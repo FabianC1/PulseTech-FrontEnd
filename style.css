@@ -52,7 +52,6 @@ nav {
     transition: 0.3s ease;
     padding-right: 50px;
     border-bottom: 3px solid;
-    /* Bottom border */
     border-image: linear-gradient(to right, #ff00aa, #00ffdd, #ff5100) 1;
 }
 
@@ -97,25 +96,18 @@ nav {
 /* Search Icon */
 .search-icon {
     position: absolute;
-    /* Make it absolutely positioned */
     right: 30px;
-    /* Position it on the far right */
     top: 50%;
     transform: translateY(-50%);
-    /* Center it vertically */
     width: 35px;
-    /* Adjust the size */
     height: 35px;
-    /* Adjust the size */
     cursor: pointer;
-    /* Makes the icon clickable */
 }
 
 /* Search Bar Container (Initially hidden) */
 .search-bar-container {
     position: absolute;
     right: 100px;
-    /* Move the search bar more to the left */
     top: 50%;
     transform: translateY(-50%) scaleX(0);
     transition: transform 0.5s ease;
@@ -125,7 +117,6 @@ nav {
 /* Active class for search bar */
 .search-bar-container.active {
     transform: translateY(-50%) scaleX(1);
-    /* Expand the search bar */
 }
 
 /* Search Input */
@@ -144,7 +135,6 @@ nav {
 /* When search bar is active, make input visible */
 .search-bar-container.active .search-input {
     width: 280px;
-    /* Adjust to desired width */
 }
 
 /* Navigation Items (Sections) */
@@ -183,6 +173,7 @@ footer {
     width: 100%;
     height: 5%;
     bottom: 0;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4); /* Soft shadow effect */
 }
 
 /* Footer Logos */
@@ -196,12 +187,9 @@ footer {
 /* Wrapper to create the gradient border */
 .logo-wrapper {
     width: 51px;
-    /* Adjust for the border size */
     height: 51px;
     background: linear-gradient(45deg, #000000, #6200ff);
-    /* Gradient border */
     border-radius: 50%;
-    /* Circular shape */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -214,61 +202,45 @@ footer {
     border-radius: 50%;
     background-color: transparent;
     padding: 5px;
-    /* Inner spacing */
 }
 
 .home-container {
     text-align: left;
-    /* Align text to the left */
     padding: 20px;
     margin: 20px auto;
     max-width: 90%;
-    /* Ensure the container doesn't stretch too wide */
     background: linear-gradient(45deg, #63005a93, #14668696);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Optional: shadow for depth */
     height: 650px;
-    /* Set a fixed height */
     overflow-y: scroll;
-    /* Enable scrolling inside the container */
     font-size: 1.2em;
     line-height: 1.6;
     border-radius: 10px;
     padding-right: 15px;
-    /* To prevent the scrollbar from overlapping the content */
     box-sizing: border-box;
-    /* Ensure padding is included in the total width/height */
 }
 
 .home-container strong {
     font-weight: bold;
-    /* Ensure text is bold */
     text-decoration: underline;
-    /* Underline the text */
     padding: 3px;
-    /* Add padding around the bold text */
     border-radius: 5px;
-    /* Rounded corners */
     color: white;
-    /* White text for visibility */
 }
 
 /* Optional: Optional limits on the scroll position */
 .home-container::-webkit-scrollbar {
     width: 8px;
-    /* Reduce scrollbar width for a cleaner look */
 }
 
 .home-container::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.5);
-    /* Light thumb color */
     border-radius: 15px;
-    /* Rounded scrollbar thumb */
 }
 
 .home-container::-webkit-scrollbar-track {
     background: transparent;
-    /* Transparent track for a cleaner look */
+
 }
 
 /* Menu Panel (Initially hidden off-screen) */
@@ -278,7 +250,7 @@ footer {
     left: -250px; /* Start off-screen */
     width: 250px;
     height: 711px;
-    background-color: #24252af5; /* Solid background color */
+    background: linear-gradient(130deg, rgba(36,37,42,0.9668242296918768) 0%, rgba(38,34,51,1) 85%, rgba(119, 0, 255, 0.855) 100% );
     color: white;
     display: flex;
     flex-direction: column;
@@ -304,7 +276,7 @@ footer {
     right: -3px;
     width: 3px;  /* Make it the same size as the border */
     height: 100%;
-    background: linear-gradient(to top, #ff00aa, #00ffdd, #ff5100); /* Apply gradient to the right side */
+    background: linear-gradient(to right, #8740c1, #0c62a2);
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4); /* Soft shadow effect */
 }
 
