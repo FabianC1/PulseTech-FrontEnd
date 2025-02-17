@@ -9,7 +9,7 @@ const app = Vue.createApp({
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
             sections: [
-                { text: "These Terms and Conditions govern the use of the PulseTech application and services provided." },
+                { text: "These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. " },
                 { text: "By accessing and using this application, you agree to comply with the terms outlined here." },
                 { text: "You must ensure that all information provided is accurate and up-to-date for the best service." },
                 { text: "Any misuse of the app may lead to restricted access or termination of services." },
@@ -40,7 +40,7 @@ const app = Vue.createApp({
             this.closeMenu();
         },
         navigateSection(direction) {
-            console.log(`Navigating... currentSection: ${this.currentSection}`);
+            // Navigate through the sections
             if (direction === 'next' && this.currentSection < this.sections.length - 1) {
                 this.currentSection++;
             } else if (direction === 'previous' && this.currentSection > 0) {
@@ -55,7 +55,6 @@ const app = Vue.createApp({
         },
         handleTouchEnd() {
             if (this.menuActive && this.touchStartX - this.touchEndX > 50) {
-                // If swiped left by at least 50px, close menu
                 this.closeMenu();
             }
         },
