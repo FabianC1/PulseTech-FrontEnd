@@ -1,0 +1,363 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to left, #758FFF, #ffffff);
+    color: white;
+    text-align: center;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, #8740c1, #0c62a2);
+    color: white;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+    width: 75px;
+    height: 75px;
+    margin-left: 20px;
+}
+
+/* Title */
+header h1 {
+    flex: 1;
+    text-align: center;
+    font-size: 30px;
+    color: white;
+}
+
+/* Profile Icon */
+.profile-icon {
+    width: 70px;
+    height: 70px;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+/* Navigation Bar */
+nav {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    background-color: #24252a;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
+    padding-right: 50px;
+    border-bottom: 3px solid;
+    /* Bottom border */
+    border-image: linear-gradient(to right, #ff00aa, #00ffdd, #ff5100) 1;
+}
+
+/* Navigation Right Container (for menu and search) */
+.nav-right-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50%; /* Make it circular */
+    transition: all 0.3s ease-in-out;
+    
+}
+
+/* Menu Button */
+.menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Menu Icon */
+.menu-icon {
+    position: absolute; /* Keep the absolute positioning */
+    left: 50px; /* Maintain the existing positioning */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+.menu-icon:hover {
+    border: 3px solid rgba(255, 255, 255, 0.911); /* Add a circular border */
+    border-radius: 15px; /* Ensure the border is circular */
+    padding: 2px; /* Create space around the icon */
+    background-color: rgba(0, 0, 0, 0.05); /* Optional: Light background */
+}
+
+
+/* Search Icon */
+.search-icon {
+    position: absolute;
+    /* Make it absolutely positioned */
+    right: 30px;
+    /* Position it on the far right */
+    top: 50%;
+    transform: translateY(-50%);
+    /* Center it vertically */
+    width: 35px;
+    /* Adjust the size */
+    height: 35px;
+    /* Adjust the size */
+    cursor: pointer;
+    /* Makes the icon clickable */
+}
+
+/* Search Bar Container (Initially hidden) */
+.search-bar-container {
+    position: absolute;
+    right: 100px;
+    /* Move the search bar more to the left */
+    top: 50%;
+    transform: translateY(-50%) scaleX(0);
+    transition: transform 0.5s ease;
+    overflow: hidden;
+}
+
+/* Active class for search bar */
+.search-bar-container.active {
+    transform: translateY(-50%) scaleX(1);
+    /* Expand the search bar */
+}
+
+/* Search Input */
+.search-input {
+    padding: 8px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    transition: width 0.3s ease;
+    width: 0;
+}
+
+/* When search bar is active, make input visible */
+.search-bar-container.active .search-input {
+    width: 280px;
+    /* Adjust to desired width */
+}
+
+/* Navigation Items (Sections) */
+.nav-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+/* Hover Effect */
+.nav-item:hover {
+    color: #0084ff;
+}
+
+/* Divider */
+.divider {
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin: 0 15px;
+}
+
+/* Main Section */
+main {
+    padding: 20px;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(to left, #8740c1, #0c62a2);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    height: 5%;
+    bottom: 0;
+}
+
+/* Footer Logos */
+.footer-logos {
+    display: flex;
+    justify-content: center;
+    gap: 15%;
+    margin-bottom: 10px;
+}
+
+/* Wrapper to create the gradient border */
+.logo-wrapper {
+    width: 51px;
+    /* Adjust for the border size */
+    height: 51px;
+    background: linear-gradient(45deg, #000000, #6200ff);
+    /* Gradient border */
+    border-radius: 50%;
+    /* Circular shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Inner Image */
+.logo-wrapper img {
+    width: 45px;
+    height: auto;
+    border-radius: 50%;
+    background-color: transparent;
+    padding: 5px;
+    /* Inner spacing */
+}
+
+.home-container {
+    text-align: left;
+    /* Align text to the left */
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 90%;
+    /* Ensure the container doesn't stretch too wide */
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Optional: shadow for depth */
+    height: 650px;
+    /* Set a fixed height */
+    overflow-y: scroll;
+    /* Enable scrolling inside the container */
+    font-size: 1.2em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    /* To prevent the scrollbar from overlapping the content */
+    box-sizing: border-box;
+    /* Ensure padding is included in the total width/height */
+}
+
+.home-container strong {
+    font-weight: bold;
+    /* Ensure text is bold */
+    text-decoration: underline;
+    /* Underline the text */
+    padding: 3px;
+    /* Add padding around the bold text */
+    border-radius: 5px;
+    /* Rounded corners */
+    color: white;
+    /* White text for visibility */
+}
+
+/* Optional: Optional limits on the scroll position */
+.home-container::-webkit-scrollbar {
+    width: 8px;
+    /* Reduce scrollbar width for a cleaner look */
+}
+
+.home-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Light thumb color */
+    border-radius: 15px;
+    /* Rounded scrollbar thumb */
+}
+
+.home-container::-webkit-scrollbar-track {
+    background: transparent;
+    /* Transparent track for a cleaner look */
+}
+
+/* Menu Panel (Initially hidden off-screen) */
+.menu-panel {
+    position: fixed;
+    top: 147px; /* Align with the bottom of the nav bar */
+    left: -250px; /* Start off-screen */
+    width: 250px;
+    height: 711px;
+    background-color: #24252af5; /* Solid background color */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 20px; /* Optional: space from the top */
+    transition: left 0.3s ease;
+    z-index: 5;
+    border-left: 1px solid transparent; /* Make the left border transparent initially */
+}
+
+/* When the menu is active (visible) */
+.menu-panel.active {
+    left: 0;
+    border-right: 1px solid transparent; /* Initially make the right border transparent */
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5); /* Add shadow to the right */
+}
+
+/* Apply gradient border directly to the right side of the panel */
+.menu-panel.active::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -3px;
+    width: 3px;  /* Make it the same size as the border */
+    height: 100%;
+    background: linear-gradient(to top, #ff00aa, #00ffdd, #ff5100); /* Apply gradient to the right side */
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4); /* Soft shadow effect */
+}
+
+
+/* Menu Items */
+.menu-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    justify-content: space-evenly; /* Space items evenly in the panel */
+    height: 100%; /* Ensure the menu takes up full height */
+}
+
+/* Menu Item Styling */
+.menu-list li {
+    padding: 30px 30px 30px; /* Adjusted padding for more even spacing */
+    cursor: pointer;
+    text-align: left;
+    position: relative; /* Make the border easier to manipulate */
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+/* Create a custom separator with border-radius */
+.menu-list li::after {
+    content: ''; /* Empty content for the separator */
+    position: absolute;
+    bottom: 0; /* Place the separator at the bottom */
+    left: 20px; /* Keep some space from the left edge */
+    width: calc(100% - 50px); /* Make the separator smaller than the full width */
+    border-bottom: 1px solid #ffffff60; /* Subtle separator line */
+    border-radius: 15px; /* Add border-radius for rounded corners */
+}
+
+/* Remove separator from the last item */
+.menu-list li:last-child::after {
+    border-bottom: none; /* Remove separator for the "Close Menu" item */
+}
+
+
+/* Hover Effect for Menu Items */
+.menu-list li:hover {
+    color: #0084ff;
+    transform: scale(1); /* Slightly enlarge the item on hover for better interactivity */
+}
+
+/* Close Button Style */
+.menu-list li:last-child {
+    border-bottom: none; /* No separator under the last item */
+    font-weight: bold;
+    color: #e74c3c;
+    margin-top:10px; /* Add space between the close button and other items */
+    text-transform: uppercase; /* Make the "Close Menu" text uppercase for emphasis */
+}

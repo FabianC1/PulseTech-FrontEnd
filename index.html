@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseTech - Your Digital Health Companion</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <img src="/image/Icon-Only-Color (2).png" alt="BioSync Logo" class="logo"> <!-- Logo (Left) -->
+            <h1>PulseTech</h1> <!-- Title (Center) -->
+            <img src="/image/ProfileIcon.png" alt="Profile" class="profile-icon"> <!-- Profile Icon (Right) -->
+        </header>
+
+        <!-- Menu Panel (Initially hidden) -->
+        <div class="menu-panel" :class="{'active': menuActive}">
+            <ul class="menu-list">
+                <li @click="navigateTo('Terms and Conditions')">Terms and Conditions</li>
+                <li @click="navigateTo('Privacy and Security')">Privacy and Security</li>
+                <li @click="navigateTo('Your Data')">Your Data</li>
+                <li @click="navigateTo('cookies')">Cookies</li>
+                <li @click="navigateTo('contact')">Contact Us</li>
+                <li @click="navigateTo('help')">Help</li>
+                <li @click="navigateTo('Emergency Contact')">Emergency Contact</li>
+                <li @click="toggleMenu">Close Menu</li>
+            </ul>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav>
+            <div class="nav-right-container">
+                <!-- Menu Button (Aligned with the search icon) -->
+                <div class="menu-btn" @click="toggleMenu">
+                    <img src="/image/menu.png" alt="Menu Icon" class="menu-icon" />
+                </div>
+
+                <!-- Search Icon Button -->
+                <div class="search-icon-wrapper" @click="toggleSearch">
+                    <img src="/image/icons8-search-50.png" alt="Search Icon" class="search-icon" />
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-bar-container" :class="{'active': searchActive}">
+                    <input type="text" placeholder="Search..." v-model="searchQuery" class="search-input" />
+                </div>
+            </div>
+
+            <!-- Navigation Items -->
+            <div class="nav-item" @click="currentView = 'home'">Home</div>
+            <div class="divider"></div>
+            <div class="nav-item" @click="currentView = 'healthDashboard'">Health Dashboard</div>
+            <div class="divider"></div>
+            <div class="nav-item" @click="currentView = 'appointments'">Appointments</div>
+            <div class="divider"></div>
+            <div class="nav-item" @click="currentView = 'symptomChecker'">Symptom Checker</div>
+            <div class="divider"></div>
+            <div class="nav-item" @click="currentView = 'medication'">Medication</div>
+            <div class="divider"></div>
+            <div class="nav-item" @click="currentView = 'messages'">Messages</div>
+            <div class="divider"></div>
+            <div class="nav-item" @click="currentView = 'profile'">Profile</div>
+        </nav>
+
+
+
+
+        <!-- Main Content -->
+        <main>
+            <!-- Home Section -->
+            <div v-if="currentView === 'home'" class="home-container">
+                <!-- Scrollable Section with Transparency and Rounded Borders -->
+                <p>
+                    <strong>What is PulseTech?</strong><br>
+                    PulseTech is a revolutionary digital health companion designed to empower you to take control of
+                    your health and well-being. Whether you are looking to track your health metrics, book medical
+                    appointments, or seek instant health advice, PulseTech is your one-stop solution. Our platform
+                    integrates cutting-edge technology with user-friendly interfaces to provide personalized
+                    services that cater to your unique health needs. We aim to give you easy access to healthcare
+                    tools that can improve your quality of life.
+                </p>
+
+                <p>
+                    <strong>How Does PulseTech Work?</strong><br>
+                    PulseTech uses the latest advancements in health technology to collect, analyze, and present
+                    your health data in a way that is easy to understand. By connecting your health data from
+                    various sources, such as wearable devices, medical records, and symptom inputs, PulseTech
+                    provides you with a complete picture of your current health status. The app is designed to be
+                    intuitive and easy to use, ensuring that you can track your progress, manage your health
+                    effectively, and stay informed about potential health risks.
+                </p>
+
+                <p>
+                    <strong>Core Features of PulseTech:</strong><br>
+                    PulseTech offers a comprehensive set of features that aim to make your health journey smoother
+                    and more informed:
+                <ul>
+                    <li><strong>Health Dashboard:</strong> The health dashboard is your personal health hub. It
+                        aggregates all of your health metrics, such as heart rate, blood pressure, activity levels,
+                        and sleep patterns, into an easy-to-read interface. With real-time updates and analytics,
+                        you can keep track of your progress and understand what factors are impacting your health.
+                    </li>
+                    <li><strong>Appointments:</strong> Booking medical appointments has never been easier. PulseTech
+                        allows you to schedule appointments with healthcare providers directly from the app. You can
+                        choose from available time slots, receive reminders, and manage cancellations or
+                        rescheduling with ease.</li>
+                    <li><strong>Symptom Checker:</strong> If you're feeling unwell or unsure about symptoms, the
+                        PulseTech symptom checker can help. By answering a series of questions about your symptoms,
+                        the app provides potential diagnoses and suggests next steps, whether it's seeing a doctor
+                        or taking certain preventive measures.</li>
+                    <li><strong>Medication Management:</strong> Staying on top of your medications is crucial for
+                        maintaining good health. PulseTech offers a medication tracker that lets you keep track of
+                        prescribed medications, dosage instructions, and refill reminders, helping you stay
+                        consistent with your treatment plan.</li>
+                    <li><strong>Messages:</strong> Communication with healthcare providers is simplified through
+                        PulseTech's messaging feature. You can send and receive messages, ask questions, and receive
+                        guidance from your medical team, all within the app.</li>
+                </ul>
+                </p>
+
+                <p>
+                    <strong>How to Use PulseTech:</strong><br>
+                    PulseTech is designed to be intuitive and easy to use. Here's how you can get started:
+                <ol>
+                    <li><strong>Create an Account:</strong> Download the PulseTech app and create your
+                        account by entering your basic details and health preferences. This will help the app
+                        personalize its recommendations and track your progress accurately.</li>
+                    <li><strong>Connect Your Health Devices:</strong> Link your wearable devices or health
+                        trackers, such as a fitness band, smartwatch, or other connected health devices, to
+                        PulseTech. This will allow the app to automatically gather data about your heart rate,
+                        sleep, activity levels, and more.</li>
+                    <li><strong>Access Your Health Dashboard:</strong> Once you've set up your profile and
+                        linked your devices, you can access your health dashboard. The dashboard will display your
+                        key health metrics and trends, and you can easily track your progress over time.</li>
+                    <li><strong>Book Appointments:</strong> PulseTech allows you to schedule appointments
+                        with healthcare providers. Browse through available doctors and specialists, check their
+                        availability, and book a time that works best for you. You'll receive reminders and
+                        notifications about upcoming appointments.</li>
+                    <li><strong>Use the Symptom Checker:</strong> If you're feeling unwell, the symptom
+                        checker will guide you through a series of questions about your symptoms. Based on your
+                        answers, it will suggest possible diagnoses or recommend that you seek professional medical
+                        help.</li>
+                    <li><strong>Manage Your Medications:</strong> Keep track of your prescribed medications
+                        and set reminders for each dose. PulseTech will notify you when it's time to take your
+                        medication and help you stay on schedule.</li>
+                    <li><strong>Connect with Healthcare Providers:</strong> With the messaging feature, you
+                        can communicate directly with your healthcare team. Ask questions, get advice, and stay
+                        connected to ensure you're on the right track with your health.</li>
+                </ol>
+                </p>
+
+                <p>
+                    <strong>Privacy and Security:</strong><br>
+                    We take your privacy and security seriously. PulseTech uses encryption and other security
+                    measures to protect your personal and health data. We follow strict privacy guidelines to ensure
+                    that your information is only used for the purpose of improving your health experience. You can
+                    rest assured that your data is in safe hands.
+                </p>
+
+                <p>
+                    <strong>PulseTech - Your Partner in Health:</strong><br>
+                    PulseTech is more than just an app; it's your partner in health. We are committed to helping you
+                    lead a healthier, more informed life. With our range of tools, expert guidance, and easy-to-use
+                    features, PulseTech is the ultimate solution for individuals who want to take control of their
+                    health. Whether you're managing chronic conditions, tracking your fitness goals, or just looking
+                    for quick health advice, PulseTech has you covered. Join us today and start your journey toward
+                    better health.
+                </p>
+
+                <p>
+                    Thank you for choosing PulseTech. We are excited to be a part of your health journey and look
+                    forward to helping you achieve your wellness goals. If you have any questions or need
+                    assistance, our support team is always here to help.
+                </p>
+            </div>
+
+            <!-- Health Dashboard Section -->
+            <div v-if="currentView === 'healthDashboard'">
+                <h2>Health Dashboard</h2>
+                <p>Your health metrics will appear here.</p>
+            </div>
+
+            <!-- Appointments Section -->
+            <div v-if="currentView === 'appointments'">
+                <h2>Appointments</h2>
+                <p>Your upcoming appointments will appear here.</p>
+            </div>
+
+            <!-- Symptom Checker Section -->
+            <div v-if="currentView === 'symptomChecker'">
+                <h2>Symptom Checker</h2>
+                <p>Get health advice based on symptoms.</p>
+            </div>
+
+            <!-- Medication Section -->
+            <div v-if="currentView === 'medication'">
+                <h2>Medication</h2>
+                <p>Track your prescribed medications and dosage here.</p>
+            </div>
+
+            <!-- Messages Section -->
+            <div v-if="currentView === 'messages'">
+                <h2>Messages</h2>
+                <p>Your messages and communication with healthcare providers will appear here.</p>
+            </div>
+
+            <!-- Profile Section -->
+            <div v-if="currentView === 'profile'">
+                <h2>Your Profile</h2>
+                <p>View and edit your personal health details.</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-logos">
+                <div class="logo-wrapper"><img src="/image/WhatsApp.svg.webp" alt="Logo 1"></div>
+                <div class="logo-wrapper"><img src="/image/telegram.svg" alt="Logo 2"></div>
+                <div class="logo-wrapper"><img src="/image/insta.png" alt="Logo 3"></div>
+                <div class="logo-wrapper"><img src="/image/twitter.png" alt="Logo 4"></div>
+                <div class="logo-wrapper"><img src="/image/meta-12368.svg" alt="Logo 5"></div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Vue Script -->
+    <script src="scripts/Vue.js"></script>
+
+</body>
+
+</html>
