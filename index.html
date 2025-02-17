@@ -240,10 +240,15 @@
                 </div>
                 <div class="arrows">
                     <!-- Arrow buttons to navigate sections -->
-                    <button @click="navigateSection('previous')" class="arrow-button left-arrow">←</button>
-                    <button @click="navigateSection('next')" class="arrow-button right-arrow">→</button>
+                    <button @click="navigateSection('previous')" class="arrow-button left-arrow">
+                        <img src="/image/icons/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
+                    </button>
+                    <button @click="navigateSection('next')" class="arrow-button right-arrow">
+                        <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
+                    </button>
                 </div>
             </div>
+
 
 
             <!-- Privacy and Security Section -->
