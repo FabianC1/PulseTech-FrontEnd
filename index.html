@@ -22,16 +22,24 @@
         <!-- Menu Panel (Initially hidden) -->
         <div class="menu-panel" :class="{'active': menuActive}">
             <ul class="menu-list">
-                <li @click="navigateTo('Terms and Conditions')">Terms and Conditions</li>
-                <li @click="navigateTo('Privacy and Security')">Privacy and Security</li>
-                <li @click="navigateTo('Your Data')">Your Data</li>
-                <li @click="navigateTo('cookies')">Cookies</li>
-                <li @click="navigateTo('contact')">Contact Us</li>
-                <li @click="navigateTo('help')">Help</li>
-                <li @click="navigateTo('Emergency Contact')">Emergency Contact</li>
-                <li @click="toggleMenu">Close Menu</li>
+                <li @click="navigateTo('termsAndConditions')" class="nav-item">Terms and Conditions</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('privacyAndSecurity')" class="nav-item">Privacy and Security</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('yourData')" class="nav-item">Your Data</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('cookies')" class="nav-item">Cookies</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('contact')" class="nav-item">Contact Us</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('help')" class="nav-item">Help</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('emergencyContact')" class="nav-item">Emergency Contact</li>
+                <div class="divider"></div>
+                <li @click="toggleMenu" class="nav-item">Close Menu</li>
             </ul>
         </div>
+
 
         <!-- Navigation Bar -->
         <nav>
@@ -215,6 +223,65 @@
                 <h2>Your Profile</h2>
                 <p>View and edit your personal health details.</p>
             </div>
+
+            <!-- Terms and Conditions Section -->
+            <div v-if="currentView === 'termsAndConditions'" class="terms-container">
+                <h2>Terms and Conditions</h2>
+                <div class="content-wrapper">
+                    <!-- Debug: Check if sections are showing -->
+                    <p>Current Section: {{ currentSection }}</p>
+                    <transition name="fade">
+                        <!-- Use v-if to show only the current section -->
+                        <div v-for="(section, index) in sections" :key="index" v-if="currentSection === index"
+                            class="text-section">
+                            <p>{{ section.text }}</p>
+                        </div>
+                    </transition>
+                </div>
+                <div class="arrows">
+                    <!-- Arrow buttons to navigate sections -->
+                    <button @click="navigateSection('previous')" class="arrow-button left-arrow">←</button>
+                    <button @click="navigateSection('next')" class="arrow-button right-arrow">→</button>
+                </div>
+            </div>
+
+
+            <!-- Privacy and Security Section -->
+            <div v-if="currentView === 'Privacy and Security'">
+                <h2>Privacy and Security</h2>
+                <p>Learn how we protect your privacy and secure your data.</p>
+            </div>
+
+            <!-- Your Data Section -->
+            <div v-if="currentView === 'Your Data'">
+                <h2>Your Data</h2>
+                <p>Understand how your data is collected, used, and stored.</p>
+            </div>
+
+            <!-- Cookies Section -->
+            <div v-if="currentView === 'cookies'">
+                <h2>Cookies</h2>
+                <p>Find out how we use cookies on our platform to improve your experience.</p>
+            </div>
+
+            <!-- Contact Us Section -->
+            <div v-if="currentView === 'contact'">
+                <h2>Contact Us</h2>
+                <p>If you have any questions, feel free to reach out to us through the contact form.</p>
+            </div>
+
+            <!-- Help Section -->
+            <div v-if="currentView === 'help'">
+                <h2>Help</h2>
+                <p>Get answers to frequently asked questions or contact support for assistance.</p>
+            </div>
+
+            <!-- Emergency Contact Section -->
+            <div v-if="currentView === 'Emergency Contact'">
+                <h2>Emergency Contact</h2>
+                <p>Here you can find important emergency contacts in case of urgent situations.</p>
+            </div>
+
         </main>
 
         <!-- Footer -->
