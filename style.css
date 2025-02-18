@@ -218,6 +218,7 @@ footer {
     border-radius: 10px;
     padding-right: 15px;
     box-sizing: border-box;
+    border: black solid;
 }
 
 .home-container strong {
@@ -346,8 +347,15 @@ footer {
     padding: 20px;
     font-size: 1.2em;
     line-height: 1.6;
+    border: black solid;
     border-radius: 10px;
 }
+
+.terms-container h2 {
+    text-decoration: underline;
+    color: rgb(0, 0, 0);  /* Ensure the text color is white, if needed */
+}
+
 
 .content-wrapper {
     height: 100%;
@@ -420,4 +428,9 @@ footer {
     width: 50px;
     height: 50px;
     object-fit: contain;
+}
+
+.text-section p {
+    margin-bottom: 50px; /* Add spacing between paragraphs */
+    text-align: left;
 }

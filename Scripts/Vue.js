@@ -8,13 +8,7 @@ const app = Vue.createApp({
             currentSection: 0, // Start at the first section
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
-            sections: [
-                { text: "These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. These Terms and Conditions govern the use of the PulseTech application and services provided. " },
-                { text: "By accessing and using this application, you agree to comply with the terms outlined here." },
-                { text: "You must ensure that all information provided is accurate and up-to-date for the best service." },
-                { text: "Any misuse of the app may lead to restricted access or termination of services." },
-                { text: "For further inquiries or concerns, please refer to the contact details provided." },
-            ]
+            sections: [] // Sections will be loaded dynamically
         };
     },
     methods: {
@@ -65,12 +59,29 @@ const app = Vue.createApp({
             if (this.menuActive && !menu.contains(event.target) && !menuButton.contains(event.target)) {
                 this.closeMenu();
             }
+        },
+        loadTermsFromHTML() {
+            const termsContainer = document.getElementById("terms-content");
+            if (termsContainer) {
+                const sections = termsContainer.querySelectorAll("section");
+                this.sections = Array.from(sections).map((section, index) => {
+                    // Get both paragraphs from the section
+                    const paragraphs = section.querySelectorAll("p");
+                    return {
+                        title: section.querySelector("h3")?.innerText || `Section ${index + 1}`,
+                        text: Array.from(paragraphs).map(p => p.innerText).join("\n\n")  // Combine the paragraphs with a newline
+                    };
+                });
+            }
         }
+
+
     },
     mounted() {
         document.addEventListener("touchstart", this.handleTouchStart);
         document.addEventListener("touchmove", this.handleTouchMove);
         document.addEventListener("touchend", this.handleTouchEnd);
+        this.loadTermsFromHTML(); // Load Terms & Conditions text
     },
     beforeUnmount() {
         document.removeEventListener("touchstart", this.handleTouchStart);
