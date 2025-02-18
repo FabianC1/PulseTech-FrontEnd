@@ -232,8 +232,9 @@
                         <p v-for="(para, index) in sections[currentSection]?.text.split('\n')" :key="index">{{ para }}
                         </p>
                     </div>
+                    <p>Current Section: {{ currentSection + 1 }} / {{ sections.length }}</p>
                 </div>
-                <p>Current Section: {{ currentSection + 1 }} / {{ sections.length }}</p>
+                
                 <div class="arrows">
                     <button @click="navigateSection('previous')" class="arrow-button left-arrow">
                         <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
@@ -243,6 +244,10 @@
                     </button>
                 </div>
             </div>
+
+
+
+
 
 
             <!-- Privacy and Security Section -->
