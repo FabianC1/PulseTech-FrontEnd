@@ -4,7 +4,7 @@ const app = Vue.createApp({
             menuActive: false,
             searchActive: false,
             searchQuery: "",
-            currentView: "termsAndConditions", // Default view
+            currentView: "home", // Default view
             currentSection: 0, // Start at the first section
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
