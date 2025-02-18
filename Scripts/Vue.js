@@ -8,10 +8,32 @@ const app = Vue.createApp({
             currentSection: 0, // Start at the first section
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
-            sections: [] // Sections will be loaded dynamically
+            legalDocs: null, // Store the fetched legal docs here
+            newTerms: "",   // Store the updated terms to be sent in the PUT request
+            sections: [] // Sections will be loaded dynamically from the fetched content
         };
     },
+    created() {
+        const collectionName = "legalDocs";  // Your collection name for legal docs
+        fetch(`http://localhost:3000/collections/${collectionName}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data[0] && data[0].termsAndConditions) {
+                this.legalDocs = data[0].termsAndConditions;
+                this.sections = this.parseSections(data[0].termsAndConditions);
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching legal docs:", error);
+        });
+    },
     methods: {
+        // Toggle menu visibility
         toggleMenu() {
             this.menuActive = !this.menuActive;
             if (this.menuActive) {
@@ -22,36 +44,43 @@ const app = Vue.createApp({
                 document.removeEventListener("click", this.handleClickOutside);
             }
         },
+        // Close menu when clicking outside
         closeMenu() {
             this.menuActive = false;
             document.removeEventListener("click", this.handleClickOutside);
         },
+        // Toggle search visibility
         toggleSearch() {
             this.searchActive = !this.searchActive;
         },
+        // Navigate to different views
         navigateTo(view) {
             this.currentView = view;
             this.closeMenu();
         },
+        // Navigate through the sections of the legal docs
         navigateSection(direction) {
-            // Navigate through the sections
             if (direction === 'next' && this.currentSection < this.sections.length - 1) {
                 this.currentSection++;
             } else if (direction === 'previous' && this.currentSection > 0) {
                 this.currentSection--;
             }
         },
+        // Detect swipe touch start
         handleTouchStart(event) {
             this.touchStartX = event.touches[0].clientX;
         },
+        // Detect touch move
         handleTouchMove(event) {
             this.touchEndX = event.touches[0].clientX;
         },
+        // Close the menu if swipe left
         handleTouchEnd() {
             if (this.menuActive && this.touchStartX - this.touchEndX > 50) {
                 this.closeMenu();
             }
         },
+        // Close menu if clicking outside
         handleClickOutside(event) {
             const menu = document.querySelector(".menu-panel");
             const menuButton = document.querySelector(".menu-btn");
@@ -60,35 +89,51 @@ const app = Vue.createApp({
                 this.closeMenu();
             }
         },
-        loadTermsFromHTML() {
-            const termsContainer = document.getElementById("terms-content");
-            if (termsContainer) {
-                const sections = termsContainer.querySelectorAll("section");
-                this.sections = Array.from(sections).map((section, index) => {
-                    // Get both paragraphs from the section
-                    const paragraphs = section.querySelectorAll("p");
-                    return {
-                        title: section.querySelector("h3")?.innerText || `Section ${index + 1}`,
-                        text: Array.from(paragraphs).map(p => p.innerText).join("\n\n")  // Combine the paragraphs with a newline
-                    };
+        // Update terms and conditions in the database
+        async updateLegalDocs() {
+            try {
+                const response = await fetch("http://localhost:3000/collections/legalDocs", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        updateType: "updateTermsAndConditions",
+                        newTerms: this.newTerms, // New terms to be updated
+                    }),
                 });
+                const data = await response.json();
+                if (data.message === "Terms and conditions updated successfully") {
+                    console.log("Updated legal docs:", data);
+                    this.legalDocs = this.newTerms;  // Update the terms in the frontend
+                    this.sections = this.parseSections(this.newTerms); // Reparse the new terms
+                    this.newTerms = ""; // Clear the new terms input
+                }
+            } catch (error) {
+                console.error("Error updating legal docs:", error);
             }
-        }
-
-
+        },
+        // Parse the legal docs into sections for easy navigation
+        parseSections(terms) {
+            return terms.map((section, index) => ({
+                title: section.title,  // Using the title from the fetched data
+                text: section.text.join("\n")  // Joining the text array into a single string
+            }));
+        },
     },
     mounted() {
+        // Initialize touch events for swipe handling
         document.addEventListener("touchstart", this.handleTouchStart);
         document.addEventListener("touchmove", this.handleTouchMove);
         document.addEventListener("touchend", this.handleTouchEnd);
-        this.loadTermsFromHTML(); // Load Terms & Conditions text
     },
     beforeUnmount() {
+        // Clean up touch events
         document.removeEventListener("touchstart", this.handleTouchStart);
         document.removeEventListener("touchmove", this.handleTouchMove);
         document.removeEventListener("touchend", this.handleTouchEnd);
         document.removeEventListener("click", this.handleClickOutside);
-    }
+    },
 });
 
 app.mount("#app");
