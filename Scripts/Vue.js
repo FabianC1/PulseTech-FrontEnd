@@ -5,32 +5,45 @@ const app = Vue.createApp({
             searchActive: false,
             searchQuery: "",
             currentView: "home", // Default view
-            currentSection: 0, // Start at the first section
+            currentSection: 0, // Start at the first section for each view
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
             legalDocs: null, // Store the fetched legal docs here
+            privacyAndSecurity: null, // Store the fetched privacy and security docs
             newTerms: "",   // Store the updated terms to be sent in the PUT request
-            sections: [] // Sections will be loaded dynamically from the fetched content
+            sections: [], // Sections for the legal docs (Terms and Conditions)
+            privacySections: [] // Sections for Privacy and Security
         };
     },
     created() {
-        const collectionName = "legalDocs";  // Your collection name for legal docs
-        fetch(`http://localhost:3000/collections/${collectionName}`, {
+        // Fetch the Terms and Conditions data from the backend API
+        fetch(`http://localhost:3000/collections/legalDocs`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data && data[0] && data[0].termsAndConditions) {
-                this.legalDocs = data[0].termsAndConditions;
-                this.sections = this.parseSections(data[0].termsAndConditions);
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching legal docs:", error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data && data[0] && data[0].termsAndConditions) {
+                    this.legalDocs = data[0].termsAndConditions;
+                    this.sections = this.parseSections(data[0].termsAndConditions);
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching legal docs:", error);
+            });
+
+        // Fetch the Privacy and Security data from the backend API
+        fetch("/collections/PrivacyAndSecurity")
+            .then((response) => response.json())
+            .then((data) => {
+                this.privacyAndSecurity = data;
+                this.privacySections = this.parseSections(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching Privacy and Security data:", error);
+            });
     },
     methods: {
         // Toggle menu visibility
@@ -113,11 +126,11 @@ const app = Vue.createApp({
                 console.error("Error updating legal docs:", error);
             }
         },
-        // Parse the legal docs into sections for easy navigation
-        parseSections(terms) {
-            return terms.map((section, index) => ({
-                title: section.title,  // Using the title from the fetched data
-                text: section.text.join("\n")  // Joining the text array into a single string
+        // Parse the legal docs and privacy docs into sections for easy navigation
+        parseSections(data) {
+            return data.map((item) => ({
+                title: item.title,  // Using the title from the fetched data
+                text: item.text.join("\n")  // Joining the text array into a single string
             }));
         },
     },
