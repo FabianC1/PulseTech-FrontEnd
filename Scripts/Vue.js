@@ -3,8 +3,9 @@ const app = Vue.createApp({
         return {
             menuActive: false,
             searchActive: false,
+            showCookiePopup: false,
             searchQuery: "",
-            currentView: "privacyAndSecurity", // Default view
+            currentView: "home", // Default view
             currentSection: 0, // Start at the first section for each view
             currentPrivacySection: 0, // Separate section tracker for privacy view
             touchStartX: 0,  // For swipe detection
@@ -52,7 +53,13 @@ const app = Vue.createApp({
             .catch((error) => {
                 console.error("Error fetching Privacy and Security data:", error);
             });
+
+        const cookiePreference = localStorage.getItem("cookieConsent");
+        if (!cookiePreference) {
+            this.showCookiePopup = true;
+        }
     },
+
 
     methods: {
         // Toggle menu visibility
@@ -70,6 +77,10 @@ const app = Vue.createApp({
         closeMenu() {
             this.menuActive = false;
             document.removeEventListener("click", this.handleClickOutside);
+        },
+        acceptCookies(choice) {
+            localStorage.setItem("cookieConsent", choice);
+            this.showCookiePopup = false;
         },
         // Toggle search visibility
         toggleSearch() {
