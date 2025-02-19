@@ -82,13 +82,6 @@
         <!-- Main Content -->
         <main>
 
-            <div v-if="showCookiePopup" class="cookie-popup">
-                <p>This website uses cookies to ensure you get the best experience.</p>
-                <button @click="acceptCookies('all')">Accept All</button>
-                <button @click="acceptCookies('minimal')">Accept Minimal</button>
-                <button @click="acceptCookies('decline')">Decline</button>
-            </div>
-
             <!-- Home Section -->
             <div v-if="currentView === 'home'" class="home-container">
                 <!-- Scrollable Section with Transparency and Rounded Borders -->
@@ -343,10 +336,26 @@
             </div>
         </footer>
 
-    </div>
+        <!-- Cookie Consent Popup -->
+        <div v-if="showCookiePopup" class="cookie-popup">
+            <h2>We value your privacy</h2>
+            <p style="color: rgb(255, 255, 255);">
+                We use cookies to enhance your browsing experience, serve personalised ads or content, and analyse our
+                traffic. By clicking 'Accept All', you consent to our use of cookies.
+            </p>
 
-    <!-- Vue Script -->
-    <script src="scripts/Vue.js"></script>
+            <!-- Button Container -->
+            <div class="button-container">
+                <button @click="goToCookiesView" class="button">Customise</button>
+                <button @click="rejectAllCookies" class="button">Reject All</button>
+                <button @click="acceptAllCookies" class="button">Accept All</button>
+            </div>
+        </div>
+
+
+
+        <!-- Vue Script -->
+        <script src="scripts/Vue.js"></script>
 
 </body>
 

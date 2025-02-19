@@ -3,7 +3,7 @@ const app = Vue.createApp({
         return {
             menuActive: false,
             searchActive: false,
-            showCookiePopup: false,
+            showCookiePopup: true,
             searchQuery: "",
             currentView: "home", // Default view
             currentSection: 0, // Start at the first section for each view
@@ -56,10 +56,9 @@ const app = Vue.createApp({
 
         const cookiePreference = localStorage.getItem("cookieConsent");
         if (!cookiePreference) {
-            this.showCookiePopup = true;
+            this.showCookiePopup = true; // Show the cookie consent popup if no preference is set
         }
     },
-
 
     methods: {
         // Toggle menu visibility
@@ -73,28 +72,32 @@ const app = Vue.createApp({
                 document.removeEventListener("click", this.handleClickOutside);
             }
         },
+
         // Close menu when clicking outside
         closeMenu() {
             this.menuActive = false;
             document.removeEventListener("click", this.handleClickOutside);
         },
+
+        // Close the cookie popup and save the user's choice
         acceptCookies(choice) {
             localStorage.setItem("cookieConsent", choice);
-            this.showCookiePopup = false;
+            this.showCookiePopup = false; // Close the popup
         },
+
         // Toggle search visibility
         toggleSearch() {
             this.searchActive = !this.searchActive;
         },
+
         // Navigate to different views
         navigateTo(view) {
             this.currentView = view;
             this.closeMenu();
         },
-        // Navigate through the sections of the docs (generalized for both views)
 
+        // Navigate through the sections of the docs (generalized for both views)
         navigateSection(direction) {
-            // Determine which section to navigate based on the current view
             if (this.currentView === 'termsAndConditions') {
                 console.log('Navigating Terms and Conditions');
                 if (direction === 'next' && this.currentSection < this.sections.length - 1) {
@@ -113,20 +116,24 @@ const app = Vue.createApp({
                 }
             }
         },
+
         // Detect swipe touch start
         handleTouchStart(event) {
             this.touchStartX = event.touches[0].clientX;
         },
+
         // Detect touch move
         handleTouchMove(event) {
             this.touchEndX = event.touches[0].clientX;
         },
+
         // Close the menu if swipe left
         handleTouchEnd() {
             if (this.menuActive && this.touchStartX - this.touchEndX > 50) {
                 this.closeMenu();
             }
         },
+
         // Close menu if clicking outside
         handleClickOutside(event) {
             const menu = document.querySelector(".menu-panel");
@@ -136,12 +143,31 @@ const app = Vue.createApp({
                 this.closeMenu();
             }
         },
+
         // Parse the legal docs and privacy docs into sections for easy navigation
         parseSections(data) {
             return data.map((item) => ({
                 title: item.title,  // Using the title from the fetched data
                 text: item.text.join("\n")  // Joining the text array into a single string
             }));
+        },
+
+        // Navigate to the "cookies" view when "Customise" is clicked
+        goToCookiesView() {
+            this.currentView = "cookies";  // Change the current view to "cookies"
+            this.showCookiePopup = false; // Close the popup
+        },
+
+        // Handle Reject All action (close popup and save choice)
+        rejectAllCookies() {
+            localStorage.setItem("cookieConsent", "reject");
+            this.showCookiePopup = false; // Close the popup
+        },
+
+        // Handle Accept All action (close popup and save choice)
+        acceptAllCookies() {
+            localStorage.setItem("cookieConsent", "accept");
+            this.showCookiePopup = false; // Close the popup
         },
     },
     mounted() {
@@ -156,7 +182,7 @@ const app = Vue.createApp({
         document.removeEventListener("touchmove", this.handleTouchMove);
         document.removeEventListener("touchend", this.handleTouchEnd);
         document.removeEventListener("click", this.handleClickOutside);
-    },
+    }
 });
 
 app.mount("#app");

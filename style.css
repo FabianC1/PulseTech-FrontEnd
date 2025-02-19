@@ -6,7 +6,12 @@ body {
     background: linear-gradient(to left, #758FFF, #ffffff);
     color: white;
     text-align: center;
+    transition: filter 0.3s ease; /* Smooth transition for blur */
 }
+
+
+
+
 
 /* Header */
 header {
@@ -60,9 +65,10 @@ nav {
     display: flex;
     align-items: center;
     gap: 10px;
-    border-radius: 50%; /* Make it circular */
+    border-radius: 50%;
+    /* Make it circular */
     transition: all 0.3s ease-in-out;
-    
+
 }
 
 /* Menu Button */
@@ -74,8 +80,10 @@ nav {
 
 /* Menu Icon */
 .menu-icon {
-    position: absolute; /* Keep the absolute positioning */
-    left: 50px; /* Maintain the existing positioning */
+    position: absolute;
+    /* Keep the absolute positioning */
+    left: 50px;
+    /* Maintain the existing positioning */
     top: 50%;
     transform: translateY(-50%);
     width: 35px;
@@ -86,10 +94,14 @@ nav {
 
 /* Hover Effect */
 .menu-icon:hover {
-    border: 3px solid rgba(255, 255, 255, 0.911); /* Add a circular border */
-    border-radius: 15px; /* Ensure the border is circular */
-    padding: 2px; /* Create space around the icon */
-    background-color: rgba(0, 0, 0, 0.05); /* Optional: Light background */
+    border: 3px solid rgba(255, 255, 255, 0.911);
+    /* Add a circular border */
+    border-radius: 15px;
+    /* Ensure the border is circular */
+    padding: 2px;
+    /* Create space around the icon */
+    background-color: rgba(0, 0, 0, 0.05);
+    /* Optional: Light background */
 }
 
 
@@ -173,7 +185,8 @@ footer {
     width: 100%;
     height: 5%;
     bottom: 0;
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4); /* Soft shadow effect */
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    /* Soft shadow effect */
 }
 
 /* Footer Logos */
@@ -247,26 +260,32 @@ footer {
 /* Menu Panel (Initially hidden off-screen) */
 .menu-panel {
     position: fixed;
-    top: 147px; /* Align with the bottom of the nav bar */
-    left: -250px; /* Start off-screen */
+    top: 147px;
+    /* Align with the bottom of the nav bar */
+    left: -250px;
+    /* Start off-screen */
     width: 250px;
     height: 711px;
-    background: linear-gradient(130deg, rgba(36,37,42,0.9668242296918768) 0%, rgba(38,34,51,1) 85%, rgba(119, 0, 255, 0.855) 100% );
+    background: linear-gradient(130deg, rgba(36, 37, 42, 0.9668242296918768) 0%, rgba(38, 34, 51, 1) 85%, rgba(119, 0, 255, 0.855) 100%);
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: 20px; /* Optional: space from the top */
+    padding-top: 20px;
+    /* Optional: space from the top */
     transition: left 0.3s ease;
-    z-index: 999;
-    border-left: 1px solid transparent; /* Make the left border transparent initially */
+    z-index: 3;
+    border-left: 1px solid transparent;
+    /* Make the left border transparent initially */
 }
 
 /* When the menu is active (visible) */
 .menu-panel.active {
     left: 0;
-    border-right: 1px solid transparent; /* Initially make the right border transparent */
-    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5); /* Add shadow to the right */
+    border-right: 1px solid transparent;
+    /* Initially make the right border transparent */
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5);
+    /* Add shadow to the right */
 }
 
 /* Apply gradient border directly to the right side of the panel */
@@ -275,10 +294,12 @@ footer {
     position: absolute;
     top: 0;
     right: -3px;
-    width: 3px;  /* Make it the same size as the border */
+    width: 3px;
+    /* Make it the same size as the border */
     height: 100%;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.932), #6200ff);
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4); /* Soft shadow effect */
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    /* Soft shadow effect */
 }
 
 
@@ -288,51 +309,67 @@ footer {
     padding: 0;
     margin: 0;
     display: flex;
-    flex-direction: column; /* Align items vertically */
-    justify-content: space-evenly; /* Space items evenly in the panel */
-    height: 100%; /* Ensure the menu takes up full height */
+    flex-direction: column;
+    /* Align items vertically */
+    justify-content: space-evenly;
+    /* Space items evenly in the panel */
+    height: 100%;
+    /* Ensure the menu takes up full height */
 }
 
 /* Menu Item Styling */
 .menu-list li {
-    padding: 30px 30px 30px; /* Adjusted padding for more even spacing */
+    padding: 30px 30px 30px;
+    /* Adjusted padding for more even spacing */
     cursor: pointer;
     text-align: left;
-    position: relative; /* Make the border easier to manipulate */
+    position: relative;
+    /* Make the border easier to manipulate */
     font-weight: bold;
     transition: color 0.3s;
 }
 
 /* Create a custom separator with border-radius */
 .menu-list li::after {
-    content: ''; /* Empty content for the separator */
+    content: '';
+    /* Empty content for the separator */
     position: absolute;
-    bottom: 0; /* Place the separator at the bottom */
-    left: 20px; /* Keep some space from the left edge */
-    width: calc(100% - 50px); /* Make the separator smaller than the full width */
-    border-bottom: 1px solid #ffffff60; /* Subtle separator line */
-    border-radius: 15px; /* Add border-radius for rounded corners */
+    bottom: 0;
+    /* Place the separator at the bottom */
+    left: 20px;
+    /* Keep some space from the left edge */
+    width: calc(100% - 50px);
+    /* Make the separator smaller than the full width */
+    border-bottom: 1px solid #ffffff60;
+    /* Subtle separator line */
+    border-radius: 15px;
+    /* Add border-radius for rounded corners */
 }
 
 /* Remove separator from the last item */
 .menu-list li:last-child::after {
-    border-bottom: none; /* Remove separator for the "Close Menu" item */
+    border-bottom: none;
+    /* Remove separator for the "Close Menu" item */
 }
 
 
 /* Hover Effect for Menu Items */
 .menu-list li:hover {
     color: #0084ff;
-    transform: scale(1); /* Slightly enlarge the item on hover for better interactivity */
+    transform: scale(1);
+    /* Slightly enlarge the item on hover for better interactivity */
 }
 
 /* Close Button Style */
 .menu-list li:last-child {
-    border-bottom: none; /* No separator under the last item */
+    border-bottom: none;
+    /* No separator under the last item */
     font-weight: bold;
     color: #e74c3c;
-    margin-top:10px; /* Add space between the close button and other items */
-    text-transform: uppercase; /* Make the "Close Menu" text uppercase for emphasis */
+    margin-top: 10px;
+    /* Add space between the close button and other items */
+    text-transform: uppercase;
+    /* Make the "Close Menu" text uppercase for emphasis */
 }
 
 
@@ -353,7 +390,8 @@ footer {
 
 .terms-container h2 {
     text-decoration: underline;
-    color: rgb(0, 0, 0);  /* Ensure the text color is white, if needed */
+    color: rgb(0, 0, 0);
+    /* Ensure the text color is white, if needed */
 }
 
 
@@ -369,7 +407,8 @@ footer {
     margin-left: 7%;
     margin-top: -5%;
     background-color: #f9f9f900;
-    transition: opacity 0.5s ease; /* Optional transition */
+    transition: opacity 0.5s ease;
+    /* Optional transition */
 }
 
 
@@ -399,9 +438,11 @@ footer {
     0% {
         transform: translateY(-50%) scale(1);
     }
+
     50% {
         transform: translateY(-50%) scale(1.1);
     }
+
     100% {
         transform: translateY(-50%) scale(1);
     }
@@ -409,8 +450,8 @@ footer {
 
 /* Hover effect for arrow button */
 .arrow-button:hover {
-    animation: pulse 1.5s infinite; /* Apply pulsing animation */
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Creates a soft shadow effect */
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Left arrow */
@@ -431,18 +472,61 @@ footer {
 }
 
 .text-section p {
-    margin-bottom: 50px; /* Add spacing between paragraphs */
+    margin-bottom: 50px;
     text-align: left;
 }
 
+
+/* Popup styles */
 .cookie-popup {
+    height: 25%;
     position: fixed;
-    bottom: 20px;
+    bottom: 35%;
     left: 50%;
     transform: translateX(-50%);
-    background: white;
-    padding: 15px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.822); /* Semi-transparent background */
+    padding: 30px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 10; /* Ensure the popup is above other content */
+    border-radius: 15px;
+    border: solid white;
+    width: 700px;
+    text-align: center;
+}
+
+/* Remaining styles for buttons and text */
+.cookie-popup h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: rgb(255, 255, 255);
+}
+
+.cookie-popup p {
+    margin-bottom: 20px;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 15px;
+    border: transparent;
+    cursor: pointer;
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #00a2ff;
+    color: white;
 }
