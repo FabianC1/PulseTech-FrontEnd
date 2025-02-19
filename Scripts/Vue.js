@@ -4,13 +4,12 @@ const app = Vue.createApp({
             menuActive: false,
             searchActive: false,
             searchQuery: "",
-            currentView: "home", // Default view
+            currentView: "privacyAndSecurity", // Default view
             currentSection: 0, // Start at the first section for each view
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
             legalDocs: null, // Store the fetched legal docs here
             privacyAndSecurity: null, // Store the fetched privacy and security docs
-            newTerms: "",   // Store the updated terms to be sent in the PUT request
             sections: [], // Sections for the legal docs (Terms and Conditions)
             privacySections: [] // Sections for Privacy and Security
         };
@@ -35,15 +34,23 @@ const app = Vue.createApp({
             });
 
         // Fetch the Privacy and Security data from the backend API
-        fetch("/collections/PrivacyAndSecurity")
+        fetch("/collections/PrivacyAndSecurity", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
             .then((response) => response.json())
             .then((data) => {
-                this.privacyAndSecurity = data;
-                this.privacySections = this.parseSections(data);
+                if (data && data.length > 0) {
+                    this.privacyAndSecurity = data;
+                    this.privacySections = this.parseSections(data[0].privacyAndSecurity); // Update this line to reflect the correct path
+                }
             })
             .catch((error) => {
                 console.error("Error fetching Privacy and Security data:", error);
             });
+
     },
     methods: {
         // Toggle menu visibility
@@ -71,14 +78,14 @@ const app = Vue.createApp({
             this.currentView = view;
             this.closeMenu();
         },
-        // Navigate through the sections of the legal docs
+        // Navigate through the sections of the privacy and security docs
         navigateSection(direction) {
-            if (direction === 'next' && this.currentSection < this.sections.length - 1) {
+            if (direction === 'next' && this.currentSection < this.privacySections.length - 1) {
                 this.currentSection++;
             } else if (direction === 'previous' && this.currentSection > 0) {
                 this.currentSection--;
             }
-        },
+        },        
         // Detect swipe touch start
         handleTouchStart(event) {
             this.touchStartX = event.touches[0].clientX;
@@ -100,30 +107,6 @@ const app = Vue.createApp({
 
             if (this.menuActive && !menu.contains(event.target) && !menuButton.contains(event.target)) {
                 this.closeMenu();
-            }
-        },
-        // Update terms and conditions in the database
-        async updateLegalDocs() {
-            try {
-                const response = await fetch("http://localhost:3000/collections/legalDocs", {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        updateType: "updateTermsAndConditions",
-                        newTerms: this.newTerms, // New terms to be updated
-                    }),
-                });
-                const data = await response.json();
-                if (data.message === "Terms and conditions updated successfully") {
-                    console.log("Updated legal docs:", data);
-                    this.legalDocs = this.newTerms;  // Update the terms in the frontend
-                    this.sections = this.parseSections(this.newTerms); // Reparse the new terms
-                    this.newTerms = ""; // Clear the new terms input
-                }
-            } catch (error) {
-                console.error("Error updating legal docs:", error);
             }
         },
         // Parse the legal docs and privacy docs into sections for easy navigation
