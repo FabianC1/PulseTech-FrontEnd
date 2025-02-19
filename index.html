@@ -251,35 +251,45 @@
             </div>
 
 
-            <!-- Privacy and Security Section -->
-            <div v-if="currentView === 'privacyAndSecurity'" class="terms-container">
-                <h2>{{ privacySections[currentSection]?.title }}</h2>
+            <!-- Terms and Conditions Section -->
+            <div v-if="currentView === 'termsAndConditions'" class="terms-container">
+                <h2>{{ sections[currentSection]?.title }}</h2>
                 <div class="content-wrapper">
                     <div class="text-section">
-                        <!-- Loop through paragraphs and display each one correctly -->
-                        <div class="text-section">
-                            <p v-for="(para, index) in sections[currentSection]?.text.split('\n')" :key="index">{{ para
-                                }}
-                            </p>
-                        </div>
+                        <p v-for="(para, index) in sections[currentSection]?.text.split('\n')" :key="index">{{ para }}
+                        </p>
                     </div>
-                    <p>Current Section: {{ currentSection + 1 }} / {{ privacySections.length }}</p>
+                    <p>Current Section: {{ currentSection + 1 }} / {{ sections.length }}</p>
                 </div>
-
                 <div class="arrows">
-                    <!-- Button to navigate to the previous section -->
                     <button @click="navigateSection('previous')" class="arrow-button left-arrow">
                         <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
                     </button>
-                    <!-- Button to navigate to the next section -->
                     <button @click="navigateSection('next')" class="arrow-button right-arrow">
                         <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
                     </button>
                 </div>
             </div>
 
-
-
+            <!-- Privacy and Security Section -->
+            <div v-if="currentView === 'privacyAndSecurity'" class="terms-container">
+                <h2>{{ privacySections[currentPrivacySection]?.title }}</h2>
+                <div class="content-wrapper">
+                    <div class="text-section">
+                        <p v-for="(para, index) in privacySections[currentPrivacySection]?.text.split('\n')"
+                            :key="index">{{ para }}</p>
+                    </div>
+                    <p>Current Section: {{ currentPrivacySection + 1 }} / {{ privacySections.length }}</p>
+                </div>
+                <div class="arrows">
+                    <button @click="navigateSection('previous')" class="arrow-button left-arrow">
+                        <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
+                    </button>
+                    <button @click="navigateSection('next')" class="arrow-button right-arrow">
+                        <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
+                    </button>
+                </div>
+            </div>
 
 
 

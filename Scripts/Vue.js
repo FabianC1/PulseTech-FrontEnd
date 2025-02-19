@@ -6,6 +6,7 @@ const app = Vue.createApp({
             searchQuery: "",
             currentView: "privacyAndSecurity", // Default view
             currentSection: 0, // Start at the first section for each view
+            currentPrivacySection: 0, // Separate section tracker for privacy view
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
             legalDocs: null, // Store the fetched legal docs here
@@ -27,6 +28,7 @@ const app = Vue.createApp({
                 if (data && data[0] && data[0].termsAndConditions) {
                     this.legalDocs = data[0].termsAndConditions;
                     this.sections = this.parseSections(data[0].termsAndConditions);
+                    console.log('Sections for Terms and Conditions:', this.sections);  // Debugging
                 }
             })
             .catch(error => {
@@ -44,14 +46,14 @@ const app = Vue.createApp({
             .then((data) => {
                 if (data && data.length > 0) {
                     this.privacyAndSecurity = data;
-                    this.privacySections = this.parseSections(data[0].privacyAndSecurity); // Update this line to reflect the correct path
+                    this.privacySections = this.parseSections(data[0].privacyAndSecurity);
                 }
             })
             .catch((error) => {
                 console.error("Error fetching Privacy and Security data:", error);
             });
-
     },
+
     methods: {
         // Toggle menu visibility
         toggleMenu() {
@@ -78,14 +80,28 @@ const app = Vue.createApp({
             this.currentView = view;
             this.closeMenu();
         },
-        // Navigate through the sections of the privacy and security docs
+        // Navigate through the sections of the docs (generalized for both views)
+
         navigateSection(direction) {
-            if (direction === 'next' && this.currentSection < this.privacySections.length - 1) {
-                this.currentSection++;
-            } else if (direction === 'previous' && this.currentSection > 0) {
-                this.currentSection--;
+            // Determine which section to navigate based on the current view
+            if (this.currentView === 'termsAndConditions') {
+                console.log('Navigating Terms and Conditions');
+                if (direction === 'next' && this.currentSection < this.sections.length - 1) {
+                    this.currentSection++;
+                    console.log('Next Section:', this.currentSection); // Debugging
+                } else if (direction === 'previous' && this.currentSection > 0) {
+                    this.currentSection--;
+                    console.log('Previous Section:', this.currentSection); // Debugging
+                }
+            } else if (this.currentView === 'privacyAndSecurity') {
+                console.log('Navigating Privacy and Security');
+                if (direction === 'next' && this.currentPrivacySection < this.privacySections.length - 1) {
+                    this.currentPrivacySection++;
+                } else if (direction === 'previous' && this.currentPrivacySection > 0) {
+                    this.currentPrivacySection--;
+                }
             }
-        },        
+        },
         // Detect swipe touch start
         handleTouchStart(event) {
             this.touchStartX = event.touches[0].clientX;
