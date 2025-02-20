@@ -79,6 +79,13 @@
         </div>
 
 
+        <div v-if="showConfirmationPopup" class="confirmation-popup">
+            Settings have been changed!
+        </div>
+
+
+
+
 
         <!-- Main Content -->
         <main>
@@ -362,8 +369,10 @@
                 <a class="more-link" href="/privacyAndSecurity">Learn more about our Privacy Policy</a>
             </div>
 
-
-
+            <!-- Confirmation Popup -->
+            <div v-if="showConfirmationPopup" class="confirmation-popup">
+                Settings have been changed!
+            </div>
 
 
             <!-- Contact Us Section -->
