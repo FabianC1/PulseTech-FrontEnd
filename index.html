@@ -295,11 +295,76 @@
             </div>
 
 
-            <!-- Cookies Section -->
-            <div v-if="currentView === 'cookies'">
-                <h2>Cookies</h2>
-                <p>Find out how we use cookies on our platform to improve your experience.</p>
+
+            <div v-if="currentView === 'cookies'" class="cookies-container">
+                <h1 style="font-size: 1.4em; text-decoration: underline;">Cookie Preferences</h1>
+
+                <!-- Cookie Grid Container -->
+                <div class="cookie-grid">
+
+                    <!-- Essential Cookies Section -->
+                    <div class="cookie-box">
+                        <h2>Essential Cookies</h2>
+                        <p>Essential cookies are necessary for the website to function properly and cannot be turned
+                            off. They help with basic functionalities like page navigation and access to secure areas.
+                        </p>
+                        <div class="toggle-container">
+                            <label for="essentialCookies">Essential Cookies</label>
+                            <div class="toggle" :class="{ active: essentialCookies }"></div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Cookies Section -->
+                    <div class="cookie-box">
+                        <h2>Performance Cookies</h2>
+                        <p>Performance cookies help us analyze how visitors interact with our website, allowing us to
+                            improve functionality and user experience.</p>
+                        <div class="toggle-container">
+                            <label for="performanceCookies">Enable Performance Cookies</label>
+                            <div class="toggle" :class="{ active: performanceCookies }"
+                                @click="toggleCookie('performanceCookies')"></div>
+                        </div>
+                    </div>
+
+                    <!-- Functional Cookies Section -->
+                    <div class="cookie-box">
+                        <h2>Functional Cookies</h2>
+                        <p>Functional cookies allow the website to remember choices you make, like language preferences,
+                            and provide enhanced features.</p>
+                        <div class="toggle-container">
+                            <label for="functionalCookies">Enable Functional Cookies</label>
+                            <div class="toggle" :class="{ active: functionalCookies }"
+                                @click="toggleCookie('functionalCookies')"></div>
+                        </div>
+                    </div>
+
+                    <!-- Targeting Cookies Section -->
+                    <div class="cookie-box">
+                        <h2>Targeting Cookies</h2>
+                        <p>Targeting cookies track your browsing habits and are used to deliver personalized ads or
+                            content that may interest you.</p>
+                        <div class="toggle-container">
+                            <label for="targetingCookies">Enable Targeting Cookies</label>
+                            <div class="toggle" :class="{ active: targetingCookies }"
+                                @click="toggleCookie('targetingCookies')"></div>
+                        </div>
+                    </div>
+
+                </div> <!-- End of cookie-grid -->
+
+                <!-- Save and Cancel Buttons -->
+                <div class="actions">
+                    <button class="save-btn" @click="saveSettings">Save Settings</button>
+                    <button class="cancel-btn" @click="cancelSettings">Cancel</button>
+                </div>
+
+                <!-- More Link -->
+                <a class="more-link" href="/privacyAndSecurity">Learn more about our Privacy Policy</a>
             </div>
+
+
+
+
 
             <!-- Contact Us Section -->
             <div v-if="currentView === 'contact'">
