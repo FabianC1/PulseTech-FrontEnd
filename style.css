@@ -724,8 +724,9 @@ button {
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-/* Fade-out animation */
+/* Add fade-out class to trigger fade-out animation */
 .confirmation-popup.fade-out {
     opacity: 0;
     visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;  /* Optional, to match the fade-in duration */
 }

@@ -177,16 +177,26 @@ const app = Vue.createApp({
     handleClickOutside(event) {
       const menu = document.querySelector(".menu-panel");
       const menuButton = document.querySelector(".menu-btn");
+      const popup = document.querySelector(".confirmation-popup");
 
+      // Close the menu if clicked outside
       if (this.menuActive && !menu.contains(event.target) && !menuButton.contains(event.target)) {
         this.closeMenu();
       }
+
+      // Close the confirmation popup if clicked outside
+      if (this.showConfirmationPopup && popup && !popup.contains(event.target)) {
+        popup.classList.add("fade-out");
+
+        // Hide after fade-out and reset visibility
+        setTimeout(() => {
+          this.showConfirmationPopup = false;
+          popup.classList.remove("fade-out");
+        }, 500); // Match fade-out duration
+      }
     },
 
-    toggleCookie(cookieType) {
-      this[cookieType] = !this[cookieType];
-    },
-
+    // Show confirmation popup and handle animations
     saveSettings() {
       // Save the current cookie preferences to localStorage
       localStorage.setItem("essentialCookies", JSON.stringify(this.essentialCookies));
@@ -206,13 +216,27 @@ const app = Vue.createApp({
       this.showCookiePopup = false;
       localStorage.setItem("cookieConsent", "accepted");
 
-      // Show confirmation popup with fade-in
+      // Show confirmation popup
       this.showConfirmationPopup = true;
+
+      // Trigger fade-in animation by adding fade-in class
+      this.$nextTick(() => {
+        const popup = document.querySelector(".confirmation-popup");
+        popup.classList.remove("fade-out");  // Ensure no lingering fade-out class
+        popup.classList.add("fade-in");
+      });
 
       // Hide confirmation popup after 2 seconds with fade-out
       setTimeout(() => {
-        this.showConfirmationPopup = false;
-      }, 2000);
+        const popup = document.querySelector(".confirmation-popup");
+        popup.classList.add("fade-out");  // Add fade-out class to trigger fade-out
+
+        // Reset visibility after fade-out animation ends (500ms)
+        setTimeout(() => {
+          this.showConfirmationPopup = false; // Hide the popup
+          popup.classList.remove("fade-out"); // Clean up the class for future use
+        }, 500);
+      }, 2000); // Wait for 2 seconds before triggering fade-out
     },
 
     cancelSettings() {
@@ -222,6 +246,22 @@ const app = Vue.createApp({
       this.targetingCookies = this.savedCookies.targeting;
 
       this.showCookiePopup = false;
+    },
+
+    handleClickOutside(event) {
+      const popup = document.querySelector(".confirmation-popup");
+
+      // Close if clicked outside of the confirmation popup
+      if (this.showConfirmationPopup && popup && !popup.contains(event.target)) {
+        const popup = document.querySelector(".confirmation-popup");
+        popup.classList.add("fade-out");
+
+        // Hide after fade-out and reset visibility
+        setTimeout(() => {
+          this.showConfirmationPopup = false;
+          popup.classList.remove("fade-out");
+        }, 500); // Match fade-out duration
+      }
     },
 
     parseSections(data) {
