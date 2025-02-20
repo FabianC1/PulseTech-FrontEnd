@@ -270,6 +270,7 @@ const app = Vue.createApp({
       },
     },
   
+    
     mounted() {
       // Initialize touch events
       document.addEventListener("touchstart", this.handleTouchStart);
