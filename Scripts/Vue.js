@@ -58,6 +58,17 @@ const app = Vue.createApp({
         if (!cookiePreference) {
             this.showCookiePopup = true; // Show the cookie consent popup if no preference is set
         }
+
+        const path = window.location.pathname.substring(1); // Remove leading slash
+        if (path) {
+            this.currentView = path; // Set view based on the URL
+        }
+    
+        window.addEventListener("popstate", (event) => {
+            if (event.state && event.state.view) {
+                this.currentView = event.state.view;
+            }
+        });
     },
 
     methods: {
@@ -94,7 +105,9 @@ const app = Vue.createApp({
         navigateTo(view) {
             this.currentView = view;
             this.closeMenu();
-        },
+            window.history.pushState({ view }, "", `/${view}`);
+        },        
+
 
         // Navigate through the sections of the docs (generalized for both views)
         navigateSection(direction) {
@@ -156,6 +169,7 @@ const app = Vue.createApp({
         goToCookiesView() {
             this.currentView = "cookies";  // Change the current view to "cookies"
             this.showCookiePopup = false; // Close the popup
+            window.history.pushState({ view: "cookies" }, "", "/cookies"); // Update the URL
         },
 
         // Handle Reject All action (close popup and save choice)

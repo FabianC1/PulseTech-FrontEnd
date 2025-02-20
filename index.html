@@ -19,27 +19,6 @@
             <img src="/image/ProfileIcon.png" alt="Profile" class="profile-icon"> <!-- Profile Icon (Right) -->
         </header>
 
-        <!-- Menu Panel (Initially hidden) -->
-        <div class="menu-panel" :class="{'active': menuActive}">
-            <ul class="menu-list">
-                <li @click="navigateTo('termsAndConditions')" class="nav-item">Terms and Conditions</li>
-                <div class="divider"></div>
-                <li @click="navigateTo('privacyAndSecurity')" class="nav-item">Privacy and Security</li>
-                <div class="divider"></div>
-                <li @click="navigateTo('yourData')" class="nav-item">Your Data</li>
-                <div class="divider"></div>
-                <li @click="navigateTo('cookies')" class="nav-item">Cookies</li>
-                <div class="divider"></div>
-                <li @click="navigateTo('contact')" class="nav-item">Contact Us</li>
-                <div class="divider"></div>
-                <li @click="navigateTo('help')" class="nav-item">Help</li>
-                <div class="divider"></div>
-                <li @click="navigateTo('emergencyContact')" class="nav-item">Emergency Contact</li>
-                <div class="divider"></div>
-                <li @click="toggleMenu" class="nav-item">Close Menu</li>
-            </ul>
-        </div>
-
 
         <!-- Navigation Bar -->
         <nav>
@@ -61,21 +40,42 @@
             </div>
 
             <!-- Navigation Items -->
-            <div class="nav-item" @click="currentView = 'home'">Home</div>
+            <div class="nav-item" @click="navigateTo('home')">Home</div>
             <div class="divider"></div>
-            <div class="nav-item" @click="currentView = 'healthDashboard'">Health Dashboard</div>
+            <div class="nav-item" @click="navigateTo('healthDashboard')">Health Dashboard</div>
             <div class="divider"></div>
-            <div class="nav-item" @click="currentView = 'appointments'">Appointments</div>
+            <div class="nav-item" @click="navigateTo('appointments')">Appointments</div>
             <div class="divider"></div>
-            <div class="nav-item" @click="currentView = 'symptomChecker'">Symptom Checker</div>
+            <div class="nav-item" @click="navigateTo('symptomChecker')">Symptom Checker</div>
             <div class="divider"></div>
-            <div class="nav-item" @click="currentView = 'medication'">Medication</div>
+            <div class="nav-item" @click="navigateTo('medication')">Medication</div>
             <div class="divider"></div>
-            <div class="nav-item" @click="currentView = 'messages'">Messages</div>
+            <div class="nav-item" @click="navigateTo('messages')">Messages</div>
             <div class="divider"></div>
-            <div class="nav-item" @click="currentView = 'profile'">Profile</div>
+            <div class="nav-item" @click="navigateTo('profile')">Profile</div>
         </nav>
 
+
+        <!-- Menu Panel (Initially hidden) -->
+        <div class="menu-panel" :class="{'active': menuActive}">
+            <ul class="menu-list">
+                <li @click="navigateTo('termsAndConditions')" class="nav-item">Terms and Conditions</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('privacyAndSecurity')" class="nav-item">Privacy and Security</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('yourData')" class="nav-item">Your Data</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('cookies')" class="nav-item">Cookies</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('contact')" class="nav-item">Contact Us</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('help')" class="nav-item">Help</li>
+                <div class="divider"></div>
+                <li @click="navigateTo('emergencyContact')" class="nav-item">Emergency Contact</li>
+                <div class="divider"></div>
+                <li @click="toggleMenu" class="nav-item">Close Menu</li>
+            </ul>
+        </div>
 
 
 
@@ -325,7 +325,7 @@
 
             <!-- Button Container -->
             <div class="button-container">
-                <button @click="goToCookiesView" class="button">Customise</button>
+                <button @click="goToCookiesView()">Customise</button>
                 <button @click="rejectAllCookies" class="button">Reject All</button>
                 <button @click="acceptAllCookies" class="button">Accept All</button>
             </div>
