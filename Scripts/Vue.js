@@ -5,15 +5,18 @@ const app = Vue.createApp({
             searchActive: false,
             showCookiePopup: true,
             searchQuery: "",
-            currentView: "home", // Default view
+            currentView: "HealthAndWellnessGuidelines", // Default view
             currentSection: 0, // Start at the first section for each view
             currentPrivacySection: 0, // Separate section tracker for privacy view
             touchStartX: 0,  // For swipe detection
             touchEndX: 0,
             legalDocs: null, // Store the fetched legal docs here
             privacyAndSecurity: null, // Store the fetched privacy and security docs
+            healthAndWellnessGuidelines: null, // Store the fetched guidelines
             sections: [], // Sections for the legal docs (Terms and Conditions)
-            privacySections: [] // Sections for Privacy and Security
+            privacySections: [], // Sections for Privacy and Security
+            wellnessSections: [], // Sections for Health & Wellness Guidelines
+            currentWellnessSection: 0, // Separate section tracker for Health & Wellness view
         };
     },
     created() {
@@ -54,6 +57,25 @@ const app = Vue.createApp({
                 console.error("Error fetching Privacy and Security data:", error);
             });
 
+        // Fetch the Health & Wellness Guidelines data from the backend API
+        fetch("/collections/HealthAndWellnessGuidelines", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data && data.length > 0) {
+                    this.healthAndWellnessGuidelines = data;
+                    this.wellnessSections = this.parseSections(data[0].healthAndWellnessGuidelines);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching Health & Wellness Guidelines data:", error);
+            });
+
+
         const cookiePreference = localStorage.getItem("cookieConsent");
         if (!cookiePreference) {
             this.showCookiePopup = true; // Show the cookie consent popup if no preference is set
@@ -63,7 +85,7 @@ const app = Vue.createApp({
         if (path) {
             this.currentView = path; // Set view based on the URL
         }
-    
+
         window.addEventListener("popstate", (event) => {
             if (event.state && event.state.view) {
                 this.currentView = event.state.view;
@@ -106,10 +128,10 @@ const app = Vue.createApp({
             this.currentView = view;
             this.closeMenu();
             window.history.pushState({ view }, "", `/${view}`);
-        },        
+        },
 
 
-        // Navigate through the sections of the docs (generalized for both views)
+        // Navigate through the sections of the docs (generalized for all views)
         navigateSection(direction) {
             if (this.currentView === 'termsAndConditions') {
                 console.log('Navigating Terms and Conditions');
@@ -126,6 +148,13 @@ const app = Vue.createApp({
                     this.currentPrivacySection++;
                 } else if (direction === 'previous' && this.currentPrivacySection > 0) {
                     this.currentPrivacySection--;
+                }
+            } else if (this.currentView === 'HealthAndWellnessGuidelines') {
+                console.log('Navigating Health & Wellness Guidelines');
+                if (direction === 'next' && this.currentWellnessSection < this.wellnessSections.length - 1) {
+                    this.currentWellnessSection++;
+                } else if (direction === 'previous' && this.currentWellnessSection > 0) {
+                    this.currentWellnessSection--;
                 }
             }
         },
