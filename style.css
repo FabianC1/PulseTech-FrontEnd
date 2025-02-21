@@ -910,3 +910,78 @@ button {
 }
 
 
+/* Help Section Container (Similar to Home Section) */
+.help-container {
+    text-align: left;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696); /* Match Home Section's background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for the container */
+    height: 650px;  /* Fixed height to make it scrollable */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    font-size: 1.1em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styling for Help Section */
+.help-container h2 {
+    text-align: center;
+    color: black;  /* Black title for h2 */
+    font-size: 1.6em;
+    margin-top: 0;
+    text-decoration: underline;
+    text-decoration-color: black;  /* Underline color set to black */
+}
+
+/* Section Titles inside Help Section */
+.help-container h3 {
+    color: black;  /* Black titles for h3 */
+    font-size: 1.2em;
+    margin-top: 20px;
+    text-decoration: underline;
+    text-decoration-color: black;  /* Underline color set to black */
+}
+
+/* List Styling */
+.help-container ol {
+    color: white;
+    margin-left: 20px;
+}
+
+/* Links Styling */
+.help-container a {
+    color: #4a2cceda; /* Match link color */
+    text-decoration: none;
+}
+
+.help-container a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Optional: Add scroll for longer content */
+.help-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.help-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+
+.help-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Make the Help Section stack in smaller screens */
+@media (max-width: 768px) {
+    .help-container {
+        padding: 10px; /* Reduce padding for mobile */
+    }
+}
