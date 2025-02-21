@@ -196,6 +196,15 @@ const app = Vue.createApp({
       }
     },
 
+    toggleCookie(cookieType) {
+      if (this[cookieType] !== undefined) {
+        this[cookieType] = !this[cookieType];
+      } else {
+        console.error(`Cookie type "${cookieType}" does not exist.`);
+      }
+    },
+    
+
     // Show confirmation popup and handle animations
     saveSettings() {
       // Save the current cookie preferences to localStorage
