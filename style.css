@@ -985,3 +985,109 @@ button {
         padding: 10px; /* Reduce padding for mobile */
     }
 }
+
+
+/* Emergency Section Container (Reusing the existing container style) */
+.emergency-container {
+    text-align: center;  /* Center all text */
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696); /* Match the background from Home */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 650px;
+    overflow-y: auto;
+    font-size: 1.1em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Emergency Button Styling (SOS button next to each contact) */
+.sos-button {
+    background-color: red; /* Red color for SOS */
+    color: white;
+    font-size: 0.9em;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px; /* Space between the phone number and button */
+    display: inline-block; /* Ensures it aligns horizontally */
+    transition: background-color 0.3s ease;
+}
+
+/* Aligning the SOS buttons horizontally */
+.sos-button {
+    margin-right: 10px;  /* Margin between buttons */
+}
+
+.sos-button:hover {
+    background-color: darkred; /* Darker red when hovered */
+}
+
+
+/* Header Styling for Emergency Contact Section */
+.emergency-container h2 {
+    color: black;
+    font-size: 1.5em;
+    margin-top: 0;
+    text-decoration: underline;
+    text-decoration-color: black;  /* Underline color set to black */
+}
+
+/* List Styling for Emergency Contacts */
+.emergency-container ul {
+    list-style-type: none;
+    padding-left: 0;
+    color: white;
+    text-align: center; /* Center text for the entire list */
+}
+
+.emergency-container li {
+    margin-bottom: 10px;  /* Space between each item */
+}
+
+/* Links Styling */
+.emergency-container a {
+    color: #4a2cce;
+    text-decoration: none;
+}
+
+.emergency-container a:hover {
+    text-decoration: underline;
+}
+
+/* Optional: Scroll for longer content */
+.emergency-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.emergency-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+
+.emergency-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Make the Emergency Section stack in smaller screens */
+@media (max-width: 768px) {
+    .emergency-container {
+        padding: 10px; /* Reduce padding for mobile */
+    }
+
+    /* For mobile screens, reduce font size and adjust spacing */
+    .sos-button {
+        font-size: 0.8em;
+    }
+
+    .emergency-container h2 {
+        font-size: 1.2em;
+    }
+}

@@ -478,19 +478,36 @@
 
 
 
-
             <!-- Emergency Contact Section -->
-            <div v-if="currentView === 'emergencyContact'">
+            <div v-if="currentView === 'emergencyContact'" class="emergency-container">
                 <h2>Emergency Contact</h2>
                 <p>In case of an emergency, please reach out to the following contacts immediately:</p>
                 <ul>
-                    <li><strong>Emergency Services:</strong> 911</li>
-                    <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY</li>
-                    <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH</li>
-                    <li><strong>Local Poison Control:</strong> 1-800-222-1222</li>
+                    <li><strong>Emergency Services:</strong> 911 <button class="sos-button">SOS</button></li>
+                    <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY <button class="sos-button">SOS</button>
+                    </li>
+                    <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH <button
+                            class="sos-button">SOS</button></li>
+                    <li><strong>Local Poison Control:</strong> 1-800-222-1222 <button class="sos-button">SOS</button>
+                    </li>
+                    <li><strong>Fire Department:</strong> 1-800-555-FIRE <button class="sos-button">SOS</button></li>
+                    <li><strong>Police Department:</strong> 1-800-555-POLICE <button class="sos-button">SOS</button>
+                    </li>
+                    <li><strong>Ambulance Services:</strong> 1-800-555-AMBULANCE <button class="sos-button">SOS</button>
+                    </li>
+                    <li><strong>Poison Control Center:</strong> 1-800-333-POISON <button class="sos-button">SOS</button>
+                    </li>
+                    <li><strong>Mental Health Crisis Line:</strong> 1-800-555-MIND <button
+                            class="sos-button">SOS</button></li>
                 </ul>
                 <p>For non-urgent inquiries, please contact us through the <a href="/contact">Contact Us</a> page.</p>
             </div>
+
+
+
+
+
+
 
         </main>
 

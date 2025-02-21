@@ -174,6 +174,28 @@ const app = Vue.createApp({
       }
     },
 
+    handleClickOutside(event) {
+      const menu = document.querySelector(".menu-panel");
+      const menuButton = document.querySelector(".menu-btn");
+      const popup = document.querySelector(".confirmation-popup");
+
+      // Close the menu if clicked outside
+      if (this.menuActive && !menu.contains(event.target) && !menuButton.contains(event.target)) {
+        this.closeMenu();
+      }
+
+      // Close the confirmation popup if clicked outside
+      if (this.showConfirmationPopup && popup && !popup.contains(event.target)) {
+        popup.classList.add("fade-out");
+
+        // Hide after fade-out and reset visibility
+        setTimeout(() => {
+          this.showConfirmationPopup = false;
+          popup.classList.remove("fade-out");
+        }, 500); // Match fade-out duration
+      }
+    },
+
     toggleCookie(cookieType) {
       if (this[cookieType] !== undefined) {
         this[cookieType] = !this[cookieType];
@@ -234,6 +256,8 @@ const app = Vue.createApp({
 
       this.showCookiePopup = false;
     },
+
+
 
     parseSections(data) {
       return data.map((item) => ({
