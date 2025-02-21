@@ -160,28 +160,6 @@ const app = Vue.createApp({
       }
     },
 
-    handleClickOutside(event) {
-      const menu = document.querySelector(".menu-panel");
-      const menuButton = document.querySelector(".menu-btn");
-      const popup = document.querySelector(".confirmation-popup");
-    
-      // Close the menu if clicked outside
-      if (this.menuActive && menu && !menu.contains(event.target) && !menuButton.contains(event.target)) {
-        this.closeMenu();
-      }
-    
-      // Close the confirmation popup if clicked outside
-      if (this.showConfirmationPopup && popup && !popup.contains(event.target)) {
-        popup.classList.add("fade-out");
-    
-        setTimeout(() => {
-          this.showConfirmationPopup = false;
-          popup.classList.remove("fade-out");
-        }, 1000); // Match fade-out duration
-      }
-    },
-    
-
     handleTouchStart(event) {
       this.touchStartX = event.touches[0].clientX;
     },
@@ -203,7 +181,7 @@ const app = Vue.createApp({
         console.error(`Cookie type "${cookieType}" does not exist.`);
       }
     },
-
+    
 
     // Show confirmation popup and handle animations
     saveSettings() {
@@ -240,12 +218,12 @@ const app = Vue.createApp({
         const popup = document.querySelector(".confirmation-popup");
         popup.classList.add("fade-out");  // Add fade-out class to trigger fade-out
 
-        // Reset visibility after fade-out animation ends (1000ms)
+        // Reset visibility after fade-out animation ends (500ms)
         setTimeout(() => {
           this.showConfirmationPopup = false; // Hide the popup
           popup.classList.remove("fade-out"); // Clean up the class for future use
-        }, 1000);
-      }, 4000); // Wait for 2 seconds before triggering fade-out
+        }, 500);
+      }, 2000); // Wait for 2 seconds before triggering fade-out
     },
 
     cancelSettings() {
@@ -291,14 +269,15 @@ const app = Vue.createApp({
     document.addEventListener("touchstart", this.handleTouchStart);
     document.addEventListener("touchmove", this.handleTouchMove);
     document.addEventListener("touchend", this.handleTouchEnd);
-    document.addEventListener("click", this.handleClickOutside);
+    document.addEventListener("click", this.closeConfirmationPopup);
   },
 
   beforeUnmount() {
     document.removeEventListener("touchstart", this.handleTouchStart);
     document.removeEventListener("touchmove", this.handleTouchMove);
     document.removeEventListener("touchend", this.handleTouchEnd);
-    document.removeEventListener("click", this.handleClickOutside);
+
+    document.removeEventListener("click", this.closeConfirmationPopup);
   },
 });
 
