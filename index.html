@@ -376,22 +376,96 @@
 
 
             <!-- Contact Us Section -->
-            <div v-if="currentView === 'contact'">
+            <div v-if="currentView === 'contact'" class="contact-container">
                 <h2>Contact Us</h2>
-                <p>If you have any questions, feel free to reach out to us through the contact form.</p>
+
+                <!-- Contact Details and Working Hours Section (Side-by-side using Flexbox) -->
+                <div class="contact-info-container">
+                    <!-- Contact Details -->
+                    <div class="contact-details-container">
+                        <h3>Questions or feedback:</h3>
+                        <ul>
+                            <li><strong>Email:</strong> support@pulsetech.com</li>
+                            <li><strong>Phone:</strong> 1-800-123-4567</li>
+                            <li><strong>Address:</strong> 123 Health St, Wellness City, Country</li>
+                        </ul>
+                    </div>
+
+                    <!-- Working Hours -->
+                    <div class="working-hours-container">
+                        <h3>Our Working Hours:</h3>
+                        <ul>
+                            <li><strong>Monday to Friday:</strong> 9:00 AM - 6:00 PM (Local Time)</li>
+                            <li><strong>Weekends:</strong> 10:00 AM - 2:00 PM (Local Time)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Message Form Container (wrapped in a div for easier positioning) -->
+                <div class="message-form-container">
+                    <p>Or use the form below to send us a message directly:</p>
+                    <form action="mailto:support@pulsetech.com" method="get">
+                        <!-- Name and Email Fields (Side by Side) -->
+                        <div class="form-inputs">
+                            <div class="input-container">
+                                <label for="name">Your Name:</label><br>
+                                <input type="text" id="name" style="width: 35%;" name="name">
+                            </div>
+                            <div class="input-container">
+                                <label for="email">Your Email:</label><br>
+                                <input type="email" id="email" style="width: 35%;" name="email">
+                            </div>
+                        </div>
+
+                        <!-- Message Section -->
+                        <label for="message">Your Message:</label><br>
+                        <textarea style="width: 800px;" id="message" name="message"></textarea><br>
+
+                        <button type="submit">Send Message</button>
+                    </form>
+                </div>
             </div>
+
+
+
+
 
             <!-- Help Section -->
             <div v-if="currentView === 'help'">
                 <h2>Help</h2>
-                <p>Get answers to frequently asked questions or contact support for assistance.</p>
+                <p>If you're encountering any difficulties, here are some step-by-step guides to help you resolve common
+                    issues:</p>
+                <h3>Account Setup</h3>
+                <ol>
+                    <li>Create an account by clicking on the "Sign Up" button on the homepage.</li>
+                    <li>Enter your personal information and health preferences.</li>
+                    <li>Confirm your email address by clicking the verification link sent to your inbox.</li>
+                </ol>
+                <h3>Booking Appointments</h3>
+                <p>To book an appointment, follow these steps:</p>
+                <ol>
+                    <li>Navigate to the "Appointments" tab on the dashboard.</li>
+                    <li>Choose your preferred healthcare provider and available time slot.</li>
+                    <li>Confirm your appointment and receive reminders via email or SMS.</li>
+                </ol>
+                <p>If you need further help, please feel free to <a href="/contact">contact us</a> directly.</p>
             </div>
+
+
 
             <!-- Emergency Contact Section -->
             <div v-if="currentView === 'emergencyContact'">
                 <h2>Emergency Contact</h2>
-                <p>Here you can find important emergency contacts in case of urgent situations.</p>
+                <p>In case of an emergency, please reach out to the following contacts immediately:</p>
+                <ul>
+                    <li><strong>Emergency Services:</strong> 911</li>
+                    <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY</li>
+                    <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH</li>
+                    <li><strong>Local Poison Control:</strong> 1-800-222-1222</li>
+                </ul>
+                <p>For non-urgent inquiries, please contact us through the <a href="/contact">Contact Us</a> page.</p>
             </div>
+
         </main>
 
         <!-- Footer -->
