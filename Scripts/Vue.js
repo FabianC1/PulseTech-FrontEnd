@@ -1,6 +1,8 @@
 const app = Vue.createApp({
   data() {
     return {
+      user: null,
+      isLoggedIn: false,
       menuActive: false,
       searchActive: false,
       showCookiePopup: true, // Controls visibility of the cookie consent popup
@@ -303,11 +305,42 @@ const app = Vue.createApp({
 
       const mailtoLink = `mailto:support@pulsetech.com?subject=${subject}&body=${body}`;
       window.location.href = mailtoLink;
+    },
+
+    logout() {
+      localStorage.removeItem("user");
+      this.isLoggedIn = false;
+      this.user = null;
+    },
+    redirectToLogin() {
+      this.currentView = "login"; // Switch to login view
+    },
+    redirectToSignup() {
+      this.currentView = "signup"; // Switch to signup view
+    },
+    login() {
+      // Handle login logic here
+      console.log("Login logic goes here");
+      // For example, you might want to authenticate using an API
+    },
+    signup() {
+      // Handle signup logic here
+      console.log("Signup logic goes here");
+      // Example: Save the user details or call an API to register them
     }
 
   },
 
+
+
   mounted() {
+    // Check if user is stored in localStorage (temporary, backend session handling will replace this)
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+      this.isLoggedIn = true;
+    }
+
     document.addEventListener("touchstart", this.handleTouchStart);
     document.addEventListener("touchmove", this.handleTouchMove);
     document.addEventListener("touchend", this.handleTouchEnd);

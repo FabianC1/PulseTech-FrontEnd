@@ -1091,3 +1091,120 @@ button {
         font-size: 1.2em;
     }
 }
+
+
+/* Profile Container - Centers the content in the middle of the viewport */
+.profile-container {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    height: 65vh; /* Full height of the viewport */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Auth prompt container styling */
+.auth-prompt {
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 400px;
+    width: 100%; /* Allow it to be responsive */
+    text-align: center;
+    border: 3px solid black;
+}
+
+/* Profile content styling (when logged in) */
+.profile-content {
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%; /* Allow it to be responsive */
+    text-align: center; /* Center text */
+}
+
+/* Button container to center buttons */
+.button-container {
+    display: flex;
+    justify-content: center; /* Centers the buttons horizontally */
+    gap: 20px; /* Space between buttons */
+}
+
+/* Button styling */
+button {
+    background-color: #24252a;
+    color: white;
+    font-size: 1.1em;
+    padding: 12px 20px; /* Increased padding */
+    border: white 2px solid;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    border: white solid 2px;
+    color: white;
+    background: linear-gradient(45deg, #000000, #a200ffce);
+}
+
+
+/* Shared styling for login and signup forms */
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.form-inputs {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+button {
+    background-color: #24252a;
+    color: white;
+    font-size: 1.1em;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(45deg, #000000, #a200ffce);
+}
+
+/* Centering login/signup prompt buttons */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

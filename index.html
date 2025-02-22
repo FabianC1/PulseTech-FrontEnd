@@ -83,10 +83,6 @@
             Settings have been changed!
         </div>
 
-
-
-
-
         <!-- Main Content -->
         <main>
 
@@ -233,10 +229,71 @@
             </div>
 
             <!-- Profile Section -->
-            <div v-if="currentView === 'profile'">
-                <h2>Your Profile</h2>
-                <p>View and edit your personal health details.</p>
+            <div v-if="currentView === 'profile'" class="profile-container">
+                <!-- User Profile Content (if logged in) -->
+                <div v-if="isLoggedIn" class="profile-content">
+                    <h2>Welcome, {{ user.fullName }}</h2>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Date of Birth:</strong> {{ user.dateOfBirth }}</p>
+                    <button @click="logout">Logout</button>
+                </div>
+
+                <!-- Login / Sign-up Prompt (if not logged in) -->
+                <div v-else class="auth-prompt">
+                    <h2>You need to log in or sign up</h2>
+                    <p>To access your profile, please log in or create an account.</p>
+                    <div class="button-container">
+                        <button @click="navigateTo('login')">Login</button>
+                        <button @click="navigateTo('signup')">Sign Up</button>
+                    </div>
+                </div>
             </div>
+
+            <!-- Login Section -->
+            <div v-if="currentView === 'login'" class="auth-container">
+                <h2>Login</h2>
+                <form @submit.prevent="loginUser">
+                    <div class="form-inputs">
+                        <label for="loginUsername">Username:</label>
+                        <input type="text" id="loginUsername" v-model="loginData.username" required>
+                    </div>
+                    <div class="form-inputs">
+                        <label for="loginPassword">Password:</label>
+                        <input type="password" id="loginPassword" v-model="loginData.password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                    <p>Don't have an account? <a @click="navigateTo('signup')">Sign up here</a></p>
+                </form>
+            </div>
+
+            <!-- Sign-Up Section -->
+            <div v-if="currentView === 'signup'" class="auth-container">
+                <h2>Create an Account</h2>
+                <form @submit.prevent="signupUser">
+                    <div class="form-inputs">
+                        <label for="signupUsername">Username:</label>
+                        <input type="text" id="signupUsername" v-model="signupData.username" required>
+                    </div>
+                    <div class="form-inputs">
+                        <label for="signupEmail">Email:</label>
+                        <input type="email" id="signupEmail" v-model="signupData.email" required>
+                    </div>
+                    <div class="form-inputs">
+                        <label for="signupPassword">Password:</label>
+                        <input type="password" id="signupPassword" v-model="signupData.password" required>
+                    </div>
+                    <button type="submit">Sign Up</button>
+                    <p>Already have an account? <a @click="navigateTo('login')">Login here</a></p>
+                </form>
+            </div>
+
+
+
+
+
+
+
 
             <!-- Terms and Conditions Section -->
             <div v-if="currentView === 'termsAndConditions'" class="terms-container">
