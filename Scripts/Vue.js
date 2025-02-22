@@ -29,6 +29,9 @@ const app = Vue.createApp({
       privacySections: [], // Sections for Privacy and Security
       wellnessSections: [], // Sections for Health & Wellness Guidelines
       currentWellnessSection: 0, // Separate section tracker for Health & Wellness view
+      name: "",
+      email: "",
+      message: ""
     };
   },
 
@@ -203,7 +206,7 @@ const app = Vue.createApp({
         console.error(`Cookie type "${cookieType}" does not exist.`);
       }
     },
-    
+
 
     // Show confirmation popup and handle animations
     saveSettings() {
@@ -287,6 +290,21 @@ const app = Vue.createApp({
       this.targetingCookies = true;
       this.saveSettings();
     },
+    sendEmail() {
+      if (!this.name || !this.email || !this.message) {
+        alert("Please fill in all fields before sending.");
+        return;
+      }
+
+      const subject = encodeURIComponent("New Contact Form Submission");
+      const body = encodeURIComponent(
+        `Name: ${this.name}\nEmail: ${this.email}\n\nMessage:\n${this.message}`
+      );
+
+      const mailtoLink = `mailto:support@pulsetech.com?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+    }
+
   },
 
   mounted() {

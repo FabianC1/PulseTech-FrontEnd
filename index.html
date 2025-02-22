@@ -404,104 +404,111 @@
                 <!-- Message Form Container (wrapped in a div for easier positioning) -->
                 <div class="message-form-container">
                     <p>Or use the form below to send us a message directly:</p>
-                    <form action="mailto:support@pulsetech.com" method="get">
+                    <form @submit.prevent="sendEmail">
                         <!-- Name and Email Fields (Side by Side) -->
                         <div class="form-inputs">
                             <div class="input-container">
                                 <label for="name">Your Name:</label><br>
-                                <input type="text" id="name" style="width: 35%;" name="name">
+                                <input type="text" id="name" v-model="name" style="width: 35%;" required>
                             </div>
                             <div class="input-container">
                                 <label for="email">Your Email:</label><br>
-                                <input type="email" id="email" style="width: 35%;" name="email">
+                                <input type="email" id="email" v-model="email" style="width: 35%;" required>
                             </div>
                         </div>
 
                         <!-- Message Section -->
                         <label for="message">Your Message:</label><br>
-                        <textarea style="width: 800px;" id="message" name="message"></textarea><br>
+                        <textarea id="message" v-model="message" style="width: 800px;" required></textarea><br>
 
                         <button type="submit">Send Message</button>
                     </form>
                 </div>
-            </div>
 
 
 
 
 
-            <!-- Help Section -->
-            <div v-if="currentView === 'help'" class="help-container">
-                <h2>Help</h2>
-                <p>If you're encountering any difficulties, here are some step-by-step guides to help you resolve common
-                    issues:</p>
 
-                <h3>Account Setup</h3>
-                <ol>
-                    <li>Create an account by clicking on the "Sign Up" button on the homepage.</li>
-                    <li>Enter your personal information and health preferences.</li>
-                    <li>Confirm your email address by clicking the verification link sent to your inbox.</li>
-                    <li>Once confirmed, you'll be redirected to your dashboard.</li>
-                    <li>If you face any issues during the process, please contact support.</li>
-                </ol>
+                <!-- Help Section -->
+                <div v-if="currentView === 'help'" class="help-container">
+                    <h2>Help</h2>
+                    <p>If you're encountering any difficulties, here are some step-by-step guides to help you resolve
+                        common
+                        issues:</p>
 
-                <h3>Booking Appointments</h3>
-                <p>To book an appointment, follow these steps:</p>
-                <ol>
-                    <li>Navigate to the "Appointments" tab on the dashboard.</li>
-                    <li>Choose your preferred healthcare provider and available time slot.</li>
-                    <li>Confirm your appointment and receive reminders via email or SMS.</li>
-                    <li>If needed, you can reschedule or cancel your appointment from the same tab.</li>
-                    <li>If you face any issues, you can contact your healthcare provider directly via the app.</li>
-                </ol>
+                    <h3>Account Setup</h3>
+                    <ol>
+                        <li>Create an account by clicking on the "Sign Up" button on the homepage.</li>
+                        <li>Enter your personal information and health preferences.</li>
+                        <li>Confirm your email address by clicking the verification link sent to your inbox.</li>
+                        <li>Once confirmed, you'll be redirected to your dashboard.</li>
+                        <li>If you face any issues during the process, please contact support.</li>
+                    </ol>
 
-                <h3>Managing Your Profile</h3>
-                <p>To update your profile:</p>
-                <ol>
-                    <li>Go to the "Profile" section from your dashboard.</li>
-                    <li>Edit your personal details such as name, age, and contact information.</li>
-                    <li>You can also update your health preferences and notification settings here.</li>
-                </ol>
+                    <h3>Booking Appointments</h3>
+                    <p>To book an appointment, follow these steps:</p>
+                    <ol>
+                        <li>Navigate to the "Appointments" tab on the dashboard.</li>
+                        <li>Choose your preferred healthcare provider and available time slot.</li>
+                        <li>Confirm your appointment and receive reminders via email or SMS.</li>
+                        <li>If needed, you can reschedule or cancel your appointment from the same tab.</li>
+                        <li>If you face any issues, you can contact your healthcare provider directly via the app.</li>
+                    </ol>
 
-                <h3>Resetting Your Password</h3>
-                <p>If you've forgotten your password, follow these steps:</p>
-                <ol>
-                    <li>Click on "Forgot Password" on the login page.</li>
-                    <li>Enter your registered email address.</li>
-                    <li>Follow the instructions in the email to reset your password.</li>
-                    <li>If you encounter any issues during the reset process, please contact support.</li>
-                </ol>
+                    <h3>Managing Your Profile</h3>
+                    <p>To update your profile:</p>
+                    <ol>
+                        <li>Go to the "Profile" section from your dashboard.</li>
+                        <li>Edit your personal details such as name, age, and contact information.</li>
+                        <li>You can also update your health preferences and notification settings here.</li>
+                    </ol>
 
-                <p>If you need further help, please feel free to <a href="/contact">contact us</a> directly.</p>
-            </div>
+                    <h3>Resetting Your Password</h3>
+                    <p>If you've forgotten your password, follow these steps:</p>
+                    <ol>
+                        <li>Click on "Forgot Password" on the login page.</li>
+                        <li>Enter your registered email address.</li>
+                        <li>Follow the instructions in the email to reset your password.</li>
+                        <li>If you encounter any issues during the reset process, please contact support.</li>
+                    </ol>
+
+                    <p>If you need further help, please feel free to <a href="/contact">contact us</a> directly.</p>
+                </div>
 
 
 
 
-            <!-- Emergency Contact Section -->
-            <div v-if="currentView === 'emergencyContact'" class="emergency-container">
-                <h2>Emergency Contact</h2>
-                <p>In case of an emergency, please reach out to the following contacts immediately:</p>
-                <ul>
-                    <li><strong>Emergency Services:</strong> 911 <button class="sos-button">SOS</button></li>
-                    <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH <button
-                            class="sos-button">SOS</button></li>
-                    <li><strong>Local Poison Control:</strong> 1-800-222-1222 <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Fire Department:</strong> 1-800-555-FIRE <button class="sos-button">SOS</button></li>
-                    <li><strong>Police Department:</strong> 1-800-555-POLICE <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Ambulance Services:</strong> 1-800-555-AMBULANCE <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Poison Control Center:</strong> 1-800-333-POISON <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Mental Health Crisis Line:</strong> 1-800-555-MIND <button
-                            class="sos-button">SOS</button></li>
-                </ul>
-                <p>For non-urgent inquiries, please contact us through the <a href="/contact">Contact Us</a> page.</p>
-            </div>
+                <!-- Emergency Contact Section -->
+                <div v-if="currentView === 'emergencyContact'" class="emergency-container">
+                    <h2>Emergency Contact</h2>
+                    <p>In case of an emergency, please reach out to the following contacts immediately:</p>
+                    <ul>
+                        <li><strong>Emergency Services:</strong> 911 <button class="sos-button">SOS</button></li>
+                        <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH <button
+                                class="sos-button">SOS</button></li>
+                        <li><strong>Local Poison Control:</strong> 1-800-222-1222 <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Fire Department:</strong> 1-800-555-FIRE <button class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Police Department:</strong> 1-800-555-POLICE <button class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Ambulance Services:</strong> 1-800-555-AMBULANCE <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Poison Control Center:</strong> 1-800-333-POISON <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Mental Health Crisis Line:</strong> 1-800-555-MIND <button
+                                class="sos-button">SOS</button></li>
+                    </ul>
+                    <p>For non-urgent inquiries, please contact us through the <a href="/contact">Contact Us</a> page.
+                    </p>
+                </div>
 
 
 
