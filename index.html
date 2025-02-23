@@ -327,27 +327,28 @@
                 <div v-if="selectedRole === 'doctor'" class="doctor-form">
                     <form @submit.prevent="signupDoctorUser">
                         <div class="form-inputs">
-                            <label for="doctorUsername">Username:</label>
-                            <input type="text" id="doctorUsername" v-model="signupData.username" required />
+                            <div>
+                                <label for="doctorUsername">Username:</label>
+                                <input type="text" id="doctorUsername" v-model="signupData.username" required />
+                            </div>
+                            <div>
+                                <label for="doctorEmail">Email:</label>
+                                <input type="email" id="doctorEmail" v-model="signupData.email" required />
+                            </div>
+                            <div>
+                                <label for="doctorPassword">Password:</label>
+                                <input type="password" id="doctorPassword" v-model="signupData.password" required />
+                            </div>
+                            <div>
+                                <label for="confirmDoctorPassword">Confirm Password:</label>
+                                <input type="password" id="confirmDoctorPassword" v-model="signupData.confirmPassword"
+                                    required />
+                            </div>
+                            <div class="full-width">
+                                <label for="medicalLicense">Medical License:</label>
+                                <input type="text" id="medicalLicense" v-model="signupData.medicalLicense" required />
+                            </div>
                         </div>
-                        <div class="form-inputs">
-                            <label for="doctorEmail">Email:</label>
-                            <input type="email" id="doctorEmail" v-model="signupData.email" required />
-                        </div>
-                        <div class="form-inputs">
-                            <label for="doctorPassword">Password:</label>
-                            <input type="password" id="doctorPassword" v-model="signupData.password" required />
-                        </div>
-                        <div class="form-inputs">
-                            <label for="confirmDoctorPassword">Confirm Password:</label>
-                            <input type="password" id="confirmDoctorPassword" v-model="signupData.confirmPassword"
-                                required />
-                        </div>
-                        <div class="form-inputs">
-                            <label for="medicalLicense">Medical License:</label>
-                            <input type="text" id="medicalLicense" v-model="signupData.medicalLicense" required />
-                        </div>
-
                         <button type="submit">Sign Up</button>
                         <p>Already have an account? <a @click="navigateTo('login')" class="signup-link">Login here</a>
                         </p>

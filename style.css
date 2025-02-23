@@ -1365,7 +1365,7 @@ a:hover {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 650px;  /* Adjust to fit content */
+    height: 650px;
     padding: 20px;
     margin: 20px auto;
     max-width: 98%;
@@ -1383,7 +1383,7 @@ a:hover {
 .signup-container h2 {
     color: black;
     text-decoration: underline;
-    margin-top: 0;
+    margin-bottom: 20px;
 }
 
 /* Role Toggle */
@@ -1408,21 +1408,12 @@ a:hover {
     background-color: #4a2cceda;
 }
 
-/* Form Container with Two Columns */
-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;  /* 2 columns */
-    gap: 20px;  /* Space between the columns */
-    width: 100%;
-    max-width: 700px;
-    margin-top: 20px;
-}
-
 /* Form Input Containers */
 .form-inputs {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 15px;
 }
 
@@ -1431,8 +1422,9 @@ form {
     font-weight: bold;
     color: white;
     font-size: 1.1em;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     display: block;
+    text-align: left;
     width: 100%;
     max-width: 350px;
 }
@@ -1449,7 +1441,6 @@ form {
     color: #333;
     outline: none;
     transition: border-color 0.3s ease, background-color 0.3s ease;
-    margin-bottom: 15px;  /* Add some space below the input */
 }
 
 /* Submit Button */
@@ -1458,12 +1449,10 @@ form {
     color: white;
     font-size: 1.1em;
     padding: 12px 20px;
-    border: white 2px solid;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    grid-column: span 2;  /* Make the button span across both columns */
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .signup-button:hover {
@@ -1481,18 +1470,37 @@ form {
     color: #3c1ebc;
 }
 
-/* Doctor Fields - If applicable for doctors */
 .doctor-form .form-inputs {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
     margin-top: 20px;
+}
+
+.doctor-form .form-inputs .full-width {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the input */
+    text-align: left; /* Align text to the left */
+    padding-left: 0; /* Remove padding */
+}
+
+.doctor-form .form-inputs .full-width label {
+    align-items: left; /* Align label to the left */
+    margin-bottom: 5px;
+    width: 100%; /* Ensure the label takes the full width */
+    max-width: 350px; /* Ensure the label doesn't exceed a certain width */
+}
+
+.doctor-form .form-inputs .full-width input {
+    width: 100%;
+    max-width: 350px; /* Ensure the input doesn't exceed a certain width */
+    margin: 0 auto; /* Center the input */
 }
 
 .doctor-form input {
     width: 100%;
-    max-width: 350px;
     padding: 10px;
     font-size: 1em;
     border: 2px solid #ccc;
