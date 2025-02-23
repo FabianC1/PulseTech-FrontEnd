@@ -47,6 +47,15 @@ const app = Vue.createApp({
     };
   },
 
+  computed: {
+    formattedTitle() {
+      // Replace camel case with spaces and capitalize each word
+      return this.currentView.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+        .replace(/^./, str => str.toUpperCase()); // Capitalize the first letter
+    }
+  },
+
+
   created() {
     // Fetch the Terms and Conditions data from the backend API
     fetch(`http://localhost:3000/collections/legalDocs`, {
