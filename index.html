@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PulseTech - Your Digital Health Companion</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/image/Icon-Only-Color (2).png" type="image/x-icon">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 
@@ -293,23 +294,26 @@
                     <form @submit.prevent="signupUser">
                         <div class="form-inputs">
                             <label for="patientUsername">Username:</label>
-                            <input type="text" id="patientUsername" v-model="signupData.username" required />
+                            <input type="text" id="patientUsername" v-model="signupData.username"
+                                placeholder="Enter your username" required />
                         </div>
 
                         <div class="form-inputs">
                             <label for="patientEmail">Email:</label>
-                            <input type="email" id="patientEmail" v-model="signupData.email" required />
+                            <input type="email" id="patientEmail" v-model="signupData.email"
+                                placeholder="Enter your email" required />
                         </div>
 
                         <div class="form-inputs">
                             <label for="patientPassword">Password:</label>
-                            <input type="password" id="patientPassword" v-model="signupData.password" required />
+                            <input type="password" id="patientPassword" v-model="signupData.password"
+                                placeholder="Enter your password" required />
                         </div>
 
                         <div class="form-inputs">
                             <label for="confirmPatientPassword">Confirm Password:</label>
                             <input type="password" id="confirmPatientPassword" v-model="signupData.confirmPassword"
-                                required />
+                                placeholder="Confirm your password" required />
                         </div>
 
                         <div class="button-container">
@@ -321,32 +325,34 @@
                     </form>
                 </div>
 
-
-
                 <!-- Doctor Sign-Up Form -->
                 <div v-if="selectedRole === 'doctor'" class="doctor-form">
                     <form @submit.prevent="signupDoctorUser">
                         <div class="form-inputs">
                             <div>
                                 <label for="doctorUsername">Username:</label>
-                                <input type="text" id="doctorUsername" v-model="signupData.username" required />
+                                <input type="text" id="doctorUsername" v-model="signupData.username"
+                                    placeholder="Enter your username" required />
                             </div>
                             <div>
                                 <label for="doctorEmail">Email:</label>
-                                <input type="email" id="doctorEmail" v-model="signupData.email" required />
+                                <input type="email" id="doctorEmail" v-model="signupData.email"
+                                    placeholder="Enter your email" required />
                             </div>
                             <div>
                                 <label for="doctorPassword">Password:</label>
-                                <input type="password" id="doctorPassword" v-model="signupData.password" required />
+                                <input type="password" id="doctorPassword" v-model="signupData.password"
+                                    placeholder="Enter your password" required />
                             </div>
                             <div>
                                 <label for="confirmDoctorPassword">Confirm Password:</label>
                                 <input type="password" id="confirmDoctorPassword" v-model="signupData.confirmPassword"
-                                    required />
+                                    placeholder="Confirm your password" required />
                             </div>
                             <div class="full-width">
                                 <label for="medicalLicense">Medical License:</label>
-                                <input type="text" id="medicalLicense" v-model="signupData.medicalLicense" required />
+                                <input type="text" id="medicalLicense" v-model="signupData.medicalLicense"
+                                    placeholder="Enter your medical license" required />
                             </div>
                         </div>
                         <button type="submit">Sign Up</button>
@@ -354,279 +360,286 @@
                         </p>
                     </form>
                 </div>
-            </div>
 
 
 
 
-            <!-- Terms and Conditions Section -->
-            <div v-if="currentView === 'termsAndConditions'" class="terms-container">
-                <h2>{{ sections[currentSection]?.title }}</h2>
-                <div class="content-wrapper">
-                    <div class="text-section">
-                        <p v-for="(para, index) in sections[currentSection]?.text.split('\n')" :key="index">{{ para }}
-                        </p>
-                    </div>
-                    <p>Current Section: {{ currentSection + 1 }} / {{ sections.length }}</p>
-                </div>
-
-                <div class="arrows">
-                    <button @click="navigateSection('previous')" class="arrow-button left-arrow">
-                        <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
-                    </button>
-                    <button @click="navigateSection('next')" class="arrow-button right-arrow">
-                        <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
-                    </button>
-                </div>
-            </div>
-
-            <!-- Privacy and Security Section -->
-            <div v-if="currentView === 'privacyAndSecurity'" class="terms-container">
-                <h2>{{ privacySections[currentPrivacySection]?.title }}</h2>
-                <div class="content-wrapper">
-                    <div class="text-section">
-                        <p v-for="(para, index) in privacySections[currentPrivacySection]?.text.split('\n')"
-                            :key="index">{{ para }}</p>
-                    </div>
-                    <p>Current Section: {{ currentPrivacySection + 1 }} / {{ privacySections.length }}</p>
-                </div>
-                <div class="arrows">
-                    <button @click="navigateSection('previous')" class="arrow-button left-arrow">
-                        <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
-                    </button>
-                    <button @click="navigateSection('next')" class="arrow-button right-arrow">
-                        <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
-                    </button>
-                </div>
-            </div>
-
-
-
-            <!-- Health & Wellness Guidelines Section -->
-            <div v-if="currentView === 'HealthAndWellnessGuidelines'" class="terms-container">
-                <h2>{{ wellnessSections[currentWellnessSection]?.title }}</h2>
-                <div class="content-wrapper">
-                    <div class="text-section">
-                        <p v-for="(para, index) in wellnessSections[currentWellnessSection]?.text.split('\n')"
-                            :key="index">{{ para }}</p>
-                    </div>
-                    <p>Current Section: {{ currentWellnessSection + 1 }} / {{ wellnessSections.length }}</p>
-                </div>
-                <div class="arrows">
-                    <button @click="navigateSection('previous')" class="arrow-button left-arrow">
-                        <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
-                    </button>
-                    <button @click="navigateSection('next')" class="arrow-button right-arrow">
-                        <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
-                    </button>
-                </div>
-            </div>
-
-
-
-            <div v-if="currentView === 'cookies'" class="cookies-container">
-                <h1 style="font-size: 1.4em; text-decoration: underline;">Cookie Preferences</h1>
-
-                <!-- Cookie Grid Container -->
-                <div class="cookie-grid">
-
-                    <!-- Essential Cookies Section -->
-                    <div class="cookie-box">
-                        <h2>Essential Cookies</h2>
-                        <p>Essential cookies are necessary for the website to function properly and cannot be turned
-                            off. They help with basic functionalities like page navigation and access to secure areas.
-                        </p>
-                        <div class="toggle-container">
-                            <label for="essentialCookies">Essential Cookies</label>
-                            <div class="toggle" :class="{ active: essentialCookies }"></div>
+                <!-- Terms and Conditions Section -->
+                <div v-if="currentView === 'termsAndConditions'" class="terms-container">
+                    <h2>{{ sections[currentSection]?.title }}</h2>
+                    <div class="content-wrapper">
+                        <div class="text-section">
+                            <p v-for="(para, index) in sections[currentSection]?.text.split('\n')" :key="index">{{ para
+                                }}
+                            </p>
                         </div>
+                        <p>Current Section: {{ currentSection + 1 }} / {{ sections.length }}</p>
                     </div>
 
-                    <!-- Performance Cookies Section -->
-                    <div class="cookie-box">
-                        <h2>Performance Cookies</h2>
-                        <p>Performance cookies help us analyze how visitors interact with our website, allowing us to
-                            improve functionality and user experience.</p>
-                        <div class="toggle-container">
-                            <label for="performanceCookies">Enable Performance Cookies</label>
-                            <div class="toggle" :class="{ active: performanceCookies }"
-                                @click="toggleCookie('performanceCookies')"></div>
-                        </div>
+                    <div class="arrows">
+                        <button @click="navigateSection('previous')" class="arrow-button left-arrow">
+                            <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
+                        </button>
+                        <button @click="navigateSection('next')" class="arrow-button right-arrow">
+                            <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
+                        </button>
                     </div>
-
-                    <!-- Functional Cookies Section -->
-                    <div class="cookie-box">
-                        <h2>Functional Cookies</h2>
-                        <p>Functional cookies allow the website to remember choices you make, like language preferences,
-                            and provide enhanced features.</p>
-                        <div class="toggle-container">
-                            <label for="functionalCookies">Enable Functional Cookies</label>
-                            <div class="toggle" :class="{ active: functionalCookies }"
-                                @click="toggleCookie('functionalCookies')"></div>
-                        </div>
-                    </div>
-
-                    <!-- Targeting Cookies Section -->
-                    <div class="cookie-box">
-                        <h2>Targeting Cookies</h2>
-                        <p>Targeting cookies track your browsing habits and are used to deliver personalized ads or
-                            content that may interest you.</p>
-                        <div class="toggle-container">
-                            <label for="targetingCookies">Enable Targeting Cookies</label>
-                            <div class="toggle" :class="{ active: targetingCookies }"
-                                @click="toggleCookie('targetingCookies')"></div>
-                        </div>
-                    </div>
-
-                </div> <!-- End of cookie-grid -->
-
-                <!-- Save and Cancel Buttons -->
-                <div class="actions">
-                    <button class="save-btn" @click="saveSettings">Save Settings</button>
-                    <button class="cancel-btn" @click="cancelSettings">Cancel</button>
                 </div>
 
-                <!-- More Link -->
-                <a class="more-link" href="/privacyAndSecurity">Learn more about our Privacy Policy</a>
-            </div>
-
-            <!-- Confirmation Popup -->
-            <div v-if="showConfirmationPopup" class="confirmation-popup">
-                Settings have been changed!
-            </div>
-
-
-            <!-- Contact Us Section -->
-            <div v-if="currentView === 'contact'" class="contact-container">
-                <h2>Contact Us</h2>
-
-                <!-- Contact Details and Working Hours Section (Side-by-side using Flexbox) -->
-                <div class="contact-info-container">
-                    <!-- Contact Details -->
-                    <div class="contact-details-container">
-                        <h3>Questions or feedback:</h3>
-                        <ul>
-                            <li><strong>Email:</strong> support@pulsetech.com</li>
-                            <li><strong>Phone:</strong> 1-800-123-4567</li>
-                            <li><strong>Address:</strong> 123 Health St, Wellness City, Country</li>
-                        </ul>
+                <!-- Privacy and Security Section -->
+                <div v-if="currentView === 'privacyAndSecurity'" class="terms-container">
+                    <h2>{{ privacySections[currentPrivacySection]?.title }}</h2>
+                    <div class="content-wrapper">
+                        <div class="text-section">
+                            <p v-for="(para, index) in privacySections[currentPrivacySection]?.text.split('\n')"
+                                :key="index">{{ para }}</p>
+                        </div>
+                        <p>Current Section: {{ currentPrivacySection + 1 }} / {{ privacySections.length }}</p>
                     </div>
-
-                    <!-- Working Hours -->
-                    <div class="working-hours-container">
-                        <h3>Our Working Hours:</h3>
-                        <ul>
-                            <li><strong>Monday to Friday:</strong> 9:00 AM - 6:00 PM (Local Time)</li>
-                            <li><strong>Weekends:</strong> 10:00 AM - 2:00 PM (Local Time)</li>
-                        </ul>
+                    <div class="arrows">
+                        <button @click="navigateSection('previous')" class="arrow-button left-arrow">
+                            <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
+                        </button>
+                        <button @click="navigateSection('next')" class="arrow-button right-arrow">
+                            <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
+                        </button>
                     </div>
                 </div>
 
 
-                <!-- Message Form Container (wrapped in a div for easier positioning) -->
-                <div class="message-form-container">
-                    <p>Or use the form below to send us a message directly:</p>
-                    <form @submit.prevent="sendEmail">
-                        <!-- Name and Email Fields (Side by Side) -->
-                        <div class="form-inputs">
-                            <div class="input-container">
-                                <label for="name">Your Name:</label><br>
-                                <input type="text" id="name" v-model="name" style="width: 35%;" required>
-                            </div>
-                            <div class="input-container">
-                                <label for="email">Your Email:</label><br>
-                                <input type="email" id="email" v-model="email" style="width: 35%;" required>
+
+                <!-- Health & Wellness Guidelines Section -->
+                <div v-if="currentView === 'HealthAndWellnessGuidelines'" class="terms-container">
+                    <h2>{{ wellnessSections[currentWellnessSection]?.title }}</h2>
+                    <div class="content-wrapper">
+                        <div class="text-section">
+                            <p v-for="(para, index) in wellnessSections[currentWellnessSection]?.text.split('\n')"
+                                :key="index">{{ para }}</p>
+                        </div>
+                        <p>Current Section: {{ currentWellnessSection + 1 }} / {{ wellnessSections.length }}</p>
+                    </div>
+                    <div class="arrows">
+                        <button @click="navigateSection('previous')" class="arrow-button left-arrow">
+                            <img src="/image/left-arrow.png" alt="Left Arrow" class="arrow-icon" />
+                        </button>
+                        <button @click="navigateSection('next')" class="arrow-button right-arrow">
+                            <img src="/image/right-arrow.png" alt="Right Arrow" class="arrow-icon" />
+                        </button>
+                    </div>
+                </div>
+
+
+
+                <div v-if="currentView === 'cookies'" class="cookies-container">
+                    <h1 style="font-size: 1.4em; text-decoration: underline;">Cookie Preferences</h1>
+
+                    <!-- Cookie Grid Container -->
+                    <div class="cookie-grid">
+
+                        <!-- Essential Cookies Section -->
+                        <div class="cookie-box">
+                            <h2>Essential Cookies</h2>
+                            <p>Essential cookies are necessary for the website to function properly and cannot be turned
+                                off. They help with basic functionalities like page navigation and access to secure
+                                areas.
+                            </p>
+                            <div class="toggle-container">
+                                <label for="essentialCookies">Essential Cookies</label>
+                                <div class="toggle" :class="{ active: essentialCookies }"></div>
                             </div>
                         </div>
 
-                        <!-- Message Section -->
-                        <label for="message">Your Message:</label><br>
-                        <textarea id="message" v-model="message" style="width: 800px;" required></textarea><br>
+                        <!-- Performance Cookies Section -->
+                        <div class="cookie-box">
+                            <h2>Performance Cookies</h2>
+                            <p>Performance cookies help us analyze how visitors interact with our website, allowing us
+                                to
+                                improve functionality and user experience.</p>
+                            <div class="toggle-container">
+                                <label for="performanceCookies">Enable Performance Cookies</label>
+                                <div class="toggle" :class="{ active: performanceCookies }"
+                                    @click="toggleCookie('performanceCookies')"></div>
+                            </div>
+                        </div>
 
-                        <button type="submit">Send Message</button>
-                    </form>
+                        <!-- Functional Cookies Section -->
+                        <div class="cookie-box">
+                            <h2>Functional Cookies</h2>
+                            <p>Functional cookies allow the website to remember choices you make, like language
+                                preferences,
+                                and provide enhanced features.</p>
+                            <div class="toggle-container">
+                                <label for="functionalCookies">Enable Functional Cookies</label>
+                                <div class="toggle" :class="{ active: functionalCookies }"
+                                    @click="toggleCookie('functionalCookies')"></div>
+                            </div>
+                        </div>
+
+                        <!-- Targeting Cookies Section -->
+                        <div class="cookie-box">
+                            <h2>Targeting Cookies</h2>
+                            <p>Targeting cookies track your browsing habits and are used to deliver personalized ads or
+                                content that may interest you.</p>
+                            <div class="toggle-container">
+                                <label for="targetingCookies">Enable Targeting Cookies</label>
+                                <div class="toggle" :class="{ active: targetingCookies }"
+                                    @click="toggleCookie('targetingCookies')"></div>
+                            </div>
+                        </div>
+
+                    </div> <!-- End of cookie-grid -->
+
+                    <!-- Save and Cancel Buttons -->
+                    <div class="actions">
+                        <button class="save-btn" @click="saveSettings">Save Settings</button>
+                        <button class="cancel-btn" @click="cancelSettings">Cancel</button>
+                    </div>
+
+                    <!-- More Link -->
+                    <a class="more-link" href="/privacyAndSecurity">Learn more about our Privacy Policy</a>
                 </div>
-            </div>
+
+                <!-- Confirmation Popup -->
+                <div v-if="showConfirmationPopup" class="confirmation-popup">
+                    Settings have been changed!
+                </div>
+
+
+                <!-- Contact Us Section -->
+                <div v-if="currentView === 'contact'" class="contact-container">
+                    <h2>Contact Us</h2>
+
+                    <!-- Contact Details and Working Hours Section (Side-by-side using Flexbox) -->
+                    <div class="contact-info-container">
+                        <!-- Contact Details -->
+                        <div class="contact-details-container">
+                            <h3>Questions or feedback:</h3>
+                            <ul>
+                                <li><strong>Email:</strong> support@pulsetech.com</li>
+                                <li><strong>Phone:</strong> 1-800-123-4567</li>
+                                <li><strong>Address:</strong> 123 Health St, Wellness City, Country</li>
+                            </ul>
+                        </div>
+
+                        <!-- Working Hours -->
+                        <div class="working-hours-container">
+                            <h3>Our Working Hours:</h3>
+                            <ul>
+                                <li><strong>Monday to Friday:</strong> 9:00 AM - 6:00 PM (Local Time)</li>
+                                <li><strong>Weekends:</strong> 10:00 AM - 2:00 PM (Local Time)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <!-- Message Form Container (wrapped in a div for easier positioning) -->
+                    <div class="message-form-container">
+                        <p>Or use the form below to send us a message directly:</p>
+                        <form @submit.prevent="sendEmail">
+                            <!-- Name and Email Fields (Side by Side) -->
+                            <div class="form-inputs">
+                                <div class="input-container">
+                                    <label for="name">Your Name:</label><br>
+                                    <input type="text" id="name" v-model="name" style="width: 35%;" required>
+                                </div>
+                                <div class="input-container">
+                                    <label for="email">Your Email:</label><br>
+                                    <input type="email" id="email" v-model="email" style="width: 35%;" required>
+                                </div>
+                            </div>
+
+                            <!-- Message Section -->
+                            <label for="message">Your Message:</label><br>
+                            <textarea id="message" v-model="message" style="width: 800px;" required></textarea><br>
+
+                            <button type="submit">Send Message</button>
+                        </form>
+                    </div>
+                </div>
 
 
 
 
 
-            <!-- Help Section -->
-            <div v-if="currentView === 'help'" class="help-container">
-                <h2>Help</h2>
-                <p>If you're encountering any difficulties, here are some step-by-step guides to help you resolve
-                    common
-                    issues:</p>
+                <!-- Help Section -->
+                <div v-if="currentView === 'help'" class="help-container">
+                    <h2>Help</h2>
+                    <p>If you're encountering any difficulties, here are some step-by-step guides to help you resolve
+                        common
+                        issues:</p>
 
-                <h3>Account Setup</h3>
-                <ol>
-                    <li>Create an account by clicking on the "Sign Up" button on the homepage.</li>
-                    <li>Enter your personal information and health preferences.</li>
-                    <li>Confirm your email address by clicking the verification link sent to your inbox.</li>
-                    <li>Once confirmed, you'll be redirected to your dashboard.</li>
-                    <li>If you face any issues during the process, please contact support.</li>
-                </ol>
+                    <h3>Account Setup</h3>
+                    <ol>
+                        <li>Create an account by clicking on the "Sign Up" button on the homepage.</li>
+                        <li>Enter your personal information and health preferences.</li>
+                        <li>Confirm your email address by clicking the verification link sent to your inbox.</li>
+                        <li>Once confirmed, you'll be redirected to your dashboard.</li>
+                        <li>If you face any issues during the process, please contact support.</li>
+                    </ol>
 
-                <h3>Booking Appointments</h3>
-                <p>To book an appointment, follow these steps:</p>
-                <ol>
-                    <li>Navigate to the "Appointments" tab on the dashboard.</li>
-                    <li>Choose your preferred healthcare provider and available time slot.</li>
-                    <li>Confirm your appointment and receive reminders via email or SMS.</li>
-                    <li>If needed, you can reschedule or cancel your appointment from the same tab.</li>
-                    <li>If you face any issues, you can contact your healthcare provider directly via the app.</li>
-                </ol>
+                    <h3>Booking Appointments</h3>
+                    <p>To book an appointment, follow these steps:</p>
+                    <ol>
+                        <li>Navigate to the "Appointments" tab on the dashboard.</li>
+                        <li>Choose your preferred healthcare provider and available time slot.</li>
+                        <li>Confirm your appointment and receive reminders via email or SMS.</li>
+                        <li>If needed, you can reschedule or cancel your appointment from the same tab.</li>
+                        <li>If you face any issues, you can contact your healthcare provider directly via the app.</li>
+                    </ol>
 
-                <h3>Managing Your Profile</h3>
-                <p>To update your profile:</p>
-                <ol>
-                    <li>Go to the "Profile" section from your dashboard.</li>
-                    <li>Edit your personal details such as name, age, and contact information.</li>
-                    <li>You can also update your health preferences and notification settings here.</li>
-                </ol>
+                    <h3>Managing Your Profile</h3>
+                    <p>To update your profile:</p>
+                    <ol>
+                        <li>Go to the "Profile" section from your dashboard.</li>
+                        <li>Edit your personal details such as name, age, and contact information.</li>
+                        <li>You can also update your health preferences and notification settings here.</li>
+                    </ol>
 
-                <h3>Resetting Your Password</h3>
-                <p>If you've forgotten your password, follow these steps:</p>
-                <ol>
-                    <li>Click on "Forgot Password" on the login page.</li>
-                    <li>Enter your registered email address.</li>
-                    <li>Follow the instructions in the email to reset your password.</li>
-                    <li>If you encounter any issues during the reset process, please contact support.</li>
-                </ol>
+                    <h3>Resetting Your Password</h3>
+                    <p>If you've forgotten your password, follow these steps:</p>
+                    <ol>
+                        <li>Click on "Forgot Password" on the login page.</li>
+                        <li>Enter your registered email address.</li>
+                        <li>Follow the instructions in the email to reset your password.</li>
+                        <li>If you encounter any issues during the reset process, please contact support.</li>
+                    </ol>
 
-                <p>If you need further help, please feel free to <a href="/contact">contact us</a> directly.</p>
-            </div>
-
-
+                    <p>If you need further help, please feel free to <a href="/contact">contact us</a> directly.</p>
+                </div>
 
 
-            <!-- Emergency Contact Section -->
-            <div v-if="currentView === 'emergencyContact'" class="emergency-container">
-                <h2>Emergency Contact</h2>
-                <p>In case of an emergency, please reach out to the following contacts immediately:</p>
-                <ul>
-                    <li><strong>Emergency Services:</strong> 911 <button class="sos-button">SOS</button></li>
-                    <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH <button
-                            class="sos-button">SOS</button></li>
-                    <li><strong>Local Poison Control:</strong> 1-800-222-1222 <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Fire Department:</strong> 1-800-555-FIRE <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Police Department:</strong> 1-800-555-POLICE <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Ambulance Services:</strong> 1-800-555-AMBULANCE <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Poison Control Center:</strong> 1-800-333-POISON <button class="sos-button">SOS</button>
-                    </li>
-                    <li><strong>Mental Health Crisis Line:</strong> 1-800-555-MIND <button
-                            class="sos-button">SOS</button></li>
-                </ul>
-                <p>For non-urgent inquiries, please contact us through the <a href="/contact">Contact Us</a> page.
-                </p>
-            </div>
+
+
+                <!-- Emergency Contact Section -->
+                <div v-if="currentView === 'emergencyContact'" class="emergency-container">
+                    <h2>Emergency Contact</h2>
+                    <p>In case of an emergency, please reach out to the following contacts immediately:</p>
+                    <ul>
+                        <li><strong>Emergency Services:</strong> 911 <button class="sos-button">SOS</button></li>
+                        <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH <button
+                                class="sos-button">SOS</button></li>
+                        <li><strong>Local Poison Control:</strong> 1-800-222-1222 <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Fire Department:</strong> 1-800-555-FIRE <button class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Police Department:</strong> 1-800-555-POLICE <button class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Ambulance Services:</strong> 1-800-555-AMBULANCE <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Poison Control Center:</strong> 1-800-333-POISON <button
+                                class="sos-button">SOS</button>
+                        </li>
+                        <li><strong>Mental Health Crisis Line:</strong> 1-800-555-MIND <button
+                                class="sos-button">SOS</button></li>
+                    </ul>
+                    <p>For non-urgent inquiries, please contact us through the <a href="/contact">Contact Us</a> page.
+                    </p>
+                </div>
 
 
 

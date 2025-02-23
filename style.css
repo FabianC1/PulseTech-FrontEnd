@@ -1443,6 +1443,12 @@ a:hover {
     transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
+/* Focus state - Only bottom border with thicker gradient box-shadow */
+.signup-container input:focus {
+    border-color: transparent; /* Keep the original transparent border */
+    box-shadow: 0 2px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+}
+
 /* Submit Button */
 .signup-button {
     background-color: #24252a;
