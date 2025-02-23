@@ -1139,24 +1139,6 @@ button {
     gap: 20px; /* Space between buttons */
 }
 
-/* Button styling */
-button {
-    background-color: #24252a;
-    color: white;
-    font-size: 1.1em;
-    padding: 12px 20px; /* Increased padding */
-    border: white 2px solid;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    color: white;
-    background: linear-gradient(45deg, #000000, #a200ffce);
-}
-
-
 /* Shared styling for login and signup forms */
 .auth-container {
     display: flex;
@@ -1185,7 +1167,8 @@ input {
     font-size: 1em;
 }
 
-button {
+/* Styling specifically for buttons inside the auth-prompt */
+.auth-prompt .auth-button {
     background-color: #24252a;
     color: white;
     font-size: 1.1em;
@@ -1196,16 +1179,11 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.auth-prompt .auth-button:hover {
     background: linear-gradient(45deg, #000000, #a200ffce);
 }
 
-/* Centering login/signup prompt buttons */
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
+
 
 a {
     color: #007BFF;
