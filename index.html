@@ -277,12 +277,83 @@
             </div>
 
 
+            <!-- Signup Section -->
+            <div v-if="currentView === 'signup'" class="signup-container">
+                <h2>Create an Account</h2>
+
+                <!-- Role Toggle (Switch between Patient and Doctor) -->
+                <div class="role-toggle">
+                    <button @click="toggleRole('patient')"
+                        :class="{'active': selectedRole === 'patient'}">Patient</button>
+                    <button @click="toggleRole('doctor')" :class="{'active': selectedRole === 'doctor'}">Doctor</button>
+                </div>
+
+                <!-- Patient Signup Form -->
+                <div v-if="selectedRole === 'patient'" class="patient-form">
+                    <form @submit.prevent="signupUser">
+                        <div class="form-inputs">
+                            <label for="patientUsername">Username:</label>
+                            <input type="text" id="patientUsername" v-model="signupData.username" required />
+                        </div>
+
+                        <div class="form-inputs">
+                            <label for="patientEmail">Email:</label>
+                            <input type="email" id="patientEmail" v-model="signupData.email" required />
+                        </div>
+
+                        <div class="form-inputs">
+                            <label for="patientPassword">Password:</label>
+                            <input type="password" id="patientPassword" v-model="signupData.password" required />
+                        </div>
+
+                        <div class="form-inputs">
+                            <label for="confirmPatientPassword">Confirm Password:</label>
+                            <input type="password" id="confirmPatientPassword" v-model="signupData.confirmPassword"
+                                required />
+                        </div>
+
+                        <div class="button-container">
+                            <button type="submit" class="signup-button">Sign Up</button>
+                        </div>
+
+                        <p>Already have an account? <a @click="navigateTo('login')" class="signup-link">Login here</a>
+                        </p>
+                    </form>
+                </div>
 
 
 
+                <!-- Doctor Sign-Up Form -->
+                <div v-if="selectedRole === 'doctor'" class="doctor-form">
+                    <form @submit.prevent="signupDoctorUser">
+                        <div class="form-inputs">
+                            <label for="doctorUsername">Username:</label>
+                            <input type="text" id="doctorUsername" v-model="signupData.username" required />
+                        </div>
+                        <div class="form-inputs">
+                            <label for="doctorEmail">Email:</label>
+                            <input type="email" id="doctorEmail" v-model="signupData.email" required />
+                        </div>
+                        <div class="form-inputs">
+                            <label for="doctorPassword">Password:</label>
+                            <input type="password" id="doctorPassword" v-model="signupData.password" required />
+                        </div>
+                        <div class="form-inputs">
+                            <label for="confirmDoctorPassword">Confirm Password:</label>
+                            <input type="password" id="confirmDoctorPassword" v-model="signupData.confirmPassword"
+                                required />
+                        </div>
+                        <div class="form-inputs">
+                            <label for="medicalLicense">Medical License:</label>
+                            <input type="text" id="medicalLicense" v-model="signupData.medicalLicense" required />
+                        </div>
 
-
-
+                        <button type="submit">Sign Up</button>
+                        <p>Already have an account? <a @click="navigateTo('login')" class="signup-link">Login here</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
 
 
 

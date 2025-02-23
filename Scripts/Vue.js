@@ -35,7 +35,15 @@ const app = Vue.createApp({
       currentWellnessSection: 0, // Separate section tracker for Health & Wellness view
       name: "",
       email: "",
-      message: ""
+      message: "",
+      selectedRole: 'patient',  // Default to patient
+      signupData: {
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        medicalLicense: '' // Only used for doctor sign-up
+      }
     };
   },
 
@@ -114,6 +122,42 @@ const app = Vue.createApp({
   },
 
   methods: {
+    // Toggle between Patient and Doctor forms
+    toggleRole(role) {
+      this.selectedRole = role;
+    },
+
+    // Handle Patient Signup
+    signupUser() {
+      // Validate form inputs
+      if (this.validateForm()) {
+        console.log("Patient data: ", this.signupData);
+        // Here, handle the patient signup logic (send data to API)
+      }
+    },
+
+    // Handle Doctor Signup
+    signupDoctorUser() {
+      // Validate form inputs
+      if (this.validateForm()) {
+        console.log("Doctor data: ", this.signupData);
+        // Here, handle the doctor signup logic (send data to API)
+      }
+    },
+
+    // Form Validation
+    validateForm() {
+      if (this.signupData.password !== this.signupData.confirmPassword) {
+        alert("Passwords do not match.");
+        return false;
+      }
+      if (this.selectedRole === 'doctor' && !this.signupData.medicalLicense) {
+        alert("Please provide your medical license.");
+        return false;
+      }
+      return true;
+    },
+
     toggleMenu() {
       this.menuActive = !this.menuActive;
       if (this.menuActive) {

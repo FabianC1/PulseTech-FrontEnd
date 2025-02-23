@@ -829,11 +829,13 @@ button {
     padding: 12px;  /* Increased padding */
     font-size: 1em; /* Increased font size */
     margin-bottom: 15px;
-    border: none;
+    border: 2px solid #ccc;
     border-radius: 5px;
     background-color: #f1f1f1;
     color: #333;
 }
+
+
 
 /* Style for message textarea */
 .contact-container .message-form-container textarea {
@@ -842,12 +844,21 @@ button {
     font-size: 1em; /* Increased font size */
     padding: 12px; /* Increased padding */
     margin-bottom: 15px;
-    border: none;
+    border: 2px solid #ccc;
     border-radius: 5px;
     background-color: #f1f1f1;
     color: #333;
     resize: vertical;  /* Allow vertical resizing */
 }
+
+/* Apply linear gradient border on focus for textarea */
+.contact-container .message-form-container textarea:focus {
+    border: 2px solid transparent;
+    border-image-source: linear-gradient(45deg, #0099ff, #6200ff);
+    border-image-slice: 1;
+    background-color: #ffffff;
+}
+
 
 /* Submit button */
 .contact-container .message-form-container button {
@@ -1122,6 +1133,7 @@ button {
 
 /* Button container to center buttons */
 .button-container {
+    
     display: flex;
     justify-content: center; /* Centers the buttons horizontally */
     gap: 20px; /* Space between buttons */
@@ -1140,7 +1152,6 @@ button {
 }
 
 button:hover {
-    border: white solid 2px;
     color: white;
     background: linear-gradient(45deg, #000000, #a200ffce);
 }
@@ -1198,7 +1209,7 @@ button:hover {
 
 a {
     color: #007BFF;
-    text-decoration: none;
+    font-weight: bold;
 }
 
 a:hover {
@@ -1344,4 +1355,150 @@ a:hover {
 
 .signup-link:hover {
     color: #3c1ebc;
+}
+
+
+/* Signup Container */
+.signup-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 650px;  /* Adjust to fit content */
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.2em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+}
+
+/* Title */
+.signup-container h2 {
+    color: black;
+    text-decoration: underline;
+    margin-top: 0;
+}
+
+/* Role Toggle */
+.role-toggle {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.role-toggle button {
+    background-color: #24252a;
+    color: white;
+    font-size: 1em;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 10px;
+}
+
+.role-toggle button.active {
+    background-color: #4a2cceda;
+}
+
+/* Form Container with Two Columns */
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* 2 columns */
+    gap: 20px;  /* Space between the columns */
+    width: 100%;
+    max-width: 700px;
+    margin-top: 20px;
+}
+
+/* Form Input Containers */
+.form-inputs {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+/* Labels */
+.signup-container label {
+    font-weight: bold;
+    color: white;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    display: block;
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Input Fields */
+.signup-container input {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    margin-bottom: 15px;  /* Add some space below the input */
+}
+
+/* Submit Button */
+.signup-button {
+    background-color: #24252a;
+    color: white;
+    font-size: 1.1em;
+    padding: 12px 20px;
+    border: white 2px solid;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    grid-column: span 2;  /* Make the button span across both columns */
+    margin-top: 20px;
+}
+
+.signup-button:hover {
+    background: linear-gradient(45deg, #000000, #a200ffce);
+}
+
+/* Links */
+.signup-link {
+    color: #4a2cceda;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.signup-link:hover {
+    color: #3c1ebc;
+}
+
+/* Doctor Fields - If applicable for doctors */
+.doctor-form .form-inputs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.doctor-form input {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
 }
