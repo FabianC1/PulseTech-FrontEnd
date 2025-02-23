@@ -1,14 +1,16 @@
 const app = Vue.createApp({
   data() {
     return {
-      user: null,
-      isLoggedIn: false,
+      currentView: "login", // Default view
+      isLoggedIn: false, // User login status
+      user: null, // Stores user data when logged in
+      loginData: { username: "", password: "" }, // Stores login credentials
+      signupData: { username: "", email: "", password: "" }, // Stores signup credentials
       menuActive: false,
       searchActive: false,
       showCookiePopup: true, // Controls visibility of the cookie consent popup
       showConfirmationPopup: false, // Initially set to false (hidden)
       searchQuery: "",
-      currentView: "home", // Default view
       currentSection: 0, // Start at the first section for each view
       currentPrivacySection: 0, // Separate section tracker for privacy view
       currentWellnessSection: 0, // Separate section tracker for Health & Wellness view
@@ -139,6 +141,7 @@ const app = Vue.createApp({
 
     navigateTo(view) {
       this.currentView = view;
+      console.log("Navigating to:", view);  // Debugging line
       this.closeMenu();
       window.history.pushState({ view }, "", `/${view}`);
     },

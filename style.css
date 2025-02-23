@@ -10,10 +10,6 @@ body {
     /* Smooth transition for blur */
 }
 
-
-
-
-
 /* Header */
 header {
     background: linear-gradient(to right, #8740c1, #0c62a2);
@@ -1207,4 +1203,145 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+
+.login-page {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers everything vertically */
+    align-items: center; /* Centers everything horizontally */
+    height: 650px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.2em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+    position: relative;
+}
+
+/* Title (Moves it to the top) */
+.login-page h2 {
+    color: black;
+    text-decoration: underline;
+    position: absolute;
+    top: 30px; /* Adjusts title closer to the top */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 20px;
+}
+
+/* Form Container (Centered in middle) */
+.login-page form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 50%; /* Moves form to the center */
+    transform: translateY(-50%);
+}
+
+/* Form Input Containers */
+.form-inputs {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Labels */
+.login-page label {
+    font-weight: bold;
+    color: white;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left;
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Input Fields: Default Style */
+.login-page input {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Input Fields: Linear Gradient Border when Focused */
+.login-page input:focus {
+    border: 2px solid transparent;
+    border-radius: 15px;
+    border-image: linear-gradient(45deg, #0099ffda, #6200ff);
+    border-image-slice: 1;
+    background-color: #ffffff;
+}
+
+
+/* Submit Button */
+.login-button {
+    background-color: #24252a;
+    color: white;
+    font-size: 1.1em;
+    padding: 12px 20px;
+    border: white 2px solid;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px; /* Adds spacing below inputs */
+}
+
+.login-button:hover {
+    background: linear-gradient(45deg, #000000, #a200ffce);
+}
+
+/* Links Container */
+.link-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+}
+
+/* Forgot Password Link */
+.forgot-password-link {
+    color: #00eeff;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.forgot-password-link:hover {
+    color: #00d9ff;
+}
+
+/* Sign Up Link */
+.signup-link {
+    color: #4a2cceda;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.signup-link:hover {
+    color: #3c1ebc;
 }
