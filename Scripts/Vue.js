@@ -171,6 +171,7 @@ const app = Vue.createApp({
     signupDoctorUser() {
       // Validate form inputs
       if (this.validateForm()) {
+        // Include medical license in the request when role is 'doctor'
         fetch("http://localhost:3000/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -179,7 +180,7 @@ const app = Vue.createApp({
             email: this.signupData.email,
             password: this.signupData.password,
             role: this.selectedRole,
-            medicalLicense: this.signupData.medicalLicense,
+            medicalLicense: this.selectedRole === "doctor" ? this.signupData.medicalLicense : null, // Only send for doctor
           }),
         })
           .then((res) => res.json())
@@ -194,6 +195,8 @@ const app = Vue.createApp({
           .catch((error) => console.error("Signup error:", error));
       }
     },
+    
+    
 
     // Form Validation
     validateForm() {
@@ -208,17 +211,19 @@ const app = Vue.createApp({
       return true;
     },
 
-    // Handle Login
     loginUser() {
       fetch("http://localhost:3000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(this.loginData),
+        body: JSON.stringify({
+          email: this.loginData.email,
+          password: this.loginData.password,
+        }),
       })
         .then((res) => res.json())
         .then((data) => {
           if (data.message === "Login successful") {
-            localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("user", JSON.stringify(data.user)); // Store user data
             this.isLoggedIn = true;
             this.user = data.user;
             this.navigateTo("profile");
