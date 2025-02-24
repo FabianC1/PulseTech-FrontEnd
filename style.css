@@ -217,7 +217,7 @@ footer {
 .home-container {
     text-align: left;
     padding: 20px;
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -377,7 +377,7 @@ footer {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 600px;
     max-width: 98%;
-    margin: 20px auto;
+    margin: 5px auto;
     padding: 20px;
     font-size: 1.2em;
     line-height: 1.6;
@@ -534,7 +534,7 @@ button {
 .cookies-container {
     text-align: center;
     padding: 20px;
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -733,7 +733,7 @@ button {
 .contact-container {
     text-align: center;
     padding: 20px;
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -921,7 +921,7 @@ button {
 .help-container {
     text-align: left;
     padding: 20px;
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696); /* Match Home Section's background */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for the container */
@@ -998,7 +998,7 @@ button {
 .emergency-container {
     text-align: center;  /* Center all text */
     padding: 20px;
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696); /* Match the background from Home */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1203,7 +1203,7 @@ a:hover {
     align-items: center; /* Centers everything horizontally */
     height: 650px;
     padding: 20px;
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1341,7 +1341,7 @@ a:hover {
     align-items: center;
     height: 650px;
     padding: 20px;
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
