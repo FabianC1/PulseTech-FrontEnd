@@ -5,7 +5,6 @@ const app = Vue.createApp({
       isLoggedIn: false, // User login status
       user: null, // Stores user data when logged in
       loginData: { username: "", password: "" }, // Stores login credentials
-      signupData: { username: "", email: "", password: "" }, // Stores signup credentials
       menuActive: false,
       searchActive: false,
       showCookiePopup: true, // Controls visibility of the cookie consent popup
@@ -33,9 +32,6 @@ const app = Vue.createApp({
       privacySections: [], // Sections for Privacy and Security
       wellnessSections: [], // Sections for Health & Wellness Guidelines
       currentWellnessSection: 0, // Separate section tracker for Health & Wellness view
-      name: "",
-      email: "",
-      message: "",
       selectedRole: 'patient',  // Default to patient
       signupData: {
         username: '',
@@ -128,6 +124,14 @@ const app = Vue.createApp({
         this.currentView = event.state.view;
       }
     });
+
+    // Restore user session if logged in
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+      this.isLoggedIn = true;
+      this.currentView = "profile"; // Redirect logged-in users to profile
+    }
   },
 
   methods: {
@@ -140,8 +144,26 @@ const app = Vue.createApp({
     signupUser() {
       // Validate form inputs
       if (this.validateForm()) {
-        console.log("Patient data: ", this.signupData);
-        // Here, handle the patient signup logic (send data to API)
+        fetch("http://localhost:3000/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: this.signupData.username,
+            email: this.signupData.email,
+            password: this.signupData.password,
+            role: this.selectedRole,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.message === "User registered successfully") {
+              alert("Signup successful! Please log in.");
+              this.navigateTo("login");
+            } else {
+              alert(data.message);
+            }
+          })
+          .catch((error) => console.error("Signup error:", error));
       }
     },
 
@@ -149,8 +171,27 @@ const app = Vue.createApp({
     signupDoctorUser() {
       // Validate form inputs
       if (this.validateForm()) {
-        console.log("Doctor data: ", this.signupData);
-        // Here, handle the doctor signup logic (send data to API)
+        fetch("http://localhost:3000/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: this.signupData.username,
+            email: this.signupData.email,
+            password: this.signupData.password,
+            role: this.selectedRole,
+            medicalLicense: this.signupData.medicalLicense,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.message === "User registered successfully") {
+              alert("Signup successful! Please log in.");
+              this.navigateTo("login");
+            } else {
+              alert(data.message);
+            }
+          })
+          .catch((error) => console.error("Signup error:", error));
       }
     },
 
@@ -165,6 +206,27 @@ const app = Vue.createApp({
         return false;
       }
       return true;
+    },
+
+    // Handle Login
+    loginUser() {
+      fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.loginData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.message === "Login successful") {
+            localStorage.setItem("user", JSON.stringify(data.user));
+            this.isLoggedIn = true;
+            this.user = data.user;
+            this.navigateTo("profile");
+          } else {
+            alert("Invalid email or password.");
+          }
+        })
+        .catch((error) => console.error("Login error:", error));
     },
 
     toggleMenu() {
@@ -390,11 +452,12 @@ const app = Vue.createApp({
 
 
   mounted() {
-    // Check if user is stored in localStorage (temporary, backend session handling will replace this)
+    // Restore user session if logged in
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       this.user = JSON.parse(storedUser);
       this.isLoggedIn = true;
+      this.currentView = "profile"; // Redirect logged-in users to profile
     }
 
     document.addEventListener("touchstart", this.handleTouchStart);
