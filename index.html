@@ -231,12 +231,27 @@
 
             <!-- Profile Section -->
             <div v-if="currentView === 'profile'" class="profile-container">
-                <div v-if="isLoggedIn" class="profile-content">
+                <div v-if="isLoggedIn" class="loggedIn">
                     <h2>Welcome, {{ user.fullName }}</h2>
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>Date of Birth:</strong> {{ user.dateOfBirth }}</p>
-                    <button @click="logout">Logout</button>
+
+                    <!-- Profile Information -->
+                    <div class="profile-info">
+                        <p><strong>Full Name:</strong> {{ user.fullName }} <button
+                                @click="editUserDetail('fullName')">Edit</button></p>
+                        <p><strong>Username:</strong> {{ user.username }} <button
+                                @click="editUserDetail('username')">Edit</button></p>
+                        <p><strong>Email:</strong> {{ user.email }} <button
+                                @click="editUserDetail('email')">Edit</button></p>
+                        <p><strong>Date of Birth:</strong> {{ user.dateOfBirth }} <button
+                                @click="editUserDetail('dateOfBirth')">Edit</button></p>
+                        <p><strong>Ethnicity:</strong> {{ user.ethnicity }} <button
+                                @click="editUserDetail('ethnicity')">Edit</button></p>
+                        <p><strong>Address:</strong> {{ user.address }} <button
+                                @click="editUserDetail('address')">Edit</button></p>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <button @click="logout" class="logout-button">Logout</button>
                 </div>
 
                 <div v-else class="auth-prompt">
@@ -248,6 +263,9 @@
                     </div>
                 </div>
             </div>
+
+
+
 
 
             <!-- Login Section -->

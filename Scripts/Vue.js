@@ -195,8 +195,8 @@ const app = Vue.createApp({
           .catch((error) => console.error("Signup error:", error));
       }
     },
-    
-    
+
+
 
     // Form Validation
     validateForm() {
@@ -232,6 +232,17 @@ const app = Vue.createApp({
           }
         })
         .catch((error) => console.error("Login error:", error));
+    },
+
+    // Edit user details function
+    editUserDetail(field) {
+      const newValue = prompt(`Enter new value for ${field}`, this.user[field]);
+      if (newValue && newValue !== this.user[field]) {
+        // Update the user object with the new value (you can later send this data to the backend)
+        this.user[field] = newValue;
+        alert(`${field} updated successfully!`);
+        // Optionally, make an API call to update the database with the new data
+      }
     },
 
     toggleMenu() {

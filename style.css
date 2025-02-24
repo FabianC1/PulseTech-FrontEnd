@@ -1490,3 +1490,101 @@ a:hover {
     outline: none;
     transition: border-color 0.3s ease, background-color 0.3s ease;
 }
+
+/* Logged In User Profile Container */
+.loggedIn {
+    text-align: left;
+    padding: 20px;
+    margin: 5px auto;
+    width: 90%;
+    background: linear-gradient(45deg, #63005a93, #14668696); /* Match the gradient */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 650px;
+    overflow-y: auto;
+    font-size: 1.1em;
+    line-height: 1.6;
+    border-radius: 10px;
+    box-sizing: border-box;
+    border: black solid;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Section (User's Welcome Message) */
+.loggedIn h2 {
+    color: #24252a;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Profile Information */
+.loggedIn .profile-info {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.loggedIn .profile-info p {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Edit Button Style for User Information */
+.loggedIn .profile-info button {
+    background-color: #4a2cceda;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    border: none;
+    cursor: pointer;
+}
+
+.loggedIn .profile-info button:hover {
+    background-color: #6200ff;
+}
+
+/* Center the Logout Button */
+.loggedIn .logout-button {
+    display: block;
+    margin: 20px auto 0 auto; /* Center horizontally and add margin-top */
+    background-color: #24252a;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 15%;
+}
+
+.loggedIn .logout-button:hover {
+    background-color: #4a2cceda;
+}
+
+/* Profile Details Section */
+.profile-details {
+    margin-top: 20px;
+}
+
+.profile-details p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1em;
+}
+
+/* Optional: Optional limits on the scroll position */
+.loggedIn::-webkit-scrollbar {
+    width: 8px;
+}
+
+.loggedIn::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+
+.loggedIn::-webkit-scrollbar-track {
+    background: transparent;
+}
