@@ -234,6 +234,12 @@
                 <div v-if="isLoggedIn" class="loggedIn">
                     <h2>Welcome, {{ user.username }}</h2>
 
+                    <!-- Save Success Popup -->
+                    <div v-if="showSaveSuccessPopup" class="save-success-popup">
+                        <p>Your changes have been saved successfully!</p>
+                    </div>
+
+
                     <!-- Profile Information -->
                     <div class="profile-info">
                         <!-- Full Name -->

@@ -1594,7 +1594,8 @@ a:hover {
 
 /* Editable Fields with Underline */
 .editable-input {
-    width: 50%; /* Adjust the width of the editable field */
+    background-color: transparent;
+    width: 30%; /* Adjust the width of the editable field */
     margin: 10px auto;
     padding: 5px;
     font-size: 1em;
@@ -1605,8 +1606,13 @@ a:hover {
     transition: border-bottom 0.3s ease;
 }
 
+/* Change placeholder text color */
+.editable-input::placeholder {
+    color: rgba(255, 255, 255, 0.699); /* Set placeholder text to white */
+}
+
 .editable-input:focus {
-    border-bottom: 2px solid #a200ff; /* Highlight the underline when focused */
+    border-bottom: 2px solid #00d9ff; /* Highlight the underline when focused */
 }
 
 /* Save Changes Button */
@@ -1628,3 +1634,34 @@ a:hover {
 .save-changes-button:hover {
     background-color: #6200ff;
 }
+
+
+/* Save Success Popup */
+.save-success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #4a2cceda;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    text-align: center;
+    width: auto;
+    min-width: 200px;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  /* Popup fade-in animation */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  

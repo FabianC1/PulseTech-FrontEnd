@@ -55,7 +55,8 @@ const app = Vue.createApp({
         dateOfBirth: false,
         ethnicity: false,
         address: false
-      }
+      },
+      showSaveSuccessPopup: false,  // Controls visibility of the saved changes popup
     };
   },
 
@@ -141,7 +142,7 @@ const app = Vue.createApp({
       }
     });
 
-    // Restore user session if logged in
+    // Retrieve user data from localStorage
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       this.user = JSON.parse(storedUser);
@@ -483,18 +484,53 @@ const app = Vue.createApp({
     toggleEdit(field) {
       this.isEditing[field] = !this.isEditing[field];
     },
+
     saveChanges() {
-      // Call API or perform the logic to save changes here
-      alert("Changes saved successfully!");
-      // Reset edit mode after saving
-      this.isEditing = {
-        fullName: false,
-        username: false,
-        email: false,
-        dateOfBirth: false,
-        ethnicity: false,
-        address: false
+      const userId = this.user._id; // Get user ID from the stored user data
+
+      // Prepare the updated data
+      const updatedData = {
+        email: this.user.email,  // We're using email now to find the user
+        fullName: this.user.fullName,
+        username: this.user.username,
+        dateOfBirth: this.user.dateOfBirth,
+        ethnicity: this.user.ethnicity,
+        address: this.user.address,
       };
+
+      // Send the updated data to the backend
+      fetch("http://localhost:3000/updateProfile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message === "User profile updated successfully") {
+            // Show the save success popup
+            this.showSaveSuccessPopup = true;
+
+            // Update the user data on the front-end
+            this.user = { ...this.user, ...updatedData };  // Merge the updated data with current user data
+
+            // Update localStorage with the new user data
+            localStorage.setItem("user", JSON.stringify(this.user));  // Update the user data in localStorage
+
+            // Close the popup after a few seconds
+            setTimeout(() => {
+              this.showSaveSuccessPopup = false;
+            }, 3000);
+          }
+        })
+        .catch((error) => {
+          console.error("Error updating user:", error);
+          alert("An error occurred while saving your changes.");
+        });
+      // Close all edit sections (set all fields to false)
+      Object.keys(this.isEditing).forEach((key) => {
+        this.isEditing[key] = false;  // Close all editing fields
+      });
+
     }
 
   },
