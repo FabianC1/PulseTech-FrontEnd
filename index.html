@@ -230,9 +230,9 @@
             </div>
 
             <!-- Profile Section -->
-            <div v-if="currentView === 'profile'" class="profile-container">
+            <div v-if="currentView === 'profile'" >
                 <div v-if="isLoggedIn" class="loggedIn">
-                    <h2>Welcome, {{ user.fullName }}</h2>
+                    <h2>Welcome, {{ user.username }}</h2>
 
                     <!-- Profile Information -->
                     <div class="profile-info">

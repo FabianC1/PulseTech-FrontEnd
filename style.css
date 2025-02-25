@@ -1119,6 +1119,12 @@ button {
     width: 100%; /* Allow it to be responsive */
     text-align: center;
     border: 3px solid black;
+
+    /* Centering the container */
+    position: absolute; /* Absolute positioning relative to the viewport */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Move it back by half its own width/height */    
 }
 
 /* Profile content styling (when logged in) */
@@ -1496,7 +1502,7 @@ a:hover {
     text-align: left;
     padding: 20px;
     margin: 5px auto;
-    width: 90%;
+    width: 98%;
     background: linear-gradient(45deg, #63005a93, #14668696); /* Match the gradient */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 650px;
@@ -1575,16 +1581,3 @@ a:hover {
     font-size: 1.1em;
 }
 
-/* Optional: Optional limits on the scroll position */
-.loggedIn::-webkit-scrollbar {
-    width: 8px;
-}
-
-.loggedIn::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 15px;
-}
-
-.loggedIn::-webkit-scrollbar-track {
-    background: transparent;
-}
