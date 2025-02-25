@@ -1653,15 +1653,16 @@ a:hover {
     width: auto;
     min-width: 200px;
     animation: fadeIn 0.5s ease-in-out;
-  }
+}
   
   /* Popup fade-in animation */
-  @keyframes fadeIn {
+@keyframes fadeIn {
     0% {
       opacity: 0;
     }
     100% {
       opacity: 1;
     }
-  }
+}
   
+

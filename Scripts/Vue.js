@@ -1,7 +1,8 @@
 const app = Vue.createApp({
   data() {
     return {
-      currentView: "login", // Default view
+      profilePicture: "", // Stores base64 profile picture
+      currentView: "home", // Default view
       isLoggedIn: false, // User login status
       user: null, // Stores user data when logged in
       loginData: { username: "", password: "" }, // Stores login credentials
@@ -459,10 +460,24 @@ const app = Vue.createApp({
     },
 
     logout() {
-      localStorage.removeItem("user");
+      localStorage.removeItem("user"); // Clear user session
       this.isLoggedIn = false;
-      this.user = null;
-    },
+    
+      // Instead of null, reset user to an empty object to avoid errors
+      this.user = {
+        fullName: "",
+        username: "",
+        email: "",
+        dateOfBirth: "",
+        ethnicity: "",
+        address: "",
+        phoneNumber: "",
+        gender: "",
+        profilePicture: "" // Ensure profilePicture exists to prevent errors
+      };
+    
+      this.currentView = "login"; // Redirect instantly
+    },    
     redirectToLogin() {
       this.currentView = "login"; // Switch to login view
     },
@@ -485,20 +500,33 @@ const app = Vue.createApp({
       this.isEditing[field] = !this.isEditing[field];
     },
 
-    saveChanges() {
-      const userId = this.user._id; // Get user ID from the stored user data
+    // Handle file input change (for profile picture)
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.user.profilePicture = e.target.result; // Convert to base64
+          this.isEditing.profilePicture = false; // Close edit mode
+        };
+        reader.readAsDataURL(file);
+      }
+    },
 
-      // Prepare the updated data
+
+    saveChanges() {
       const updatedData = {
-        email: this.user.email,  // We're using email now to find the user
+        email: this.user.email,
         fullName: this.user.fullName,
         username: this.user.username,
         dateOfBirth: this.user.dateOfBirth,
         ethnicity: this.user.ethnicity,
         address: this.user.address,
+        phoneNumber: this.user.phoneNumber,
+        gender: this.user.gender,
+        profilePicture: this.user.profilePicture
       };
 
-      // Send the updated data to the backend
       fetch("http://localhost:3000/updateProfile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -507,16 +535,16 @@ const app = Vue.createApp({
         .then((response) => response.json())
         .then((data) => {
           if (data.message === "User profile updated successfully") {
-            // Show the save success popup
             this.showSaveSuccessPopup = true;
+            this.saveSuccessMessage = "Profile updated successfully!";
 
-            // Update the user data on the front-end
-            this.user = { ...this.user, ...updatedData };  // Merge the updated data with current user data
+            this.user = { ...this.user, ...updatedData }; // Instantly update UI
+            localStorage.setItem("user", JSON.stringify(this.user));
 
-            // Update localStorage with the new user data
-            localStorage.setItem("user", JSON.stringify(this.user));  // Update the user data in localStorage
+            Object.keys(this.isEditing).forEach((key) => {
+              this.isEditing[key] = false;
+            });
 
-            // Close the popup after a few seconds
             setTimeout(() => {
               this.showSaveSuccessPopup = false;
             }, 3000);
@@ -526,13 +554,7 @@ const app = Vue.createApp({
           console.error("Error updating user:", error);
           alert("An error occurred while saving your changes.");
         });
-      // Close all edit sections (set all fields to false)
-      Object.keys(this.isEditing).forEach((key) => {
-        this.isEditing[key] = false;  // Close all editing fields
-      });
-
     }
-
   },
 
 

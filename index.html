@@ -17,8 +17,10 @@
         <header>
             <img src="/image/Icon-Only-Color (2).png" alt="BioSync Logo" class="logo"> <!-- Logo (Left) -->
             <h1>{{ 'PulseTech - ' + formattedTitle }}</h1>
-            <img src="/image/ProfileIcon.png" alt="Profile" class="profile-icon"> <!-- Profile Icon (Right) -->
+            <img :src="user.profilePicture ? user.profilePicture : '/image/ProfileIcon.png'" alt="Profile"
+                class="profile-icon"> <!-- Dynamic Profile Picture -->
         </header>
+
 
 
         <!-- Navigation Bar -->
@@ -240,7 +242,6 @@
                     </div>
 
 
-                    <!-- Profile Information -->
                     <div class="profile-info">
                         <!-- Full Name -->
                         <p>
@@ -265,7 +266,8 @@
                         <p>
                             <strong>Email:</strong>
                             <span v-if="!isEditing.email">{{ user.email }}</span>
-                            <input v-else v-model="user.email" class="editable-input" placeholder="Enter email" />
+                            <input v-else v-model="user.email" type="email" class="editable-input"
+                                placeholder="Enter email" />
                             <button @click="toggleEdit('email')">{{ isEditing.email ? 'Cancel' : 'Edit' }}</button>
                         </p>
 
@@ -273,8 +275,7 @@
                         <p>
                             <strong>Date of Birth:</strong>
                             <span v-if="!isEditing.dateOfBirth">{{ user.dateOfBirth }}</span>
-                            <input v-else v-model="user.dateOfBirth" class="editable-input"
-                                placeholder="Enter date of birth" />
+                            <input v-else v-model="user.dateOfBirth" type="date" class="editable-input" />
                             <button @click="toggleEdit('dateOfBirth')">{{ isEditing.dateOfBirth ? 'Cancel' : 'Edit'
                                 }}</button>
                         </p>
@@ -297,11 +298,44 @@
                             <button @click="toggleEdit('address')">{{ isEditing.address ? 'Cancel' : 'Edit' }}</button>
                         </p>
 
+                        <!-- Phone Number -->
+                        <p>
+                            <strong>Phone Number:</strong>
+                            <span v-if="!isEditing.phoneNumber">{{ user.phoneNumber }}</span>
+                            <input v-else v-model="user.phoneNumber" type="tel" class="editable-input"
+                                placeholder="Enter phone number" />
+                            <button @click="toggleEdit('phoneNumber')">{{ isEditing.phoneNumber ? 'Cancel' : 'Edit'
+                                }}</button>
+                        </p>
+
+                        <!-- Gender -->
+                        <p>
+                            <strong>Gender:</strong>
+                            <span v-if="!isEditing.gender">{{ user.gender }}</span>
+                            <select v-else v-model="user.gender" class="editable-input">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <button @click="toggleEdit('gender')">{{ isEditing.gender ? 'Cancel' : 'Edit' }}</button>
+                        </p>
+
+                        <!-- Profile Picture -->
+                        <p>
+                            <strong>Profile Picture:</strong>
+                            <input type="file" @change="handleFileChange" />
+                            <button @click="toggleEdit('profilePicture')">Upload Picture</button>
+                        <div v-if="user.profilePicture">
+                            <img :src="user.profilePicture" alt="Profile Picture" class="profile-picture" />
+                        </div>
+                        </p>
+
                         <!-- Save Changes Button -->
                         <button
-                            v-if="isEditing.fullName || isEditing.username || isEditing.email || isEditing.dateOfBirth || isEditing.ethnicity || isEditing.address"
+                            v-if="isEditing.fullName || isEditing.username || isEditing.email || isEditing.dateOfBirth || isEditing.ethnicity || isEditing.address || isEditing.phoneNumber || isEditing.gender || isEditing.profilePicture"
                             @click="saveChanges" class="save-changes-button">Save Changes</button>
                     </div>
+
 
 
                     <!-- Logout Button -->
