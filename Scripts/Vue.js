@@ -132,24 +132,30 @@ const app = Vue.createApp({
       this.showCookiePopup = false;
     }
 
-    const path = window.location.pathname.substring(1); // Remove leading slash
-    if (path) {
-      this.currentView = path; // Set view based on the URL
+    // Determine the correct initial view based on the URL
+    const path = window.location.pathname.substring(1); // Get the path from the URL
+    if (this.isLoggedIn && path !== 'profile') {
+      this.currentView = 'profile';
+    } else if (!this.isLoggedIn && path === 'profile') {
+      this.currentView = 'login';
+    } else {
+      this.currentView = path || 'home'; // Default to 'home' if no path is provided
     }
 
-    window.addEventListener("popstate", (event) => {
-      if (event.state && event.state.view) {
-        this.currentView = event.state.view;
-      }
-    });
-
-    // Retrieve user data from localStorage
+    // Retrieve user data from localStorage once
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       this.user = JSON.parse(storedUser);
       this.isLoggedIn = true;
-      this.currentView = "profile"; // Redirect logged-in users to profile
+    } else {
+      this.isLoggedIn = false;
     }
+
+    // Listen for changes in the browser's history (back/forward buttons)
+    window.addEventListener("popstate", this.handleRouteChange);
+
+    // Initial routing based on URL and login status
+    this.handleRouteChange();
   },
 
   methods: {
@@ -229,6 +235,7 @@ const app = Vue.createApp({
       return true;
     },
 
+    // Handle login form submission
     loginUser() {
       fetch("http://localhost:3000/login", {
         method: "POST",
@@ -244,7 +251,7 @@ const app = Vue.createApp({
             localStorage.setItem("user", JSON.stringify(data.user)); // Store user data
             this.isLoggedIn = true;
             this.user = data.user;
-            this.navigateTo("profile");
+            this.navigateTo("profile"); // Redirect to profile after successful login
           } else {
             alert("Invalid email or password.");
           }
@@ -459,25 +466,14 @@ const app = Vue.createApp({
       window.location.href = mailtoLink;
     },
 
+    // Handle logout action
     logout() {
       localStorage.removeItem("user"); // Clear user session
       this.isLoggedIn = false;
-    
-      // Instead of null, reset user to an empty object to avoid errors
-      this.user = {
-        fullName: "",
-        username: "",
-        email: "",
-        dateOfBirth: "",
-        ethnicity: "",
-        address: "",
-        phoneNumber: "",
-        gender: "",
-        profilePicture: "" // Ensure profilePicture exists to prevent errors
-      };
-    
-      this.currentView = "login"; // Redirect instantly
-    },    
+      this.user = null;
+      this.currentView = "login"; // Redirect instantly to login page
+      window.history.pushState({ view: 'login' }, '', '/login'); // Update URL to login page
+    },
     redirectToLogin() {
       this.currentView = "login"; // Switch to login view
     },
@@ -512,7 +508,7 @@ const app = Vue.createApp({
         reader.readAsDataURL(file); // Convert the file to base64 URL
       }
     },
-    
+
 
 
     saveChanges() {
@@ -527,7 +523,7 @@ const app = Vue.createApp({
         gender: this.user.gender,
         profilePicture: this.user.profilePicture
       };
-    
+
       fetch("http://localhost:3000/updateProfile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -538,7 +534,7 @@ const app = Vue.createApp({
           if (data.message === "User profile updated successfully") {
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "Profile updated successfully!";
-    
+
             this.user = { ...this.user, ...updatedData }; // Instantly update UI
             localStorage.setItem("user", JSON.stringify(this.user));
           } else {
@@ -546,12 +542,12 @@ const app = Vue.createApp({
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "No changes were made.";
           }
-    
+
           // 🔥 Ensure all edit fields are closed
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
-    
+
           setTimeout(() => {
             this.showSaveSuccessPopup = false;
           }, 3000);
@@ -559,26 +555,43 @@ const app = Vue.createApp({
         .catch((error) => {
           console.error("Error updating user:", error);
           alert("An error occurred while saving your changes.");
-    
+
           // 🔥 Close all edit fields even if there's an error
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
         });
-    }
-    
+    },
+    // Handle route changes and check login status
+    handleRouteChange() {
+      const path = window.location.pathname.substring(1); // Get the path from the URL
+
+      // Redirect based on login state and path
+      if (this.isLoggedIn) {
+        // If logged in, allow access to other pages like home, appointments, etc.
+        if (path === 'login' || path === 'signup') {
+          this.currentView = 'profile'; // Prevent logged-in users from accessing login/signup
+          window.history.pushState({ view: 'profile' }, '', '/profile');
+        } else {
+          this.currentView = path || 'home'; // Allow access to other pages
+        }
+      } else {
+        // If not logged in, redirect to login if they try to access the profile page
+        if (path === 'profile') {
+          this.currentView = 'login'; // Redirect to login page
+          window.history.pushState({ view: 'login' }, '', '/login');
+        } else {
+          this.currentView = path || 'home'; // Allow access to home or public pages
+        }
+      }
+    },
+
   },
 
 
 
   mounted() {
-    // Restore user session if logged in
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      this.user = JSON.parse(storedUser);
-      this.isLoggedIn = true;
-      this.currentView = "profile"; // Redirect logged-in users to profile
-    }
+    this.handleRouteChange();
 
     document.addEventListener("touchstart", this.handleTouchStart);
     document.addEventListener("touchmove", this.handleTouchMove);
@@ -587,6 +600,7 @@ const app = Vue.createApp({
   },
 
   beforeUnmount() {
+    window.removeEventListener("popstate", this.handleRouteChange);
     document.removeEventListener("touchstart", this.handleTouchStart);
     document.removeEventListener("touchmove", this.handleTouchMove);
     document.removeEventListener("touchend", this.handleTouchEnd);
