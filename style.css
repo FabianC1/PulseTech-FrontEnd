@@ -1664,5 +1664,73 @@ a:hover {
       opacity: 1;
     }
 }
-  
 
+
+/* Welcome Section - Centers Everything */
+.welcome-section {
+    display: flex;
+    align-items: center; /* Keeps everything aligned in one line */
+    justify-content: center; /* Centers everything horizontally */
+    margin-top: 20px; /* Adds spacing from the top */
+}
+
+/* Welcome Username */
+.welcome-username {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-right: 10px; /* Spacing between text and profile picture */
+}
+
+/* Profile Picture */
+.profile-picture-container {
+    margin-right: 10px; /* Space between profile picture and buttons */
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Edit, Upload, Remove Buttons - All in One Line */
+.edit-profile-btn,
+.upload-btn,
+.remove-btn {
+    margin-left: 10px; /* Adds spacing between buttons */
+    padding: 5px 10px;
+    font-size: 1em;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Edit Button (Same Style as Other Edit Buttons) */
+.edit-profile-btn {
+    background-color: #4a2cceda;
+    color: white;
+}
+
+.edit-profile-btn:hover {
+    background-color: #6200ff;
+}
+
+/* Upload Button (Blue) */
+.upload-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+.upload-btn:hover {
+    background-color: #0b7dda;
+}
+
+/* Remove Button (Red) */
+.remove-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.remove-btn:hover {
+    background-color: #da190b;
+}

@@ -505,23 +505,35 @@ const app = Vue.createApp({
 
 
     toggleEdit(field) {
-      this.isEditing[field] = !this.isEditing[field];
+      if (field === 'profilePicture') {
+        this.isEditing.profilePicture = !this.isEditing.profilePicture;
+      } else {
+        this.isEditing[field] = !this.isEditing[field];
+      }
     },
+
+    changeProfilePicture() {
+      // Trigger file input click to open file explorer
+      this.$refs.fileInput.click();
+    },
+  
 
     handleFileChange(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          // Set the uploaded file as the profile picture (base64)
-          this.user.profilePicture = e.target.result;
-          this.isEditing.profilePicture = false; // Close the edit mode for profile picture
+          this.user.profilePicture = e.target.result; // Set the uploaded file as the profile picture
         };
-        reader.readAsDataURL(file); // Convert the file to base64 URL
+        reader.readAsDataURL(file);
       }
+      this.isEditing.profilePicture = false; // Close edit mode after picture is selected
     },
 
-
+    removeProfilePicture() {
+      this.user.profilePicture = null; // Remove the current profile picture
+      this.isEditing.profilePicture = false; // Close edit mode
+    },
 
     saveChanges() {
       const updatedData = {

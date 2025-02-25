@@ -234,12 +234,29 @@
             <!-- Profile Section -->
             <div v-if="currentView === 'profile'">
                 <div v-if="isLoggedIn" class="loggedIn">
-                    <h2>Welcome, {{ user.username }}</h2>
+                    <!-- Welcome, Profile Picture, and Edit Button in One Line -->
+                    <div class="welcome-section">
+                        <h2 class="welcome-username">Welcome, {{ user.username }}</h2>
 
-                    <!-- Save Success Popup -->
-                    <div v-if="showSaveSuccessPopup" class="save-success-popup">
-                        <p>Your changes have been saved successfully!</p>
+                        <!-- Profile Picture (Only Shows If Uploaded) -->
+                        <div class="profile-picture-container">
+                            <img v-if="user.profilePicture" :src="user.profilePicture" alt="Profile Picture"
+                                class="profile-picture" />
+                        </div>
+
+                        <!-- Edit Profile Picture Button -->
+                        <button @click="toggleEdit('profilePicture')" class="edit-profile-btn">
+                            {{ isEditing.profilePicture ? 'Cancel' : 'Edit Picture' }}
+                        </button>
+
+                        <!-- Upload & Remove Buttons (Shown When Editing) -->
+                        <div v-if="isEditing.profilePicture" class="profile-picture-edit-options">
+                            <button @click="changeProfilePicture" class="upload-btn">Upload</button>
+                            <button @click="removeProfilePicture" class="remove-btn">Remove</button>
+                        </div>
                     </div>
+
+
 
 
                     <div class="profile-info">
@@ -320,15 +337,6 @@
                             <button @click="toggleEdit('gender')">{{ isEditing.gender ? 'Cancel' : 'Edit' }}</button>
                         </p>
 
-                        <!-- Profile Picture -->
-                        <p>
-                            <strong>Profile Picture:</strong>
-                            <input type="file" @change="handleFileChange" />
-                            <button @click="toggleEdit('profilePicture')">Upload Picture</button>
-                        <div v-if="user.profilePicture">
-                            <img :src="user.profilePicture" alt="Profile Picture" class="profile-picture" />
-                        </div>
-                        </p>
 
                         <!-- Save Changes Button -->
                         <button
@@ -336,7 +344,10 @@
                             @click="saveChanges" class="save-changes-button">Save Changes</button>
                     </div>
 
-
+                    <!-- Save Success Popup -->
+                    <div v-if="showSaveSuccessPopup" class="save-success-popup">
+                        <p>Your changes have been saved successfully!</p>
+                    </div>
 
                     <!-- Logout Button -->
                     <button @click="logout" class="logout-button">Logout</button>
@@ -503,7 +514,8 @@
                 <div class="content-wrapper">
                     <div class="text-section">
                         <p v-for="(para, index) in privacySections[currentPrivacySection]?.text.split('\n')"
-                            :key="index">{{ para }}</p>
+                            :key="index">{{
+                            para }}</p>
                     </div>
                     <p>Current Section: {{ currentPrivacySection + 1 }} / {{ privacySections.length }}</p>
                 </div>
@@ -525,7 +537,8 @@
                 <div class="content-wrapper">
                     <div class="text-section">
                         <p v-for="(para, index) in wellnessSections[currentWellnessSection]?.text.split('\n')"
-                            :key="index">{{ para }}</p>
+                            :key="index">{{
+                            para }}</p>
                     </div>
                     <p>Current Section: {{ currentWellnessSection + 1 }} / {{ wellnessSections.length }}</p>
                 </div>
@@ -594,7 +607,8 @@
                         <div class="toggle-container">
                             <label for="targetingCookies">Enable Targeting Cookies</label>
                             <div class="toggle" :class="{ active: targetingCookies }"
-                                @click="toggleCookie('targetingCookies')"></div>
+                                @click="toggleCookie('targetingCookies')">
+                            </div>
                         </div>
                     </div>
 
@@ -730,7 +744,8 @@
                     <li><strong>Health Helpline:</strong> 1-800-555-EMERGENCY <button class="sos-button">SOS</button>
                     </li>
                     <li><strong>PulseTech Emergency Support:</strong> 1-800-123-HEALTH <button
-                            class="sos-button">SOS</button></li>
+                            class="sos-button">SOS</button>
+                    </li>
                     <li><strong>Local Poison Control:</strong> 1-800-222-1222 <button class="sos-button">SOS</button>
                     </li>
                     <li><strong>Fire Department:</strong> 1-800-555-FIRE <button class="sos-button">SOS</button>
