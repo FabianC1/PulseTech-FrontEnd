@@ -39,6 +39,22 @@ const app = Vue.createApp({
         password: '',
         confirmPassword: '',
         medicalLicense: '' // Only used for doctor sign-up
+      },
+      user: {
+        fullName: 'John Doe',
+        username: 'john_doe123',
+        email: 'john.doe@example.com',
+        dateOfBirth: '1990-01-01',
+        ethnicity: 'Caucasian',
+        address: '123 Main St, Hometown, USA'
+      }, // Example user data
+      isEditing: {
+        fullName: false,
+        username: false,
+        email: false,
+        dateOfBirth: false,
+        ethnicity: false,
+        address: false
       }
     };
   },
@@ -461,6 +477,24 @@ const app = Vue.createApp({
       // Handle signup logic here
       console.log("Signup logic goes here");
       // Example: Save the user details or call an API to register them
+    },
+
+
+    toggleEdit(field) {
+      this.isEditing[field] = !this.isEditing[field];
+    },
+    saveChanges() {
+      // Call API or perform the logic to save changes here
+      alert("Changes saved successfully!");
+      // Reset edit mode after saving
+      this.isEditing = {
+        fullName: false,
+        username: false,
+        email: false,
+        dateOfBirth: false,
+        ethnicity: false,
+        address: false
+      };
     }
 
   },

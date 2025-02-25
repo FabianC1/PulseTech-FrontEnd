@@ -1189,8 +1189,6 @@ input {
     background: linear-gradient(45deg, #000000, #a200ffce);
 }
 
-
-
 a {
     color: #007BFF;
     font-weight: bold;
@@ -1199,7 +1197,6 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
 
 .login-page {
     text-align: center;
@@ -1516,6 +1513,20 @@ a:hover {
     flex-direction: column;
 }
 
+/* Scrollbar styling */
+.loggedIn::-webkit-scrollbar {
+    width: 8px;
+}
+
+.loggedIn::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+
+.loggedIn::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 /* Header Section (User's Welcome Message) */
 .loggedIn h2 {
     color: #24252a;
@@ -1581,3 +1592,39 @@ a:hover {
     font-size: 1.1em;
 }
 
+/* Editable Fields with Underline */
+.editable-input {
+    width: 50%; /* Adjust the width of the editable field */
+    margin: 10px auto;
+    padding: 5px;
+    font-size: 1em;
+    border: none;
+    outline: none;
+    text-align: center;
+    border-bottom: 2px solid #6200ff; /* Small underline */
+    transition: border-bottom 0.3s ease;
+}
+
+.editable-input:focus {
+    border-bottom: 2px solid #a200ff; /* Highlight the underline when focused */
+}
+
+/* Save Changes Button */
+.save-changes-button {
+    display: block;
+    width: 200px; /* Adjust width of the button */
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #4a2cceda;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1.1em;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.save-changes-button:hover {
+    background-color: #6200ff;
+}

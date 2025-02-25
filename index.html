@@ -230,25 +230,73 @@
             </div>
 
             <!-- Profile Section -->
-            <div v-if="currentView === 'profile'" >
+            <div v-if="currentView === 'profile'">
                 <div v-if="isLoggedIn" class="loggedIn">
                     <h2>Welcome, {{ user.username }}</h2>
 
                     <!-- Profile Information -->
                     <div class="profile-info">
-                        <p><strong>Full Name:</strong> {{ user.fullName }} <button
-                                @click="editUserDetail('fullName')">Edit</button></p>
-                        <p><strong>Username:</strong> {{ user.username }} <button
-                                @click="editUserDetail('username')">Edit</button></p>
-                        <p><strong>Email:</strong> {{ user.email }} <button
-                                @click="editUserDetail('email')">Edit</button></p>
-                        <p><strong>Date of Birth:</strong> {{ user.dateOfBirth }} <button
-                                @click="editUserDetail('dateOfBirth')">Edit</button></p>
-                        <p><strong>Ethnicity:</strong> {{ user.ethnicity }} <button
-                                @click="editUserDetail('ethnicity')">Edit</button></p>
-                        <p><strong>Address:</strong> {{ user.address }} <button
-                                @click="editUserDetail('address')">Edit</button></p>
+                        <!-- Full Name -->
+                        <p>
+                            <strong>Full Name:</strong>
+                            <span v-if="!isEditing.fullName">{{ user.fullName }}</span>
+                            <input v-else v-model="user.fullName" class="editable-input"
+                                placeholder="Enter full name" />
+                            <button @click="toggleEdit('fullName')">{{ isEditing.fullName ? 'Cancel' : 'Edit'
+                                }}</button>
+                        </p>
+
+                        <!-- Username -->
+                        <p>
+                            <strong>Username:</strong>
+                            <span v-if="!isEditing.username">{{ user.username }}</span>
+                            <input v-else v-model="user.username" class="editable-input" placeholder="Enter username" />
+                            <button @click="toggleEdit('username')">{{ isEditing.username ? 'Cancel' : 'Edit'
+                                }}</button>
+                        </p>
+
+                        <!-- Email -->
+                        <p>
+                            <strong>Email:</strong>
+                            <span v-if="!isEditing.email">{{ user.email }}</span>
+                            <input v-else v-model="user.email" class="editable-input" placeholder="Enter email" />
+                            <button @click="toggleEdit('email')">{{ isEditing.email ? 'Cancel' : 'Edit' }}</button>
+                        </p>
+
+                        <!-- Date of Birth -->
+                        <p>
+                            <strong>Date of Birth:</strong>
+                            <span v-if="!isEditing.dateOfBirth">{{ user.dateOfBirth }}</span>
+                            <input v-else v-model="user.dateOfBirth" class="editable-input"
+                                placeholder="Enter date of birth" />
+                            <button @click="toggleEdit('dateOfBirth')">{{ isEditing.dateOfBirth ? 'Cancel' : 'Edit'
+                                }}</button>
+                        </p>
+
+                        <!-- Ethnicity -->
+                        <p>
+                            <strong>Ethnicity:</strong>
+                            <span v-if="!isEditing.ethnicity">{{ user.ethnicity }}</span>
+                            <input v-else v-model="user.ethnicity" class="editable-input"
+                                placeholder="Enter ethnicity" />
+                            <button @click="toggleEdit('ethnicity')">{{ isEditing.ethnicity ? 'Cancel' : 'Edit'
+                                }}</button>
+                        </p>
+
+                        <!-- Address -->
+                        <p>
+                            <strong>Address:</strong>
+                            <span v-if="!isEditing.address">{{ user.address }}</span>
+                            <input v-else v-model="user.address" class="editable-input" placeholder="Enter address" />
+                            <button @click="toggleEdit('address')">{{ isEditing.address ? 'Cancel' : 'Edit' }}</button>
+                        </p>
+
+                        <!-- Save Changes Button -->
+                        <button
+                            v-if="isEditing.fullName || isEditing.username || isEditing.email || isEditing.dateOfBirth || isEditing.ethnicity || isEditing.address"
+                            @click="saveChanges" class="save-changes-button">Save Changes</button>
                     </div>
+
 
                     <!-- Logout Button -->
                     <button @click="logout" class="logout-button">Logout</button>
