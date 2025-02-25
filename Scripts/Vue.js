@@ -500,18 +500,19 @@ const app = Vue.createApp({
       this.isEditing[field] = !this.isEditing[field];
     },
 
-    // Handle file input change (for profile picture)
     handleFileChange(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.user.profilePicture = e.target.result; // Convert to base64
-          this.isEditing.profilePicture = false; // Close edit mode
+          // Set the uploaded file as the profile picture (base64)
+          this.user.profilePicture = e.target.result;
+          this.isEditing.profilePicture = false; // Close the edit mode for profile picture
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // Convert the file to base64 URL
       }
     },
+    
 
 
     saveChanges() {
@@ -526,7 +527,7 @@ const app = Vue.createApp({
         gender: this.user.gender,
         profilePicture: this.user.profilePicture
       };
-
+    
       fetch("http://localhost:3000/updateProfile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -537,24 +538,35 @@ const app = Vue.createApp({
           if (data.message === "User profile updated successfully") {
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "Profile updated successfully!";
-
+    
             this.user = { ...this.user, ...updatedData }; // Instantly update UI
             localStorage.setItem("user", JSON.stringify(this.user));
-
-            Object.keys(this.isEditing).forEach((key) => {
-              this.isEditing[key] = false;
-            });
-
-            setTimeout(() => {
-              this.showSaveSuccessPopup = false;
-            }, 3000);
+          } else {
+            // Even if no changes were made, still show message
+            this.showSaveSuccessPopup = true;
+            this.saveSuccessMessage = "No changes were made.";
           }
+    
+          // 🔥 Ensure all edit fields are closed
+          Object.keys(this.isEditing).forEach((key) => {
+            this.isEditing[key] = false;
+          });
+    
+          setTimeout(() => {
+            this.showSaveSuccessPopup = false;
+          }, 3000);
         })
         .catch((error) => {
           console.error("Error updating user:", error);
           alert("An error occurred while saving your changes.");
+    
+          // 🔥 Close all edit fields even if there's an error
+          Object.keys(this.isEditing).forEach((key) => {
+            this.isEditing[key] = false;
+          });
         });
     }
+    
   },
 
 
