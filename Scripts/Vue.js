@@ -470,9 +470,21 @@ const app = Vue.createApp({
     logout() {
       localStorage.removeItem("user"); // Clear user session
       this.isLoggedIn = false;
-      this.user = null;
-      this.currentView = "login"; // Redirect instantly to login page
-      window.history.pushState({ view: 'login' }, '', '/login'); // Update URL to login page
+
+      // Instead of null, reset user to an empty object to avoid errors
+      this.user = {
+        fullName: "",
+        username: "",
+        email: "",
+        dateOfBirth: "",
+        ethnicity: "",
+        address: "",
+        phoneNumber: "",
+        gender: "",
+        profilePicture: "" // Ensure profilePicture exists to prevent errors
+      };
+
+      this.currentView = "login"; // Redirect instantly
     },
     redirectToLogin() {
       this.currentView = "login"; // Switch to login view
@@ -543,7 +555,7 @@ const app = Vue.createApp({
             this.saveSuccessMessage = "No changes were made.";
           }
 
-          // 🔥 Ensure all edit fields are closed
+          
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
