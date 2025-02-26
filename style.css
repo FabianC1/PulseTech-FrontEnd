@@ -41,6 +41,7 @@ header h1 {
     height: 70px;
     margin-right: 20px;
     cursor: pointer;
+    border-radius: 15px;
 }
 
 /* Navigation Bar */
