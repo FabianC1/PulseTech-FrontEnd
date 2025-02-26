@@ -340,11 +340,13 @@
                         </p>
 
 
-                        <!-- Save Changes Button -->
-                        <button
-                            v-if="isEditing.fullName || isEditing.username || isEditing.email || isEditing.dateOfBirth || isEditing.ethnicity || isEditing.address || isEditing.phoneNumber || isEditing.gender || isEditing.profilePicture"
-                            @click="saveChanges" class="save-changes-button">Save Changes</button>
+                        <!-- Save Changes Button Wrapper -->
+                        <div class="save-changes-button-wrapper"
+                            v-if="isEditing.fullName || isEditing.username || isEditing.email || isEditing.dateOfBirth || isEditing.ethnicity || isEditing.address || isEditing.phoneNumber || isEditing.gender || isEditing.profilePicture">
+                            <button @click="saveChanges" class="save-changes-button">Save Changes</button>
+                        </div>
                     </div>
+
 
                     <!-- Save Success Popup -->
                     <div v-if="showSaveSuccessPopup" class="save-success-popup">
@@ -394,7 +396,8 @@
                     <p><a href="/forgot-password" class="forgot-password-link">Forgot Password?</a></p>
 
                     <!-- Sign Up Link -->
-                    <p>Don't have an account? <a @click="navigateTo('signup')" class="signup-link">Sign up here</a></p>
+                    <p>Don't have an account? <a @click="navigateTo('signup')" class="signup-link">Sign up here</a>
+                    </p>
                 </form>
             </div>
 
@@ -443,7 +446,8 @@
                             <button type="submit" class="signup-button">Sign Up</button>
                         </div>
 
-                        <p>Already have an account? <a @click="navigateTo('login')" class="signup-link">Login here</a>
+                        <p>Already have an account? <a @click="navigateTo('login')" class="signup-link">Login
+                                here</a>
                         </p>
                     </form>
                 </div>
@@ -479,7 +483,8 @@
                             </div>
                         </div>
                         <button class="signup-button" type="submit">Sign Up</button>
-                        <p>Already have an account? <a @click="navigateTo('login')" class="signup-link">Login here</a>
+                        <p>Already have an account? <a @click="navigateTo('login')" class="signup-link">Login
+                                here</a>
                         </p>
                     </form>
                 </div>

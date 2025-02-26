@@ -1536,6 +1536,7 @@ a:hover {
 
 /* Profile Information */
 .loggedIn .profile-info {
+    margin-left: 10%;
     margin-bottom: 20px;
     font-size: 1.1em;
     line-height: 1.6;
@@ -1550,6 +1551,7 @@ a:hover {
 
 /* Edit Button Style for User Information */
 .loggedIn .profile-info button {
+    margin-right: 10%;
     background-color: #4a2cceda;
     color: white;
     padding: 5px 10px;
@@ -1617,9 +1619,8 @@ a:hover {
 
 /* Save Changes Button */
 .save-changes-button {
-    display: block;
+    display: inline-block; /* Ensures it behaves properly inside text-align center */
     width: 200px; /* Adjust width of the button */
-    margin: 20px auto;
     padding: 10px 20px;
     background-color: #4a2cceda;
     color: white;
@@ -1630,6 +1631,12 @@ a:hover {
     border: none;
     transition: background-color 0.3s ease;
 }
+
+/* Center the button horizontally in its parent container */
+.save-changes-button-wrapper {
+    text-align: center; /* This will center the button horizontally */
+}
+
 
 .save-changes-button:hover {
     background-color: #6200ff;
