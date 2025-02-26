@@ -515,7 +515,7 @@ const app = Vue.createApp({
           })
             .then(response => response.json())
             .then(data => {
-              this.user.profilePicture = data.profilePicture || null; // Update with latest from DB
+              this.user.profilePicture = data.profilePicture || null; // Update from DB
               localStorage.setItem("user", JSON.stringify(this.user)); // Sync local storage
             })
             .catch(error => {
@@ -525,8 +525,18 @@ const app = Vue.createApp({
           // Store the current profile picture before editing
           this.originalProfilePicture = this.user.profilePicture;
         }
-    
         this.isEditing.profilePicture = !this.isEditing.profilePicture;
+      } else {
+        // Handle other fields normally
+        this.isEditing[field] = !this.isEditing[field];
+    
+        if (!this.isEditing[field]) {
+          // If user cancels, restore original value from localStorage
+          const storedUser = JSON.parse(localStorage.getItem("user"));
+          if (storedUser && storedUser[field] !== undefined) {
+            this.user[field] = storedUser[field];
+          }
+        }
       }
     },
     
