@@ -505,17 +505,31 @@ const app = Vue.createApp({
 
 
     toggleEdit(field) {
-      if (field === 'profilePicture') {
+      if (field === "profilePicture") {
         if (this.isEditing.profilePicture) {
-          // Cancel the edit - revert to the original profile picture
-          this.user.profilePicture = this.originalProfilePicture;
+          // Cancel editing - Fetch the latest profile picture from the database
+          fetch("http://localhost:3000/getUserProfile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: this.user.email }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              this.user.profilePicture = data.profilePicture || null; // Update with latest from DB
+              localStorage.setItem("user", JSON.stringify(this.user)); // Sync local storage
+            })
+            .catch(error => {
+              console.error("Error fetching user profile:", error);
+            });
         } else {
-          // Save the current profile picture before editing
+          // Store the current profile picture before editing
           this.originalProfilePicture = this.user.profilePicture;
         }
+    
         this.isEditing.profilePicture = !this.isEditing.profilePicture;
       }
     },
+    
 
     changeProfilePicture() {
       // Trigger file input click to open file explorer
@@ -539,12 +553,14 @@ const app = Vue.createApp({
       fetch("http://localhost:3000/removeProfilePicture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: this.user.email }), // Send user email to identify them
+        body: JSON.stringify({ email: this.user.email }),
       })
         .then((response) => response.json())
         .then((data) => {
           if (data.message === "Profile picture removed successfully") {
-            this.user.profilePicture = null; // Remove profile picture from UI
+            this.user.profilePicture = null; // Remove from UI
+            this.originalProfilePicture = null; // Prevent cancel from restoring
+            localStorage.setItem("user", JSON.stringify(this.user)); // Update local storage
             console.log("Profile picture removed successfully.");
           } else {
             alert("There was an error removing your profile picture.");
@@ -552,6 +568,8 @@ const app = Vue.createApp({
         })
         .catch((error) => console.error("Error removing profile picture:", error));
     },
+    
+    
     
     
     
