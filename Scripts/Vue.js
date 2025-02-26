@@ -506,9 +506,14 @@ const app = Vue.createApp({
 
     toggleEdit(field) {
       if (field === 'profilePicture') {
+        if (this.isEditing.profilePicture) {
+          // Cancel the edit - revert to the original profile picture
+          this.user.profilePicture = this.originalProfilePicture;
+        } else {
+          // Save the current profile picture before editing
+          this.originalProfilePicture = this.user.profilePicture;
+        }
         this.isEditing.profilePicture = !this.isEditing.profilePicture;
-      } else {
-        this.isEditing[field] = !this.isEditing[field];
       }
     },
 
@@ -527,13 +532,29 @@ const app = Vue.createApp({
         };
         reader.readAsDataURL(file);
       }
-      this.isEditing.profilePicture = false; // Close edit mode after picture is selected
+      this.isEditing.profilePicture = true; // Allow save after selecting a file
     },
 
     removeProfilePicture() {
-      this.user.profilePicture = null; // Remove the current profile picture
-      this.isEditing.profilePicture = false; // Close edit mode
+      fetch("http://localhost:3000/removeProfilePicture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: this.user.email }), // Send user email to identify them
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message === "Profile picture removed successfully") {
+            this.user.profilePicture = null; // Remove profile picture from UI
+            console.log("Profile picture removed successfully.");
+          } else {
+            alert("There was an error removing your profile picture.");
+          }
+        })
+        .catch((error) => console.error("Error removing profile picture:", error));
     },
+    
+    
+    
 
     saveChanges() {
       const updatedData = {
@@ -580,7 +601,6 @@ const app = Vue.createApp({
           console.error("Error updating user:", error);
           alert("An error occurred while saving your changes.");
 
-          // 🔥 Close all edit fields even if there's an error
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
