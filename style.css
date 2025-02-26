@@ -144,7 +144,7 @@ nav {
 
 /* When search bar is active, make input visible */
 .search-bar-container.active .search-input {
-    width: 280px;
+    width: 200px;
 }
 
 /* Navigation Items (Sections) */
