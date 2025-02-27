@@ -17,10 +17,14 @@
         <header>
             <img src="/image/Icon-Only-Color (2).png" alt="BioSync Logo" class="logo"> <!-- Logo (Left) -->
             <h1>{{ 'PulseTech - ' + formattedTitle }}</h1>
-            <img :src="user.profilePicture ? user.profilePicture : '/image/ProfileIcon.png'" alt="Profile"
-                class="profile-icon"> <!-- Dynamic Profile Picture -->
+            
+            <!-- Make the profile image clickable -->
+            <img :src="user.profilePicture ? user.profilePicture : '/image/ProfileIcon.png'" 
+                alt="Profile" 
+                class="profile-icon" 
+                @click="goToProfile">
         </header>
-
+        
 
 
         <!-- Navigation Bar -->

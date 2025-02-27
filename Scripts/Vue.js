@@ -529,7 +529,7 @@ const app = Vue.createApp({
       } else {
         // Handle other fields normally
         this.isEditing[field] = !this.isEditing[field];
-    
+
         if (!this.isEditing[field]) {
           // If user cancels, restore original value from localStorage
           const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -539,13 +539,13 @@ const app = Vue.createApp({
         }
       }
     },
-    
+
 
     changeProfilePicture() {
       // Trigger file input click to open file explorer
       this.$refs.fileInput.click();
     },
-  
+
 
     handleFileChange(event) {
       const file = event.target.files[0];
@@ -578,11 +578,11 @@ const app = Vue.createApp({
         })
         .catch((error) => console.error("Error removing profile picture:", error));
     },
-    
-    
-    
-    
-    
+
+
+
+
+
 
     saveChanges() {
       const updatedData = {
@@ -616,7 +616,7 @@ const app = Vue.createApp({
             this.saveSuccessMessage = "No changes were made.";
           }
 
-          
+
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
@@ -657,6 +657,11 @@ const app = Vue.createApp({
         }
       }
     },
+    // Method to navigate to the profile view
+    goToProfile() {
+      this.currentView = 'profile';  // Set the current view to 'profile'
+      window.history.pushState({ view: 'profile' }, '', '/profile');  // Update URL
+    }
 
   },
 
