@@ -17,14 +17,12 @@
         <header>
             <img src="/image/Icon-Only-Color (2).png" alt="BioSync Logo" class="logo"> <!-- Logo (Left) -->
             <h1>{{ 'PulseTech - ' + formattedTitle }}</h1>
-            
+
             <!-- Make the profile image clickable -->
-            <img :src="user.profilePicture ? user.profilePicture : '/image/ProfileIcon.png'" 
-                alt="Profile" 
-                class="profile-icon" 
-                @click="goToProfile">
+            <img :src="user.profilePicture ? user.profilePicture : '/image/ProfileIcon.png'" alt="Profile"
+                class="profile-icon" @click="goToProfile">
         </header>
-        
+
 
 
         <!-- Navigation Bar -->
@@ -282,7 +280,8 @@
                         <p>
                             <strong>Username:</strong>
                             <span v-if="!isEditing.username">{{ user.username }}</span>
-                            <input v-else v-model="user.username" class="editable-input" placeholder="Enter username" />
+                            <input v-else v-model="user.username" type="text" class="editable-input"
+                                placeholder="Enter username" />
                             <button @click="toggleEdit('username')">{{ isEditing.username ? 'Cancel' : 'Edit'
                                 }}</button>
                         </p>
@@ -294,6 +293,16 @@
                             <input v-else v-model="user.email" type="email" class="editable-input"
                                 placeholder="Enter email" />
                             <button @click="toggleEdit('email')">{{ isEditing.email ? 'Cancel' : 'Edit' }}</button>
+                        </p>
+
+                        <!-- Password -->
+                        <p>
+                            <strong>Password:</strong>
+                            <span v-if="!isEditing.password">{{ '********' }}</span>
+                            <input v-else v-model="user.password" type="password" class="editable-input"
+                                placeholder="Enter new password" required />
+                            <button @click="toggleEdit('password')">{{ isEditing.password ? 'Cancel' : 'Edit'
+                                }}</button>
                         </p>
 
                         <!-- Date of Birth -->
@@ -348,7 +357,7 @@
 
                         <!-- Save Changes Button Wrapper -->
                         <div class="save-changes-button-wrapper"
-                            v-if="isEditing.fullName || isEditing.username || isEditing.email || isEditing.dateOfBirth || isEditing.ethnicity || isEditing.address || isEditing.phoneNumber || isEditing.gender || isEditing.profilePicture">
+                            v-if="isEditing.fullName || isEditing.username || isEditing.email || isEditing.password || isEditing.dateOfBirth || isEditing.ethnicity || isEditing.address || isEditing.phoneNumber || isEditing.gender">
                             <button @click="saveChanges" class="save-changes-button">Save Changes</button>
                         </div>
                     </div>
@@ -811,7 +820,7 @@
             </div>
         </div>
 
-        
+
 
         <!-- Vue Script -->
         <script src="scripts/Vue.js"></script>

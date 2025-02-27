@@ -4,7 +4,14 @@ const app = Vue.createApp({
       profilePicture: "", // Stores base64 profile picture
       currentView: "home", // Default view
       isLoggedIn: false, // User login status
-      user: null, // Stores user data when logged in
+      user: {
+        fullName: 'John Doe',
+        username: 'john_doe123',
+        email: 'john.doe@example.com',
+        dateOfBirth: '1990-01-01',
+        ethnicity: 'Caucasian',
+        address: '123 Main St, Hometown, USA'
+      }, // Initialized here in data()
       loginData: { username: "", password: "" }, // Stores login credentials
       menuActive: false,
       searchActive: false,
@@ -32,7 +39,6 @@ const app = Vue.createApp({
       sections: [], // Sections for the legal docs (Terms and Conditions)
       privacySections: [], // Sections for Privacy and Security
       wellnessSections: [], // Sections for Health & Wellness Guidelines
-      currentWellnessSection: 0, // Separate section tracker for Health & Wellness view
       selectedRole: 'patient',  // Default to patient
       signupData: {
         username: '',
@@ -41,18 +47,11 @@ const app = Vue.createApp({
         confirmPassword: '',
         medicalLicense: '' // Only used for doctor sign-up
       },
-      user: {
-        fullName: 'John Doe',
-        username: 'john_doe123',
-        email: 'john.doe@example.com',
-        dateOfBirth: '1990-01-01',
-        ethnicity: 'Caucasian',
-        address: '123 Main St, Hometown, USA'
-      }, // Example user data
       isEditing: {
         fullName: false,
         username: false,
         email: false,
+        password: false,
         dateOfBirth: false,
         ethnicity: false,
         address: false
@@ -60,6 +59,7 @@ const app = Vue.createApp({
       showSaveSuccessPopup: false,  // Controls visibility of the saved changes popup
     };
   },
+  
 
   computed: {
     formattedTitle() {
@@ -68,6 +68,7 @@ const app = Vue.createApp({
         .replace(/^./, str => str.toUpperCase()); // Capitalize the first letter
     }
   },
+
 
 
   created() {
@@ -594,9 +595,12 @@ const app = Vue.createApp({
         address: this.user.address,
         phoneNumber: this.user.phoneNumber,
         gender: this.user.gender,
-        profilePicture: this.user.profilePicture
+        profilePicture: this.user.profilePicture,
+        password: this.user.password
       };
-
+    
+      console.log('Sending data to backend:', updatedData); // Add this to check the data being sent
+    
       fetch("http://localhost:3000/updateProfile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -604,23 +608,22 @@ const app = Vue.createApp({
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log('Response from server:', data); // Add this to see the response
           if (data.message === "User profile updated successfully") {
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "Profile updated successfully!";
-
+    
             this.user = { ...this.user, ...updatedData }; // Instantly update UI
             localStorage.setItem("user", JSON.stringify(this.user));
           } else {
-            // Even if no changes were made, still show message
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "No changes were made.";
           }
-
-
+    
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
-
+    
           setTimeout(() => {
             this.showSaveSuccessPopup = false;
           }, 3000);
@@ -628,12 +631,13 @@ const app = Vue.createApp({
         .catch((error) => {
           console.error("Error updating user:", error);
           alert("An error occurred while saving your changes.");
-
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
         });
     },
+    
+    
     // Handle route changes and check login status
     handleRouteChange() {
       const path = window.location.pathname.substring(1); // Get the path from the URL
