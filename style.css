@@ -1,7 +1,7 @@
 /* Global variables for light and dark themes */
 :root {
     --primary-bg-light: linear-gradient(to left, #758FFF, #ffffff); /* Light mode gradient */
-    --primary-bg-dark: linear-gradient(to right, #000000, #758FFF); /* Solid dark background */
+    --primary-bg-dark: linear-gradient(to right, #1f1f1f, #013a85bd); /* Solid dark background */
 
     --primary-text-light: #000000; /* Light mode text */
     --primary-text-dark: #ffffff; /* Dark mode text */
