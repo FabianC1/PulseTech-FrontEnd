@@ -234,7 +234,7 @@ nav {
 
 /* When search bar is active, make input visible */
 .search-bar-container.active .search-input {
-    width: 200px;
+    width: 220px;
 }
 
 /* Navigation Items (Sections) */
@@ -436,7 +436,7 @@ footer {
 /* Remove separator from the last item */
 .menu-list li:last-child::after {
     border-bottom: none;
-    /* Remove separator for the "Close Menu" item */
+    
 }
 
 
@@ -445,18 +445,6 @@ footer {
     color: #0084ff;
     transform: scale(1);
     /* Slightly enlarge the item on hover for better interactivity */
-}
-
-/* Close Button Style */
-.menu-list li:last-child {
-    border-bottom: none;
-    /* No separator under the last item */
-    font-weight: bold;
-    color: #e74c3c;
-    margin-top: 10px;
-    /* Add space between the close button and other items */
-    text-transform: uppercase;
-    /* Make the "Close Menu" text uppercase for emphasis */
 }
 
 
