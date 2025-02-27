@@ -726,7 +726,7 @@ button {
 }
 
 .actions button:hover {
-    background-color: #4a2cceda;
+    background-color: #3e008f;
 }
 
 
@@ -736,7 +736,7 @@ button {
     bottom: -15px;
     /* Adjust this value to move the link lower */
     font-size: 1rem;
-    color: #4900cf;
+    color: #00aeff;
     text-decoration: none;
     margin-left: -2%;
 }
@@ -1038,7 +1038,7 @@ button {
 
 /* Links Styling */
 .help-container a {
-    color: #4a2cceda; /* Match link color */
+    color: #00aeff; /* Match link color */
     text-decoration: none;
 }
 
@@ -1133,7 +1133,7 @@ button {
 
 /* Links Styling */
 .emergency-container a {
-    color: #4a2cce;
+    color: #00aeff;
     text-decoration: none;
 }
 
@@ -1394,7 +1394,7 @@ a:hover {
 
 /* Sign Up Link */
 .signup-link {
-    color: #4a2cceda;
+    color: #00aeff;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
@@ -1402,7 +1402,7 @@ a:hover {
 }
 
 .signup-link:hover {
-    color: #3c1ebc;
+    color: #0088c7;
 }
 
 
@@ -1514,13 +1514,13 @@ a:hover {
 
 /* Links */
 .signup-link {
-    color: #4a2cceda;
+    color: #00aeff;
     font-weight: bold;
     cursor: pointer;
 }
 
 .signup-link:hover {
-    color: #3c1ebc;
+    color: #009be2;
 }
 
 .doctor-form .form-inputs {
