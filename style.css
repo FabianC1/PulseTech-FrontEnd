@@ -32,6 +32,7 @@
 
 /* The theme toggle button container */
 .ThemeButtonContainer {
+    background:linear-gradient(to left, rgba(255, 255, 255, 0.459), rgba(0, 0, 0, 0.384));
     display: flex;
     align-items: center;
     position: absolute;
