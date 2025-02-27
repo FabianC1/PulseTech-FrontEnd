@@ -1,15 +1,56 @@
-/* General Styles */
-body {
+/* Global variables for light and dark themes */
+:root {
+    --primary-bg-light: linear-gradient(to left, #758FFF, #ffffff); /* Light mode gradient */
+    --primary-bg-dark: linear-gradient(to right, #000000, #758FFF); /* Solid dark background */
+
+    --primary-text-light: #000000; /* Light mode text */
+    --primary-text-dark: #ffffff; /* Dark mode text */
+  }
+  
+  /* Dark mode theme */
+  [data-theme="dark"] {
+    --primary-bg: var(--primary-bg-dark) !important; /* Use solid dark background */
+    --primary-text: var(--primary-text-dark); /* Use dark mode text */
+  }
+  
+  /* Light mode theme */
+  [data-theme="light"] {
+    --primary-bg: var(--primary-bg-light); /* Use light gradient background */
+    --primary-text: var(--primary-text-light); /* Use light mode text */
+  }
+  
+  /* Apply background and text color globally */
+  body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(to left, #758FFF, #ffffff);
-    color: white;
+    background: var(--primary-bg); /* Use background defined by the theme */
+    color: var(--primary-text); /* Use text color defined by the theme */
     text-align: center;
-    transition: filter 0.3s ease;
-    /* Smooth transition for blur */
-}
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+  }
 
+/* Add this to your existing CSS */
+.ThemeButton {
+    position: fixed; /* Fix it to the viewport */
+    top: 25%; /* Distance from the top */
+    right: 10%; /* Distance from the left */
+    background-color: #272727;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 15px;
+    z-index: 1000; /* Make sure it's on top of other content */
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Optional: Add hover effect for better UX */
+  .ThemeButton:hover {
+    background-color: #000000b6;
+  }
+  
 /* Header */
 header {
     background: linear-gradient(to right, #8740c1, #0c62a2);
@@ -941,7 +982,6 @@ button {
 /* Header Styling for Help Section */
 .help-container h2 {
     text-align: center;
-    color: black;  /* Black title for h2 */
     font-size: 1.6em;
     margin-top: 0;
     text-decoration: underline;
@@ -950,7 +990,6 @@ button {
 
 /* Section Titles inside Help Section */
 .help-container h3 {
-    color: black;  /* Black titles for h3 */
     font-size: 1.2em;
     margin-top: 20px;
     text-decoration: underline;
@@ -1744,3 +1783,19 @@ a:hover {
 .remove-btn:hover {
     background-color: #da190b;
 }
+
+:root {
+    --primary-bg: #ffffff; /* Light mode background */
+    --primary-text: #000000; /* Light mode text */
+  }
+  
+  [data-theme="dark"] {
+    --primary-bg: #121212; /* Dark mode background */
+    --primary-text: #ffffff; /* Dark mode text */
+  }
+  
+  body {
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+  }
+  

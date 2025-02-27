@@ -59,7 +59,7 @@ const app = Vue.createApp({
       showSaveSuccessPopup: false,  // Controls visibility of the saved changes popup
     };
   },
-  
+
 
   computed: {
     formattedTitle() {
@@ -158,9 +158,30 @@ const app = Vue.createApp({
 
     // Initial routing based on URL and login status
     this.handleRouteChange();
+
+    // Check if a theme is saved in localStorage
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme) {
+      document.body.setAttribute("data-theme", savedTheme); // Apply saved theme
+    } else {
+      // If no saved theme, use system preference
+      const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.body.setAttribute("data-theme", prefersDarkMode ? "dark" : "light");
+    }
   },
 
   methods: {
+    toggleTheme() {
+      const currentTheme = document.body.getAttribute("data-theme");
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      document.body.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme); // Save user choice
+    },
+    
+    
+
+
     // Toggle between Patient and Doctor forms
     toggleRole(role) {
       this.selectedRole = role;
@@ -253,12 +274,12 @@ const app = Vue.createApp({
             // ✅ Remove password from user object before saving
             const userData = { ...data.user };
             delete userData.password;
-    
+
             localStorage.setItem("user", JSON.stringify(userData)); // Store user data
             this.isLoggedIn = true;
             this.user = userData;
             this.user.password = ""; // ✅ Ensure password field is empty after login
-    
+
             this.navigateTo("profile"); // Redirect to profile after successful login
           } else {
             alert("Invalid email or password.");
@@ -266,7 +287,7 @@ const app = Vue.createApp({
         })
         .catch((error) => console.error("Login error:", error));
     },
-    
+
 
     // Edit user details function
     editUserDetail(field) {
@@ -605,14 +626,14 @@ const app = Vue.createApp({
         gender: this.user.gender,
         profilePicture: this.user.profilePicture,
       };
-    
+
       // ✅ Only include the password if the user changed it
       if (this.user.password && this.user.password.trim() !== "") {
         updatedData.password = this.user.password;
       }
-    
+
       console.log("Sending data to backend:", updatedData); // Debugging
-    
+
       fetch("http://localhost:3000/updateProfile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -624,7 +645,7 @@ const app = Vue.createApp({
           if (data.message === "User profile updated successfully") {
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "Profile updated successfully!";
-    
+
             this.user = { ...this.user, ...updatedData }; // Instantly update UI
             this.user.password = ""; // ✅ Reset password field after update
             localStorage.setItem("user", JSON.stringify(this.user));
@@ -632,11 +653,11 @@ const app = Vue.createApp({
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "No changes were made.";
           }
-    
+
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
-    
+
           setTimeout(() => {
             this.showSaveSuccessPopup = false;
           }, 3000);
@@ -649,9 +670,9 @@ const app = Vue.createApp({
           });
         });
     },
-    
-    
-    
+
+
+
     // Handle route changes and check login status
     handleRouteChange() {
       const path = window.location.pathname.substring(1); // Get the path from the URL
