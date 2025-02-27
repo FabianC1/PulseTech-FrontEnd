@@ -298,12 +298,13 @@
                         <!-- Password -->
                         <p>
                             <strong>Password:</strong>
-                            <span v-if="!isEditing.password">{{ '********' }}</span>
+                            <span v-if="!isEditing.password">{{ '••••••••' }}</span>
                             <input v-else v-model="user.password" type="password" class="editable-input"
-                                placeholder="Enter new password" required />
+                                placeholder="Enter new password" />
                             <button @click="toggleEdit('password')">{{ isEditing.password ? 'Cancel' : 'Edit'
                                 }}</button>
                         </p>
+
 
                         <!-- Date of Birth -->
                         <p>

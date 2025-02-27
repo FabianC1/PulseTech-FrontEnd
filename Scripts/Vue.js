@@ -147,6 +147,7 @@ const app = Vue.createApp({
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       this.user = JSON.parse(storedUser);
+      this.user.password = ""; // ✅ Ensure the password field is empty on load
       this.isLoggedIn = true;
     } else {
       this.isLoggedIn = false;
@@ -249,9 +250,15 @@ const app = Vue.createApp({
         .then((res) => res.json())
         .then((data) => {
           if (data.message === "Login successful") {
-            localStorage.setItem("user", JSON.stringify(data.user)); // Store user data
+            // ✅ Remove password from user object before saving
+            const userData = { ...data.user };
+            delete userData.password;
+    
+            localStorage.setItem("user", JSON.stringify(userData)); // Store user data
             this.isLoggedIn = true;
-            this.user = data.user;
+            this.user = userData;
+            this.user.password = ""; // ✅ Ensure password field is empty after login
+    
             this.navigateTo("profile"); // Redirect to profile after successful login
           } else {
             alert("Invalid email or password.");
@@ -259,6 +266,7 @@ const app = Vue.createApp({
         })
         .catch((error) => console.error("Login error:", error));
     },
+    
 
     // Edit user details function
     editUserDetail(field) {
@@ -586,7 +594,7 @@ const app = Vue.createApp({
 
 
     saveChanges() {
-      const updatedData = {
+      let updatedData = {
         email: this.user.email,
         fullName: this.user.fullName,
         username: this.user.username,
@@ -596,10 +604,14 @@ const app = Vue.createApp({
         phoneNumber: this.user.phoneNumber,
         gender: this.user.gender,
         profilePicture: this.user.profilePicture,
-        password: this.user.password
       };
     
-      console.log('Sending data to backend:', updatedData); // Add this to check the data being sent
+      // ✅ Only include the password if the user changed it
+      if (this.user.password && this.user.password.trim() !== "") {
+        updatedData.password = this.user.password;
+      }
+    
+      console.log("Sending data to backend:", updatedData); // Debugging
     
       fetch("http://localhost:3000/updateProfile", {
         method: "POST",
@@ -608,12 +620,13 @@ const app = Vue.createApp({
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log('Response from server:', data); // Add this to see the response
+          console.log("Response from server:", data);
           if (data.message === "User profile updated successfully") {
             this.showSaveSuccessPopup = true;
             this.saveSuccessMessage = "Profile updated successfully!";
     
             this.user = { ...this.user, ...updatedData }; // Instantly update UI
+            this.user.password = ""; // ✅ Reset password field after update
             localStorage.setItem("user", JSON.stringify(this.user));
           } else {
             this.showSaveSuccessPopup = true;
@@ -636,6 +649,7 @@ const app = Vue.createApp({
           });
         });
     },
+    
     
     
     // Handle route changes and check login status
