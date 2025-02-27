@@ -97,7 +97,7 @@
             <div v-if="currentView === 'home'" class="home-container">
                 <!-- Scrollable Section with Transparency and Rounded Borders -->
                 <p>
-                    <strong style="color: black;">What is PulseTech?</strong><br>
+                    <strong>What is PulseTech?</strong><br>
                     PulseTech is a revolutionary digital health companion designed to empower you to take control of
                     your health and well-being. Whether you are looking to track your health metrics, book medical
                     appointments, or seek instant health advice, PulseTech is your one-stop solution. Our platform
@@ -107,7 +107,7 @@
                 </p>
 
                 <p>
-                    <strong style="color: black;">How Does PulseTech Work?</strong><br>
+                    <strong>How Does PulseTech Work?</strong><br>
                     PulseTech uses the latest advancements in health technology to collect, analyze, and present
                     your health data in a way that is easy to understand. By connecting your health data from
                     various sources, such as wearable devices, medical records, and symptom inputs, PulseTech
@@ -117,7 +117,7 @@
                 </p>
 
                 <p>
-                    <strong style="color: black;">Core Features of PulseTech:</strong><br>
+                    <strong>Core Features of PulseTech:</strong><br>
                     PulseTech offers a comprehensive set of features that aim to make your health journey smoother
                     and more informed:
                 <ul>
@@ -145,7 +145,7 @@
                 </p>
 
                 <p>
-                    <strong style="color: black;">How to Use PulseTech:</strong><br>
+                    <strong>How to Use PulseTech:</strong><br>
                     PulseTech is designed to be intuitive and easy to use. Here's how you can get started:
                 <ol>
                     <li><strong>Create an Account:</strong> Download the PulseTech app and create your
@@ -176,7 +176,7 @@
                 </p>
 
                 <p>
-                    <strong style="color: black;">Privacy and Security:</strong><br>
+                    <strong>Privacy and Security:</strong><br>
                     We take your privacy and security seriously. PulseTech uses encryption and other security
                     measures to protect your personal and health data. We follow strict privacy guidelines to ensure
                     that your information is only used for the purpose of improving your health experience. You can
@@ -184,7 +184,7 @@
                 </p>
 
                 <p>
-                    <strong style="color: black;">PulseTech - Your Partner in Health:</strong><br>
+                    <strong>PulseTech - Your Partner in Health:</strong><br>
                     PulseTech is more than just an app; it's your partner in health. We are committed to helping you
                     lead a healthier, more informed life. With our range of tools, expert guidance, and easy-to-use
                     features, PulseTech is the ultimate solution for individuals who want to take control of their
@@ -258,14 +258,22 @@
                             <button @click="changeProfilePicture" class="upload-btn">Upload</button>
                             <button @click="removeProfilePicture" class="remove-btn">Remove</button>
                         </div>
+
+                        <!-- The theme toggle button container -->
+                        <div class="ThemeButtonContainer">
+                            <div class="theme-label left">Light Mode</div>
+                            <button class="ThemeButton" :class="{ 'dark-mode': darkMode }"
+                                @click="toggleTheme"></button>
+                            <div class="theme-label right">Dark Mode</div>
+                        </div>
+
+
+
+
                     </div>
 
                     <!-- Hidden File Input for Uploading Profile Picture -->
                     <input type="file" ref="fileInput" @change="handleFileChange" style="display: none;" />
-
-
-                    <!-- The theme toggle button will be fixed on the top left -->
-                    <button @click="toggleTheme" class="ThemeButton">Toggle Theme</button>
 
 
                     <div class="profile-info">

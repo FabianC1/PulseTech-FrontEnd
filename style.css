@@ -30,26 +30,80 @@
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
   }
 
-/* Add this to your existing CSS */
-.ThemeButton {
-    position: fixed; /* Fix it to the viewport */
-    top: 25%; /* Distance from the top */
-    right: 10%; /* Distance from the left */
-    background-color: #272727;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    padding: 10px 15px;
-    z-index: 1000; /* Make sure it's on top of other content */
+/* The theme toggle button container */
+.ThemeButtonContainer {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 7%;
+    right: 4.4%;
+    z-index: 1000; /* Ensures it stays on top of other content */
+    border: solid black 3px;
+    border-radius: 50px;
+    padding: 1%;
+}
+
+/* Left label for Light Mode */
+.theme-label.left {
     font-size: 14px;
+    color: #fff;
+    margin-right: 10px;
+}
+
+/* Right label for Dark Mode */
+.theme-label.right {
+    font-size: 14px;
+    color: #fff;
+    margin-left: 10px;
+}
+
+/* The theme toggle button */
+.ThemeButton {
+    width: 50px;
+    height: 25px;
+    background-color: #fff; /* White background for light mode */
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px;
     transition: background-color 0.3s ease;
-  }
-  
-  /* Optional: Add hover effect for better UX */
-  .ThemeButton:hover {
-    background-color: #000000b6;
-  }
+}
+
+/* Button slider */
+.ThemeButton::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 21px;
+    height: 21px;
+    background-color: black; /* Black slider for light mode */
+    border-radius: 50%;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* When the theme is toggled to Dark Mode */
+.ThemeButton.dark-mode {
+    background-color: #333; /* Dark background for dark mode */
+}
+
+/* Dark mode slider changes */
+.ThemeButton.dark-mode::before {
+    transform: translateX(25px); /* Move slider to the right */
+    background-color: white; /* White slider in dark mode */
+}
+
+/* Optional: Hover effect for better UX */
+.ThemeButton:hover {
+    background-color: #888;
+}
+
+
+
   
 /* Header */
 header {
@@ -278,7 +332,6 @@ footer {
     text-decoration: underline;
     padding: 3px;
     border-radius: 5px;
-    color: white;
 }
 
 /* Optional: Optional limits on the scroll position */
@@ -429,7 +482,6 @@ footer {
 
 .terms-container h2 {
     text-decoration: underline;
-    color: rgb(0, 0, 0);
     /* Ensure the text color is white, if needed */
 }
 
@@ -794,7 +846,7 @@ button {
 /* Header style */
 .contact-container h2 {
     text-align: center;
-    color: white;
+
     font-size: 1.5em;
     margin-top: 0;
     text-decoration: underline;
@@ -985,7 +1037,6 @@ button {
     font-size: 1.6em;
     margin-top: 0;
     text-decoration: underline;
-    text-decoration-color: black;  /* Underline color set to black */
 }
 
 /* Section Titles inside Help Section */
@@ -1080,11 +1131,9 @@ button {
 
 /* Header Styling for Emergency Contact Section */
 .emergency-container h2 {
-    color: black;
     font-size: 1.5em;
     margin-top: 0;
     text-decoration: underline;
-    text-decoration-color: black;  /* Underline color set to black */
 }
 
 /* List Styling for Emergency Contacts */
@@ -1261,7 +1310,6 @@ a:hover {
 
 /* Title (Moves it to the top) */
 .login-page h2 {
-    color: black;
     text-decoration: underline;
     position: absolute;
     top: 30px; /* Adjusts title closer to the top */
@@ -1398,7 +1446,6 @@ a:hover {
 
 /* Title */
 .signup-container h2 {
-    color: black;
     text-decoration: underline;
     margin-bottom: 20px;
 }
@@ -1536,6 +1583,7 @@ a:hover {
 
 /* Logged In User Profile Container */
 .loggedIn {
+    position: relative;
     text-align: left;
     padding: 20px;
     margin: 5px auto;
@@ -1569,7 +1617,6 @@ a:hover {
 
 /* Header Section (User's Welcome Message) */
 .loggedIn h2 {
-    color: #24252a;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -1603,7 +1650,7 @@ a:hover {
 }
 
 .loggedIn .profile-info button:hover {
-    background-color: #6200ff;
+    background-color: #380092;
 }
 
 /* Center the Logout Button */
@@ -1620,7 +1667,7 @@ a:hover {
 }
 
 .loggedIn .logout-button:hover {
-    background-color: #4a2cceda;
+    background-color: #2f00ffda;
 }
 
 /* Profile Details Section */
@@ -1761,7 +1808,7 @@ a:hover {
 }
 
 .edit-profile-btn:hover {
-    background-color: #6200ff;
+    background-color: #4400b3;
 }
 
 /* Upload Button (Blue) */
@@ -1771,7 +1818,7 @@ a:hover {
 }
 
 .upload-btn:hover {
-    background-color: #0b7dda;
+    background-color: #005da8;
 }
 
 /* Remove Button (Red) */
@@ -1781,7 +1828,7 @@ a:hover {
 }
 
 .remove-btn:hover {
-    background-color: #da190b;
+    background-color: #ad0c00;
 }
 
 :root {

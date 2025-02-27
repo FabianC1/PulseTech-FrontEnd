@@ -1,6 +1,7 @@
 const app = Vue.createApp({
   data() {
     return {
+      darkMode: false, // Initial theme state
       profilePicture: "", // Stores base64 profile picture
       currentView: "home", // Default view
       isLoggedIn: false, // User login status
@@ -66,7 +67,11 @@ const app = Vue.createApp({
       // Replace camel case with spaces and capitalize each word
       return this.currentView.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
         .replace(/^./, str => str.toUpperCase()); // Capitalize the first letter
-    }
+    },
+
+    toggleClass() {
+      return this.theme === "dark" ? "active" : ""; // If theme is dark, add active class to the button
+    },
   },
 
 
@@ -173,13 +178,24 @@ const app = Vue.createApp({
 
   methods: {
     toggleTheme() {
-      const currentTheme = document.body.getAttribute("data-theme");
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-      document.body.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme); // Save user choice
+      // Toggle the darkMode state
+      this.darkMode = !this.darkMode;
+
+      // Save the preference in localStorage
+      localStorage.setItem("theme", this.darkMode ? "dark" : "light");
+
+      // Update the body class
+      this.updateBodyClass();
     },
-    
-    
+
+    updateBodyClass() {
+      // Add the corresponding theme class to the body element
+      if (this.darkMode) {
+        document.body.setAttribute("data-theme", "dark");
+      } else {
+        document.body.setAttribute("data-theme", "light");
+      }
+    },
 
 
     // Toggle between Patient and Doctor forms
@@ -707,6 +723,19 @@ const app = Vue.createApp({
 
 
   mounted() {
+    // Load the theme preference from localStorage
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      this.darkMode = savedTheme === "dark";
+    } else {
+      // Fallback to system preference
+      const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      this.darkMode = prefersDarkMode;
+    }
+
+    // Update the body class based on the current theme
+    this.updateBodyClass();
+
     this.handleRouteChange();
 
     document.addEventListener("touchstart", this.handleTouchStart);
