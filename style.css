@@ -1814,18 +1814,76 @@ a:hover {
     background-color: #ad0c00;
 }
 
-:root {
-    --primary-bg: #ffffff; /* Light mode background */
-    --primary-text: #000000; /* Light mode text */
+
+
+/* Styling for the Symptom Checker */
+.symptom-checker {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.start-diagnosis-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-diagnosis-button:hover {
+  background-color: #45a049;
+}
+
+.input-answer {
+  width: 80%;
+  padding: 8px;
+  margin-top: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.submit-answer-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-answer-button:hover {
+  background-color: #007B9A;
+}
+
+.diagnosis-result {
+  margin-top: 20px;
+}
+
+.diagnosis-line {
+  margin-bottom: 10px; /* Add space between each sentence */
+}
+
+.diagnosis-result p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 10px; /* Add space between lines */
   }
   
-  [data-theme="dark"] {
-    --primary-bg: #121212; /* Dark mode background */
-    --primary-text: #ffffff; /* Dark mode text */
+
+/* Add responsive styling for smaller devices */
+@media screen and (max-width: 600px) {
+  .input-answer {
+    width: 100%;
   }
-  
-  body {
-    background-color: var(--primary-bg);
-    color: var(--primary-text);
+
+  .start-diagnosis-button, .submit-answer-button {
+    width: 100%;
   }
-  
+}

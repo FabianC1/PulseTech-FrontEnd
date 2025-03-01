@@ -209,29 +209,29 @@
                 <p>Your health metrics will appear here.</p>
             </div>
 
-            <!-- Appointments Section -->
-            <div v-if="currentView === 'appointments'">
-                <h2>Appointments</h2>
-                <p>Your upcoming appointments will appear here.</p>
-            </div>
-
             <!-- Symptom Checker Section -->
-            <div v-if="currentView === 'symptomChecker'">
+            <div v-if="currentView === 'symptomChecker'" class="symptom-checker">
                 <h2>Symptom Checker</h2>
-                <p>Get health advice based on symptoms.</p>
+                <p>Get health advice based on symptoms. Please input your primary symptom.</p>
 
                 <!-- Button to start the diagnosis -->
-                <button @click="startDiagnosis" v-if="!diagnosisStarted">Start Diagnosis</button>
+                <button @click="startDiagnosis" v-if="!diagnosisStarted" class="start-diagnosis-button">Start
+                    Diagnosis</button>
 
-                <div v-if="diagnosisStarted">
+                <!-- Display question and user input fields -->
+                <div v-if="diagnosisStarted && !hasDiagnosis">
                     <p>{{ question }}</p>
-                    <input v-if="showInput" v-model="userAnswer" placeholder="Your answer..." />
-                    <button v-if="showInput" @click="sendAnswer">Submit Answer</button>
+                    <input v-if="showInput" v-model="userAnswer" class="input-answer" placeholder="Your answer..." />
+                    <button v-if="showInput" @click="sendAnswer" class="submit-answer-button">Submit Answer</button>
                 </div>
 
-                <div v-if="diagnosisResult">
+                <!-- Display the diagnosis result and accuracy -->
+                <div v-if="diagnosisResult && hasDiagnosis" class="diagnosis-result">
                     <h3>Diagnosis Result:</h3>
-                    <p>{{ diagnosisResult }}</p>
+                    <!-- Loop through formatted lines for better sentence separation -->
+                    <div v-for="(line, index) in formattedDiagnosisResult" :key="index" class="diagnosis-line">
+                        <p>{{ line }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -360,7 +360,8 @@
                             <strong>Address:</strong>
                             <span v-if="!isEditing.address">{{ user.address }}</span>
                             <input v-else v-model="user.address" class="editable-input" placeholder="Enter address" />
-                            <button @click="toggleEdit('address')">{{ isEditing.address ? 'Cancel' : 'Edit' }}</button>
+                            <button @click="toggleEdit('address')">{{ isEditing.address ? 'Cancel' : 'Edit'
+                                }}</button>
                         </p>
 
                         <!-- Phone Number -->
@@ -382,7 +383,8 @@
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
-                            <button @click="toggleEdit('gender')">{{ isEditing.gender ? 'Cancel' : 'Edit' }}</button>
+                            <button @click="toggleEdit('gender')">{{ isEditing.gender ? 'Cancel' : 'Edit'
+                                }}</button>
                         </p>
 
 

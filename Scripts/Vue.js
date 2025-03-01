@@ -57,11 +57,13 @@ const app = Vue.createApp({
         ethnicity: false,
         address: false
       },
-      diagnosisStarted: false, // Controls if diagnosis has started
-      question: "", // Stores the current AI-generated question
-      userAnswer: "", // Stores user input
-      showInput: false, // Controls visibility of the answer input
-      diagnosisResult: "", // Stores the final diagnosis result
+      diagnosisStarted: false,
+      question: "",
+      userAnswer: "",
+      showInput: false,
+      diagnosisResult: "",
+      formattedDiagnosisResult: [],
+      hasDiagnosis: false, // To track whether a diagnosis is already made
     };
   },
 
@@ -190,34 +192,44 @@ const app = Vue.createApp({
         const data = await response.json();
         this.question = data.message; // Get the first question
         this.diagnosisStarted = true;
-        this.showInput = true;
+        this.showInput = true; // Show the input field when the first question is displayed
       } catch (error) {
         console.error("Error starting diagnosis:", error);
       }
     },
-  
+
     async sendAnswer() {
       if (!this.userAnswer.trim()) return; // Prevent empty submission
-  
+
       try {
         const response = await fetch("http://localhost:3000/answer-question", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userInput: this.userAnswer }),
         });
-  
+
         const data = await response.json();
         this.userAnswer = ""; // Clear input field
         this.question = data.message; // Set next question
-  
+
         // If the AI provides a diagnosis result, stop input and display result
-        if (this.question.toLowerCase().includes("you may have")) {
-          this.diagnosisResult = this.question;
-          this.showInput = false;
+        if (data.message && data.message.toLowerCase().includes("you may have") && !this.hasDiagnosis) {
+          this.diagnosisResult = data.message;
+          this.formattedDiagnosisResult = this.formatDiagnosisResult(this.diagnosisResult);
+          this.showInput = false;  // Hide input after diagnosis
+          this.hasDiagnosis = true; // Prevent further diagnosis result display
         }
       } catch (error) {
         console.error("Error sending answer:", error);
       }
+    },
+
+    // Split the result into individual sentences for better formatting
+    formatDiagnosisResult(result) {
+      return result
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0); // Remove any empty lines
     },
 
     toggleTheme() {
