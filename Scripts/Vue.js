@@ -58,7 +58,10 @@ const app = Vue.createApp({
         address: false
       },
       showSaveSuccessPopup: false,  // Controls visibility of the saved changes popup
-      result: null   // For storing the result from the API
+      currentQuestion: null,
+      isAnswering: false,
+      answer: '',
+      result: null,
     };
   },
 
@@ -178,20 +181,50 @@ const app = Vue.createApp({
   },
 
   methods: {
+    // Start the diagnosis process by calling the backend
     startDiagnosis() {
-      // Send the request to the backend to start the diagnosis process
-      fetch('http://localhost:3000/symptom-checker', {
+      this.result = null;  // Reset previous result
+      this.isAnswering = true;  // Start the answering process
+
+      // Call the backend to start the diagnosis session
+      fetch('http://localhost:3000/start-diagnosis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       })
-      .then(response => response.json())
-      .then(data => {
-        this.result = data.result;
+        .then(response => response.json())
+        .then(data => {
+          this.currentQuestion = data.question;  // Set the first question
+        })
+        .catch(error => {
+          console.error('Error starting diagnosis:', error);
+        });
+    },
+
+    // Submit the user's answer and get the next question
+    submitAnswer() {
+      if (!this.answer.trim()) return;  // Prevent submitting empty answers
+
+      const answerData = { answer: this.answer.trim() };
+
+      // Send the answer to the backend
+      fetch('http://localhost:3000/answer-question', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answerData),
       })
-      .catch(error => {
-        console.error("Error:", error);
-        this.result = "Error occurred while processing symptoms.";
-      });
+        .then(response => response.json())
+        .then(data => {
+          if (data.question) {
+            this.currentQuestion = data.question;  // Set the next question
+            this.answer = '';  // Reset the answer input field
+          } else {
+            // If no more questions, show the result
+            this.result = data.result || 'Diagnosis completed.';
+          }
+        })
+        .catch(error => {
+          console.error('Error submitting answer:', error);
+        });
     },
 
     toggleTheme() {
