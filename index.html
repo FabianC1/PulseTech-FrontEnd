@@ -219,7 +219,7 @@
                     class="start-diagnosis-button">Start Diagnosis</button>
 
                 <!-- Display question and user input fields -->
-                <div v-if="diagnosisStarted && !hasDiagnosis">
+                <div v-if="diagnosisStarted && !hasDiagnosis" class="diagnosis-container">
                     <p>{{ question }}</p>
                     <input v-if="showInput" v-model="userAnswer" class="input-answer" placeholder="Your answer..." />
                     <button v-if="showInput" @click="sendAnswer" class="submit-answer-button">Submit Answer</button>
