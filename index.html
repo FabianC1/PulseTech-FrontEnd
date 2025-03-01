@@ -212,7 +212,7 @@
             <!-- Symptom Checker Section -->
             <div v-if="currentView === 'symptomChecker'" class="symptom-checker">
                 <h2 v-if="!hasDiagnosis">Symptom Checker</h2>
-                <p v-if="!hasDiagnosis">Get health advice based on symptoms. Please input your primary symptom.</p>
+                <p v-if="!hasDiagnosis">Get health advice and a diagnosis based on symptoms. Please input your primary symptom.</p>
 
                 <!-- Button to start the diagnosis -->
                 <button v-if="!diagnosisStarted && !hasDiagnosis" @click="startDiagnosis"
@@ -220,7 +220,7 @@
 
                 <!-- Display question and user input fields -->
                 <div v-if="diagnosisStarted && !hasDiagnosis" class="diagnosis-container">
-                    <p>{{ question }}</p>
+                    <p style="margin-top: 3%;">{{ question }}</p>
                     <input v-if="showInput" v-model="userAnswer" class="input-answer" placeholder="Your answer..." />
                     <button v-if="showInput" @click="sendAnswer" class="submit-answer-button">Submit Answer</button>
                 </div>

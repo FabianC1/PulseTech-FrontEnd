@@ -1874,7 +1874,7 @@ a:hover {
 .input-answer {
     width: 30%;
     padding: 8px;
-    margin-top: 15px;
+    margin-top: 2%;
     font-size: 16px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     border: 2px solid #000000;
@@ -1885,7 +1885,7 @@ a:hover {
   /* Focus effect for the input field */
   .input-answer:focus {
     border-color: transparent; /* Keep the original transparent border */
-    box-shadow: 0 2px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+    box-shadow: 0 3px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
     outline: none; /* Remove default outline when focused */
   }
   
@@ -1909,6 +1909,7 @@ a:hover {
     
   /* Ensure container doesn't constrain space between input and button */
   .diagnosis-container {
+    margin-top: -20px;
     display: flex;
     flex-direction: column;
     align-items: center; /* Center both the input and button */
@@ -1916,7 +1917,7 @@ a:hover {
   
   
   .diagnosis-result {
-    margin-top: 20px;
+    margin-top: -20px;
   }
   
   .diagnosis-line {
@@ -1952,8 +1953,5 @@ a:hover {
     background: linear-gradient(to right, #8740c1, #0c62a2); /* Linear gradient background on hover */
     border: black solid 2px;
   }
-  
-  .diagnosis-line {
-    margin-bottom: 10px;
-  }
+
   
