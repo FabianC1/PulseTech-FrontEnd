@@ -1819,24 +1819,58 @@ a:hover {
 
 /* Styling for the Symptom Checker */
 .symptom-checker {
-    margin: 20px;
+    text-align: center;
+    padding: 20px;
+    margin: 5px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 650px;
+    font-size: 1.3em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
     font-family: Arial, sans-serif;
   }
   
-  .start-diagnosis-button {
+/* Start Diagnosis Button */
+.start-diagnosis-button {
     margin-top: 20px;
     padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4CAF50;
+    font-size: 25px;
+    background: linear-gradient(to right, #8740c1, #0c62a2); /* Linear gradient background */
     color: white;
-    border: none;
+    border: black solid 2px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .start-diagnosis-button:hover {
-    background-color: #45a049;
-  }
+    border-radius: 10px;
+    transition: background-color 0.5s ease; /* Transition for background color */
+
+}
+
+/* Button hover animation */
+.start-diagnosis-button:hover {
+    border: rgba(0, 0, 0, 0.445) solid 2px;
+    background: linear-gradient(to right, #8740c1, #0c62a2); /* Linear gradient background on hover */
+    animation: pulse1 2s infinite; /* Add pulsing animation */
+    box-shadow: 0 2px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+}
+
+/* Pulsing animation */
+@keyframes pulse1 {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1); /* Pulse effect: button slightly scales up */
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
   
   .input-answer {
     width: 40%;
@@ -1853,6 +1887,7 @@ a:hover {
     border-color: transparent; /* Keep the original transparent border */
     box-shadow: 0 2px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
     outline: none; /* Remove default outline when focused */
+    font-family: Arial, sans-serif;
   }
   
   .submit-answer-button {
@@ -1880,7 +1915,7 @@ a:hover {
   }
   
   .diagnosis-result p {
-      font-size: 16px;
+      font-size: 19px;
       line-height: 1.6;
       margin-bottom: 10px; /* Add space between lines */
   }
@@ -1897,16 +1932,18 @@ a:hover {
   }
   
   .new-diagnosis-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
+    margin-top: 0.2%;
     color: white;
-    border: none;
     cursor: pointer;
+    background: linear-gradient(to right, #8740c1, #0c62a2); /* Linear gradient background */
+    border: black solid 2px;
   }
   
   .new-diagnosis-button:hover {
-    background-color: #45a049;
+    background: linear-gradient(to right, #8740c1, #0c62a2); /* Linear gradient background on hover */
+    animation: pulse1 2s infinite; /* Add pulsing animation */
+    transform: scale(1.1); /* Slightly scale the button up */
+    border: black solid 2px;
   }
   
   .diagnosis-line {

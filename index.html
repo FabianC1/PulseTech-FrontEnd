@@ -211,12 +211,12 @@
 
             <!-- Symptom Checker Section -->
             <div v-if="currentView === 'symptomChecker'" class="symptom-checker">
-                <h2>Symptom Checker</h2>
-                <p>Get health advice based on symptoms. Please input your primary symptom.</p>
+                <h2 v-if="!hasDiagnosis">Symptom Checker</h2>
+                <p v-if="!hasDiagnosis">Get health advice based on symptoms. Please input your primary symptom.</p>
 
                 <!-- Button to start the diagnosis -->
-                <button @click="startDiagnosis" v-if="!diagnosisStarted" class="start-diagnosis-button">Start
-                    Diagnosis</button>
+                <button v-if="!diagnosisStarted && !hasDiagnosis" @click="startDiagnosis"
+                    class="start-diagnosis-button">Start Diagnosis</button>
 
                 <!-- Display question and user input fields -->
                 <div v-if="diagnosisStarted && !hasDiagnosis">
@@ -226,7 +226,7 @@
                 </div>
 
                 <!-- Display the diagnosis result and accuracy -->
-                <div v-if="diagnosisResult && hasDiagnosis" class="diagnosis-result">
+                <div v-if="hasDiagnosis" class="diagnosis-result">
                     <h3>Diagnosis Result:</h3>
                     <!-- Loop through formatted lines for better sentence separation -->
                     <div v-for="(line, index) in formattedDiagnosisResult" :key="index" class="diagnosis-line">
@@ -234,9 +234,11 @@
                     </div>
 
                     <!-- Button to start a new diagnosis -->
-                    <button @click="startNewDiagnosis" v-if="diagnosisResult">Start New Diagnosis</button>
+                    <button @click="startNewDiagnosis" class="new-diagnosis-button">Start New Diagnosis</button>
                 </div>
             </div>
+
+
 
 
 
