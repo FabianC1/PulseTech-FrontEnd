@@ -234,7 +234,7 @@
                     </div>
 
                     <!-- Button to start a new diagnosis -->
-                    <button @click="startNewDiagnosis" class="new-diagnosis-button">Start a New Diagnosis</button>
+                    <button @click="startNewDiagnosis" v-if="diagnosisResult">Start New Diagnosis</button>
                 </div>
             </div>
 

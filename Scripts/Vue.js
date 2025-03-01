@@ -64,6 +64,7 @@ const app = Vue.createApp({
       diagnosisResult: "",
       formattedDiagnosisResult: [],
       hasDiagnosis: false, // To track whether a diagnosis is already made
+      
     };
   },
 
@@ -183,6 +184,15 @@ const app = Vue.createApp({
   },
 
   methods: {
+    async startNewDiagnosis() {
+      // Clear previous diagnosis and inputs
+      this.diagnosisResult = null; // Reset diagnosis result
+      this.userAnswer = ''; // Reset user input
+      this.diagnosisStarted = false; // Reset diagnosis state
+  
+      // Start a new diagnosis
+      await this.startDiagnosis();
+    },
     async startDiagnosis() {
       try {
         const response = await fetch("http://localhost:3000/start-diagnosis", {
