@@ -58,6 +58,7 @@ const app = Vue.createApp({
         address: false
       },
       showSaveSuccessPopup: false,  // Controls visibility of the saved changes popup
+      result: null   // For storing the result from the API
     };
   },
 
@@ -177,6 +178,22 @@ const app = Vue.createApp({
   },
 
   methods: {
+    startDiagnosis() {
+      // Send the request to the backend to start the diagnosis process
+      fetch('http://localhost:3000/symptom-checker', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.result = data.result;
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        this.result = "Error occurred while processing symptoms.";
+      });
+    },
+
     toggleTheme() {
       // Toggle the darkMode state
       this.darkMode = !this.darkMode;

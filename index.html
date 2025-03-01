@@ -218,7 +218,16 @@
             <!-- Symptom Checker Section -->
             <div v-if="currentView === 'symptomChecker'">
                 <h2>Symptom Checker</h2>
-                <p>Get health advice based on symptoms.</p>
+                <p>Get a diagnosis based on your symptoms.</p>
+
+                <!-- Button to start the symptom checker -->
+                <button @click="startDiagnosis">Diagnose</button>
+
+                <!-- Display the result from the symptom checker -->
+                <div v-if="result">
+                    <h3>Diagnosis Result:</h3>
+                    <p>{{ result }}</p>
+                </div>
             </div>
 
             <!-- Medication Section -->
