@@ -232,6 +232,19 @@ const app = Vue.createApp({
         .filter((line) => line.length > 0); // Remove any empty lines
     },
 
+    // Start a new diagnosis
+    startNewDiagnosis() {
+      this.diagnosisStarted = false;
+      this.question = "";
+      this.userAnswer = "";
+      this.diagnosisResult = "";
+      this.formattedDiagnosisResult = [];
+      this.hasDiagnosis = false;
+      this.showInput = false;
+      this.startDiagnosis(); // Start the diagnosis again
+    },
+
+
     toggleTheme() {
       // Toggle the darkMode state
       this.darkMode = !this.darkMode;

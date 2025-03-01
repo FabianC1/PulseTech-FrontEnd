@@ -1887,3 +1887,21 @@ a:hover {
     width: 100%;
   }
 }
+
+.new-diagnosis-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .new-diagnosis-button:hover {
+    background-color: #45a049;
+  }
+  
+  .diagnosis-line {
+    margin-bottom: 10px;
+  }
+  
