@@ -209,10 +209,124 @@
                 <p>Your health metrics will appear here.</p>
             </div>
 
+            <!-- Medical Records Section -->
+            <div v-if="currentView === 'medicalRecords'" class="medical-records-container">
+                <h2 style="text-align: center; margin-top: -0.5%;">Medical Records</h2>
+                <p style="text-align: center; margin-top: -0.5%;">Your medical records and history appear here. Click to edit</p>
+
+                <div class="records-scroll-container">
+                    <!-- Personal Information -->
+                    <div class="record-section" @click="toggleEdit('personalInfo')">
+                        <h3>Personal Information</h3>
+                        <p v-if="!isEditing.personalInfo">Name: {{ user.fullName }} | DOB: {{ user.dateOfBirth }} |
+                            Gender: {{ user.gender }} | Blood Type: {{ user.bloodType }} | Emergency Contact: {{
+                            user.emergencyContact }}</p>
+                        <input v-if="isEditing.personalInfo" v-model="user.fullName" placeholder="Edit name" />
+                        <input v-if="isEditing.personalInfo" v-model="user.dateOfBirth" type="date" />
+                        <input v-if="isEditing.personalInfo" v-model="user.gender" placeholder="Edit gender" />
+                        <input v-if="isEditing.personalInfo" v-model="user.bloodType" placeholder="Edit blood type" />
+                        <input v-if="isEditing.personalInfo" v-model="user.emergencyContact"
+                            placeholder="Edit emergency contact" />
+                    </div>
+
+                    <!-- Medical History -->
+                    <div class="record-section" @click="toggleEdit('medicalHistory')">
+                        <h3>Medical History</h3>
+                        <p v-if="!isEditing.medicalHistory">{{ user.medicalHistory || 'No records found' }}</p>
+                        <textarea v-if="isEditing.medicalHistory" v-model="user.medicalHistory"
+                            placeholder="Enter medical history"></textarea>
+                    </div>
+
+                    <!-- Current Medications -->
+                    <div class="record-section" @click="toggleEdit('medications')">
+                        <h3>Current Medications</h3>
+                        <p v-if="!isEditing.medications">{{ user.medications || 'No medications listed' }}</p>
+                        <textarea v-if="isEditing.medications" v-model="user.medications"
+                            placeholder="Enter medications"></textarea>
+                    </div>
+
+                    <!-- Vaccination Records -->
+                    <div class="record-section" @click="toggleEdit('vaccinations')">
+                        <h3>Vaccination Records</h3>
+                        <p v-if="!isEditing.vaccinations">{{ user.vaccinations || 'No records found' }}</p>
+                        <textarea v-if="isEditing.vaccinations" v-model="user.vaccinations"
+                            placeholder="Enter vaccinations"></textarea>
+                    </div>
+
+                    <!-- Lifestyle & Habits -->
+                    <div class="record-section" @click="toggleEdit('lifestyle')">
+                        <h3>Lifestyle & Habits</h3>
+                        <p v-if="!isEditing.lifestyle">Smoking: {{ user.smokingStatus }} | Alcohol: {{
+                            user.alcoholConsumption }} | Exercise: {{ user.exerciseRoutine }} | Sleep: {{
+                            user.sleepPatterns }}</p>
+                        <input v-if="isEditing.lifestyle" v-model="user.smokingStatus"
+                            placeholder="Edit smoking status" />
+                        <input v-if="isEditing.lifestyle" v-model="user.alcoholConsumption"
+                            placeholder="Edit alcohol consumption" />
+                        <input v-if="isEditing.lifestyle" v-model="user.exerciseRoutine"
+                            placeholder="Edit exercise routine" />
+                        <input v-if="isEditing.lifestyle" v-model="user.sleepPatterns"
+                            placeholder="Edit sleep patterns" />
+                    </div>
+
+                    <!-- Symptoms & Health Logs -->
+                    <div class="record-section" @click="toggleEdit('healthLogs')">
+                        <h3>Symptoms & Health Logs</h3>
+                        <p v-if="!isEditing.healthLogs">{{ user.healthLogs || 'No symptoms recorded' }}</p>
+                        <textarea v-if="isEditing.healthLogs" v-model="user.healthLogs"
+                            placeholder="Enter symptoms"></textarea>
+                    </div>
+
+                    <!-- Lab Results & Reports -->
+                    <div class="record-section" @click="toggleEdit('labResults')">
+                        <h3>Lab Results & Reports</h3>
+                        <p v-if="!isEditing.labResults">{{ user.labResults || 'No reports available' }}</p>
+                        <textarea v-if="isEditing.labResults" v-model="user.labResults"
+                            placeholder="Enter lab results"></textarea>
+                    </div>
+
+                    <!-- Doctor Visits & Appointments -->
+                    <div class="record-section" @click="toggleEdit('doctorVisits')">
+                        <h3>Doctor Visits & Appointments</h3>
+                        <p v-if="!isEditing.doctorVisits">{{ user.doctorVisits || 'No records found' }}</p>
+                        <textarea v-if="isEditing.doctorVisits" v-model="user.doctorVisits"
+                            placeholder="Enter doctor visit records"></textarea>
+                    </div>
+
+                    <!-- Smartwatch & Wearable Data -->
+                    <div class="record-section" @click="toggleEdit('wearableData')">
+                        <h3>Smartwatch & Wearable Data</h3>
+                        <p v-if="!isEditing.wearableData">Heart Rate: {{ user.heartRate }} | Step Count: {{
+                            user.stepCount }} | Sleep Tracking: {{ user.sleepTracking }} | Blood Oxygen: {{
+                            user.bloodOxygen }}</p>
+                        <input v-if="isEditing.wearableData" v-model="user.heartRate" placeholder="Edit heart rate" />
+                        <input v-if="isEditing.wearableData" v-model="user.stepCount" placeholder="Edit step count" />
+                        <input v-if="isEditing.wearableData" v-model="user.sleepTracking"
+                            placeholder="Edit sleep tracking" />
+                        <input v-if="isEditing.wearableData" v-model="user.bloodOxygen"
+                            placeholder="Edit blood oxygen levels" />
+                    </div>
+
+                    <!-- Emergency Details -->
+                    <div class="record-section" @click="toggleEdit('emergencyDetails')">
+                        <h3>Emergency Details</h3>
+                        <p v-if="!isEditing.emergencyDetails">Organ Donor: {{ user.organDonorStatus }} | Medical
+                            Directives: {{ user.medicalDirectives }}</p>
+                        <input v-if="isEditing.emergencyDetails" v-model="user.organDonorStatus"
+                            placeholder="Edit organ donor status" />
+                        <input v-if="isEditing.emergencyDetails" v-model="user.medicalDirectives"
+                            placeholder="Edit medical directives" />
+                    </div>
+                </div>
+            </div>
+
+
+
             <!-- Symptom Checker Section -->
             <div v-if="currentView === 'symptomChecker'" class="symptom-checker">
                 <h2 v-if="!hasDiagnosis">Symptom Checker</h2>
-                <p v-if="!hasDiagnosis">Get health advice and a diagnosis based on symptoms. Please input your primary symptom.</p>
+                <p v-if="!hasDiagnosis">Get health advice and a diagnosis based on symptoms. Please input your primary
+                    symptom.</p>
 
                 <!-- Button to start the diagnosis -->
                 <button v-if="!diagnosisStarted && !hasDiagnosis" @click="startDiagnosis"
@@ -239,8 +353,13 @@
             </div>
 
 
+            <!-- Appointments Section -->
+            <div v-if="currentView === 'appointments'">
+                <h2>Appointments</h2>
+                <p>View all your appoitsments here.</p>
 
-
+                <p>Contact Dr.Patel if you would like to cancel or reschedule.</p>
+            </div>
 
             <!-- Medication Section -->
             <div v-if="currentView === 'medication'">
@@ -254,11 +373,6 @@
                 <p>Your messages and communication with healthcare providers will appear here.</p>
             </div>
 
-            <!-- Medical Records Section -->
-            <div v-if="currentView === 'medicalRecords'">
-                <h2>Medical Records</h2>
-                <p>Your medical records and history appear here.</p>
-            </div>
 
             <!-- Profile Section -->
             <div v-if="currentView === 'profile'">

@@ -1954,4 +1954,88 @@ a:hover {
     border: black solid 2px;
   }
 
-  
+/* Main Medical Records Container */
+.medical-records-container {
+    text-align: left;
+    padding: 20px;
+    margin: 5px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 650px;
+    overflow-y: auto; /* Enable scrolling */
+    font-size: 1.2em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+}
+
+
+/* Custom scrollbar */
+.medical-records-container::-webkit-scrollbar {
+    width: 8px;
+}
+.medical-records-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+.medical-records-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Scrollable container for sections */
+.records-scroll-container {
+    display: flex;
+    flex-direction: column; /* Stack the sections vertically */
+    gap: 15px; /* Add spacing between sub-containers */
+    padding-bottom: 15px;
+}
+
+/* Individual Record Sections */
+.record-section {
+    background: rgba(255, 255, 255, 0.068);
+    width: calc(100% - 30px); /* Slightly smaller than parent container */
+    height: 10%; /* Each section is 10% of the main container */
+    min-height: 60px; /* Ensure small sections don't collapse */
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #000;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    overflow-y: auto; /* Allow scrolling within sections if needed */
+}
+
+/* Custom scrollbar for individual sections */
+.record-section::-webkit-scrollbar {
+    width: 6px;
+}
+.record-section::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+.record-section::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Hover effect for better UI */
+.record-section:hover {
+    transform: scale(1.02);
+    background-color: rgba(255, 255, 255, 0.295);
+}
+
+/* Strong Text Styling */
+.medical-records-container strong {
+    font-weight: bold;
+    text-decoration: underline;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .record-section {
+        height: auto; /* Allow flexibility on smaller screens */
+        padding: 15px;
+    }
+}
