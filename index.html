@@ -221,25 +221,20 @@
                 <p>Get health advice based on symptoms.</p>
 
                 <!-- Button to start the diagnosis -->
-                <button @click="startDiagnosis">Diagnose</button>
+                <button @click="startDiagnosis" v-if="!diagnosisStarted">Start Diagnosis</button>
 
-                <!-- Display the current question -->
-                <div v-if="currentQuestion">
-                    <h3>{{ currentQuestion }}</h3>
-
-                    <div v-if="isAnswering">
-                        <!-- Input form to answer the question -->
-                        <input v-model="answer" type="text" placeholder="Type your answer" />
-                        <button @click="submitAnswer">Submit Answer</button>
-                    </div>
+                <div v-if="diagnosisStarted">
+                    <p>{{ question }}</p>
+                    <input v-if="showInput" v-model="userAnswer" placeholder="Your answer..." />
+                    <button v-if="showInput" @click="sendAnswer">Submit Answer</button>
                 </div>
 
-                <!-- Display the result after diagnosis -->
-                <div v-if="result">
+                <div v-if="diagnosisResult">
                     <h3>Diagnosis Result:</h3>
-                    <p>{{ result }}</p>
+                    <p>{{ diagnosisResult }}</p>
                 </div>
             </div>
+
 
             <!-- Medication Section -->
             <div v-if="currentView === 'medication'">

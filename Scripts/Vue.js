@@ -57,11 +57,11 @@ const app = Vue.createApp({
         ethnicity: false,
         address: false
       },
-      showSaveSuccessPopup: false,  // Controls visibility of the saved changes popup
-      currentQuestion: null,
-      isAnswering: false,
-      answer: '',
-      result: null,
+      diagnosisStarted: false, // Controls if diagnosis has started
+      question: "", // Stores the current AI-generated question
+      userAnswer: "", // Stores user input
+      showInput: false, // Controls visibility of the answer input
+      diagnosisResult: "", // Stores the final diagnosis result
     };
   },
 
@@ -181,50 +181,43 @@ const app = Vue.createApp({
   },
 
   methods: {
-    // Start the diagnosis process by calling the backend
-    startDiagnosis() {
-      this.result = null;  // Reset previous result
-      this.isAnswering = true;  // Start the answering process
-
-      // Call the backend to start the diagnosis session
-      fetch('http://localhost:3000/start-diagnosis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      })
-        .then(response => response.json())
-        .then(data => {
-          this.currentQuestion = data.question;  // Set the first question
-        })
-        .catch(error => {
-          console.error('Error starting diagnosis:', error);
+    async startDiagnosis() {
+      try {
+        const response = await fetch("http://localhost:3000/start-diagnosis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
         });
+        const data = await response.json();
+        this.question = data.message; // Get the first question
+        this.diagnosisStarted = true;
+        this.showInput = true;
+      } catch (error) {
+        console.error("Error starting diagnosis:", error);
+      }
     },
-
-    // Submit the user's answer and get the next question
-    submitAnswer() {
-      if (!this.answer.trim()) return;  // Prevent submitting empty answers
-
-      const answerData = { answer: this.answer.trim() };
-
-      // Send the answer to the backend
-      fetch('http://localhost:3000/answer-question', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(answerData),
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.question) {
-            this.currentQuestion = data.question;  // Set the next question
-            this.answer = '';  // Reset the answer input field
-          } else {
-            // If no more questions, show the result
-            this.result = data.result || 'Diagnosis completed.';
-          }
-        })
-        .catch(error => {
-          console.error('Error submitting answer:', error);
+  
+    async sendAnswer() {
+      if (!this.userAnswer.trim()) return; // Prevent empty submission
+  
+      try {
+        const response = await fetch("http://localhost:3000/answer-question", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userInput: this.userAnswer }),
         });
+  
+        const data = await response.json();
+        this.userAnswer = ""; // Clear input field
+        this.question = data.message; // Set next question
+  
+        // If the AI provides a diagnosis result, stop input and display result
+        if (this.question.toLowerCase().includes("you may have")) {
+          this.diagnosisResult = this.question;
+          this.showInput = false;
+        }
+      } catch (error) {
+        console.error("Error sending answer:", error);
+      }
     },
 
     toggleTheme() {
