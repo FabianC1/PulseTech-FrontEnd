@@ -1950,8 +1950,6 @@ a:hover {
   
   .new-diagnosis-button:hover {
     background: linear-gradient(to right, #8740c1, #0c62a2); /* Linear gradient background on hover */
-    animation: pulse1 2s infinite; /* Add pulsing animation */
-    transform: scale(1.1); /* Slightly scale the button up */
     border: black solid 2px;
   }
   
