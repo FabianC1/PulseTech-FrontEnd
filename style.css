@@ -2017,7 +2017,25 @@ a:hover {
     justify-content: space-between;
     align-items: center; /* Vertically center the content */
   }
+
+/* Style for the input fields */
+.record-section-content input {
+    width: 15% !important; /* Adjust width to make inputs smaller */
+    padding: 8px !important; /* Reduce padding for smaller inputs */
+    font-size: 0.9em !important; /* Smaller text size */
+    margin: 5px auto !important; /* Center inputs horizontally and add space between them */
+    display: block !important; /* Ensure inputs are block-level for vertical alignment */
+    border-radius: 5px !important; /* Keep the rounded corners */
+    border: 1px solid #ccc !important; /* Add a light border for better visibility */
+  }
   
+
+  .record-section-content input:focus {
+    border-color: transparent; /* Keep the original transparent border */
+    box-shadow: 0 3px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+    outline: none; /* Remove default outline when focused */
+  }
+
   /* Edit button position on the right */
   .record-section button {
     margin-top: -4%;
