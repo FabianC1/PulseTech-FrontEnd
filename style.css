@@ -2036,6 +2036,28 @@ a:hover {
     outline: none; /* Remove default outline when focused */
   }
 
+  /* Style for textareas */
+.record-section-content textarea {
+    width: 93%; /* Make textarea take up full width */
+    padding: 10px; /* Add padding for better text spacing */
+    font-size: 1.1em; /* Set font size */
+    font-family: 'Arial', sans-serif; /* Use a clean, modern font */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #ccc; /* Light border */
+    background-color: #f9f9f9; /* Light background color */
+    color: #333; /* Text color */
+    resize: vertical; /* Allow vertical resizing only */
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+  }
+  
+  /* Focus styling */
+  .record-section-content textarea:focus {
+    border-color: transparent; /* Keep the original transparent border */
+    box-shadow: 0 3px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+    outline: none; /* Remove default outline when focused */
+  }
+  
+
   /* Edit button position on the right */
   .record-section button {
     margin-top: -4%;
