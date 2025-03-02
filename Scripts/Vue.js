@@ -799,7 +799,7 @@ const app = Vue.createApp({
     goToProfile() {
       this.currentView = 'profile';  // Set the current view to 'profile'
       window.history.pushState({ view: 'profile' }, '', '/profile');  // Update URL
-    }
+    },
 
   },
 

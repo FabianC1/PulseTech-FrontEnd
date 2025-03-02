@@ -1987,6 +1987,7 @@ a:hover {
 
 /* Scrollable container for sections */
 .records-scroll-container {
+    margin-left: 0.1%;
     display: flex;
     flex-direction: column; /* Stack the sections vertically */
     gap: 15px; /* Add spacing between sub-containers */
@@ -2004,8 +2005,38 @@ a:hover {
     border: 2px solid #000;
     transition: transform 0.3s ease, background-color 0.3s ease;
     overflow-y: auto; /* Allow scrolling within sections if needed */
-}
-
+  }
+  .record-section h3 {
+    font-weight: bold;
+  }
+  
+  /* Flexbox container for the content in record-section */
+  .record-section-content {
+    display: flex;
+    flex-direction: row; /* Align content horizontally */
+    justify-content: space-between;
+    align-items: center; /* Vertically center the content */
+  }
+  
+  /* Edit button position on the right */
+  .record-section button {
+    margin-top: -4%;
+    margin-right: 2%; /* Push the button to the right */
+    background-color: #4a2cceda;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 1.1em;
+  }
+  
+  /* Button hover effect */
+  .record-section button:hover {
+    background-color: #1b0092ef;
+  }
+  
+  
 /* Custom scrollbar for individual sections */
 .record-section::-webkit-scrollbar {
     width: 6px;
@@ -2027,7 +2058,6 @@ a:hover {
 /* Strong Text Styling */
 .medical-records-container strong {
     font-weight: bold;
-    text-decoration: underline;
     padding: 3px;
     border-radius: 5px;
 }
