@@ -921,7 +921,7 @@ button {
     font-size: 1em; /* Increased font size */
     padding: 12px; /* Increased padding */
     margin-bottom: 15px;
-    border: 2px solid #ccc;
+    border: 2px solid #000000;
     border-radius: 5px;
     background-color: #f1f1f1;
     color: #333;
@@ -930,10 +930,9 @@ button {
 
 /* Apply linear gradient border on focus for textarea */
 .contact-container .message-form-container textarea:focus {
-    border: 2px solid transparent;
-    border-image-source: linear-gradient(45deg, #0099ff, #6200ff);
-    border-image-slice: 1;
-    background-color: #ffffff;
+    border-color: transparent; /* Keep the original transparent border */
+    box-shadow: 0 3px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+    outline: none; /* Remove default outline when focused */
 }
 
 

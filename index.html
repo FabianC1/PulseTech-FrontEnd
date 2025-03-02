@@ -261,17 +261,27 @@
                     <div class="record-section">
                         <h3>Current Medications</h3>
                         <div v-if="!isEditing.medications" class="record-section-content">
-                            <p>{{ user.medications || 'No medications listed' }}</p>
+                            <p>
+                                <strong>Medications:</strong>
+                            <ul>
+                                <li v-for="(medication, index) in user.medications" :key="index">{{ medication }}</li>
+                            </ul>
+                            </p>
                             <button @click="toggleEdit('medications')">Edit</button>
                         </div>
                         <div v-else class="record-section-content">
-                            <textarea v-model="user.medications" placeholder="Enter medications"></textarea>
+                            <div v-for="(medication, index) in user.medications" :key="index" class="medication-input">
+                                <input v-model="user.medications[index]" :placeholder="'Medication ' + (index + 1)" />
+                                <button @click="removeMedication(index)" class="remove-btn">Remove</button>
+                            </div>
+                            <button @click="addMedication" class="add-btn">Add Medication</button>
                             <div class="button-container">
                                 <button class="save-btn">Save</button>
                                 <button class="cancel-btn">Cancel</button>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Vaccination Records -->
                     <div class="record-section">
