@@ -221,184 +221,114 @@
                         <h3>Personal Information</h3>
                         <div v-if="!isEditing.personalInfo" class="record-section-content">
                             <p><strong>Name:</strong> {{ user.fullName }} | <strong>DOB:</strong> {{ user.dateOfBirth }}
-                                |
-                                <strong>Gender:</strong> {{ user.gender }} | <strong>Blood Type:</strong> {{
-                                user.bloodType }} |
-                                <strong>Emergency Contact:</strong> {{ user.emergencyContact }}
+                                | <strong>Gender:</strong> {{ user.gender }} |
+                                <strong>Blood Type:</strong> {{ user.bloodType }} | <strong>Emergency Contact:</strong>
+                                {{ user.emergencyContact }}
                             </p>
                             <button @click="toggleEdit('personalInfo')">Edit</button>
                         </div>
                         <div v-else class="record-section-content">
-                            <label><strong>Name:</strong> <input v-model="user.fullName"
-                                    placeholder="Edit Name" /></label>
-                            <label><strong>DOB:</strong> <input v-model="user.dateOfBirth" type="date" /></label>
-                            <label><strong>Gender:</strong> <input v-model="user.gender"
-                                    placeholder="Edit Gender" /></label>
-                            <label><strong>Blood Type:</strong> <input v-model="user.bloodType"
-                                    placeholder="Edit Blood Type" /></label>
-                            <label><strong>Emergency Contact:</strong> <input v-model="user.emergencyContact"
-                                    placeholder="Edit Emergency Contact" /></label>
-                            <button @click="saveEdit('personalInfo')">Save</button>
-                            <button @click="cancelEdit('personalInfo')">Cancel</button>
+                            <input v-model="user.fullName" placeholder="Edit Name" />
+                            <input v-model="user.dateOfBirth" type="date" />
+                            <input v-model="user.gender" placeholder="Edit Gender" />
+                            <input v-model="user.bloodType" placeholder="Edit Blood Type" />
+                            <input v-model="user.emergencyContact" placeholder="Edit Emergency Contact" />
+                            <div class="button-container">
+                                <button class="save-btn">Save</button>
+                                <button class="cancel-btn">Cancel</button>
+                            </div>
                         </div>
                     </div>
 
+
+
                     <!-- Medical History -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('medicalHistory')">
                         <h3>Medical History</h3>
-                        <div v-if="!isEditing.medicalHistory" class="record-section-content">
-                            <p>{{ user.medicalHistory || 'No records found' }}</p>
-                            <button @click="toggleEdit('medicalHistory')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Medical History:</strong> <textarea v-model="user.medicalHistory"
-                                    placeholder="Enter medical history"></textarea></label>
-                            <button @click="saveEdit('medicalHistory')">Save</button>
-                            <button @click="cancelEdit('medicalHistory')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.medicalHistory">{{ user.medicalHistory || 'No records found' }}</p>
+                        <textarea v-if="isEditing.medicalHistory" v-model="user.medicalHistory"
+                            placeholder="Enter medical history"></textarea>
                     </div>
 
                     <!-- Current Medications -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('medications')">
                         <h3>Current Medications</h3>
-                        <div v-if="!isEditing.medications" class="record-section-content">
-                            <p>{{ user.medications || 'No medications listed' }}</p>
-                            <button @click="toggleEdit('medications')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Medications:</strong> <textarea v-model="user.medications"
-                                    placeholder="Enter medications"></textarea></label>
-                            <button @click="saveEdit('medications')">Save</button>
-                            <button @click="cancelEdit('medications')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.medications">{{ user.medications || 'No medications listed' }}</p>
+                        <textarea v-if="isEditing.medications" v-model="user.medications"
+                            placeholder="Enter medications"></textarea>
                     </div>
 
                     <!-- Vaccination Records -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('vaccinations')">
                         <h3>Vaccination Records</h3>
-                        <div v-if="!isEditing.vaccinations" class="record-section-content">
-                            <p>{{ user.vaccinations || 'No records found' }}</p>
-                            <button @click="toggleEdit('vaccinations')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Vaccinations:</strong> <textarea v-model="user.vaccinations"
-                                    placeholder="Enter vaccinations"></textarea></label>
-                            <button @click="saveEdit('vaccinations')">Save</button>
-                            <button @click="cancelEdit('vaccinations')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.vaccinations">{{ user.vaccinations || 'No records found' }}</p>
+                        <textarea v-if="isEditing.vaccinations" v-model="user.vaccinations"
+                            placeholder="Enter vaccinations"></textarea>
                     </div>
 
                     <!-- Lifestyle & Habits -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('lifestyle')">
                         <h3>Lifestyle & Habits</h3>
-                        <div v-if="!isEditing.lifestyle" class="record-section-content">
-                            <p><strong>Smoking:</strong> {{ user.smokingStatus }} | <strong>Alcohol:</strong> {{
-                                user.alcoholConsumption }} |
-                                <strong>Exercise:</strong> {{ user.exerciseRoutine }} | <strong>Sleep:</strong> {{
-                                user.sleepPatterns }}
-                            </p>
-                            <button @click="toggleEdit('lifestyle')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Smoking:</strong> <input v-model="user.smokingStatus"
-                                    placeholder="Edit smoking status" /></label>
-                            <label><strong>Alcohol:</strong> <input v-model="user.alcoholConsumption"
-                                    placeholder="Edit alcohol consumption" /></label>
-                            <label><strong>Exercise:</strong> <input v-model="user.exerciseRoutine"
-                                    placeholder="Edit exercise routine" /></label>
-                            <label><strong>Sleep:</strong> <input v-model="user.sleepPatterns"
-                                    placeholder="Edit sleep patterns" /></label>
-                            <button @click="saveEdit('lifestyle')">Save</button>
-                            <button @click="cancelEdit('lifestyle')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.lifestyle">Smoking: {{ user.smokingStatus }} | Alcohol: {{
+                            user.alcoholConsumption }} | Exercise: {{ user.exerciseRoutine }} | Sleep: {{
+                            user.sleepPatterns }}</p>
+                        <input v-if="isEditing.lifestyle" v-model="user.smokingStatus"
+                            placeholder="Edit smoking status" />
+                        <input v-if="isEditing.lifestyle" v-model="user.alcoholConsumption"
+                            placeholder="Edit alcohol consumption" />
+                        <input v-if="isEditing.lifestyle" v-model="user.exerciseRoutine"
+                            placeholder="Edit exercise routine" />
+                        <input v-if="isEditing.lifestyle" v-model="user.sleepPatterns"
+                            placeholder="Edit sleep patterns" />
                     </div>
 
                     <!-- Symptoms & Health Logs -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('healthLogs')">
                         <h3>Symptoms & Health Logs</h3>
-                        <div v-if="!isEditing.healthLogs" class="record-section-content">
-                            <p>{{ user.healthLogs || 'No symptoms recorded' }}</p>
-                            <button @click="toggleEdit('healthLogs')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Symptoms:</strong> <textarea v-model="user.healthLogs"
-                                    placeholder="Enter symptoms"></textarea></label>
-                            <button @click="saveEdit('healthLogs')">Save</button>
-                            <button @click="cancelEdit('healthLogs')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.healthLogs">{{ user.healthLogs || 'No symptoms recorded' }}</p>
+                        <textarea v-if="isEditing.healthLogs" v-model="user.healthLogs"
+                            placeholder="Enter symptoms"></textarea>
                     </div>
 
                     <!-- Lab Results & Reports -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('labResults')">
                         <h3>Lab Results & Reports</h3>
-                        <div v-if="!isEditing.labResults" class="record-section-content">
-                            <p>{{ user.labResults || 'No reports available' }}</p>
-                            <button @click="toggleEdit('labResults')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Lab Results:</strong> <textarea v-model="user.labResults"
-                                    placeholder="Enter lab results"></textarea></label>
-                            <button @click="saveEdit('labResults')">Save</button>
-                            <button @click="cancelEdit('labResults')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.labResults">{{ user.labResults || 'No reports available' }}</p>
+                        <textarea v-if="isEditing.labResults" v-model="user.labResults"
+                            placeholder="Enter lab results"></textarea>
                     </div>
 
                     <!-- Doctor Visits & Appointments -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('doctorVisits')">
                         <h3>Doctor Visits & Appointments</h3>
-                        <div v-if="!isEditing.doctorVisits" class="record-section-content">
-                            <p>{{ user.doctorVisits || 'No records found' }}</p>
-                            <button @click="toggleEdit('doctorVisits')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Doctor Visits:</strong> <textarea v-model="user.doctorVisits"
-                                    placeholder="Enter doctor visit records"></textarea></label>
-                            <button @click="saveEdit('doctorVisits')">Save</button>
-                            <button @click="cancelEdit('doctorVisits')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.doctorVisits">{{ user.doctorVisits || 'No records found' }}</p>
+                        <textarea v-if="isEditing.doctorVisits" v-model="user.doctorVisits"
+                            placeholder="Enter doctor visit records"></textarea>
                     </div>
 
                     <!-- Smartwatch & Wearable Data -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('wearableData')">
                         <h3>Smartwatch & Wearable Data</h3>
-                        <div v-if="!isEditing.wearableData" class="record-section-content">
-                            <p><strong>Heart Rate:</strong> {{ user.heartRate }} | <strong>Step Count:</strong> {{
-                                user.stepCount }} |
-                                <strong>Sleep Tracking:</strong> {{ user.sleepTracking }} | <strong>Blood
-                                    Oxygen:</strong> {{ user.bloodOxygen }}
-                            </p>
-                            <button @click="toggleEdit('wearableData')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Heart Rate:</strong> <input v-model="user.heartRate"
-                                    placeholder="Edit heart rate" /></label>
-                            <label><strong>Step Count:</strong> <input v-model="user.stepCount"
-                                    placeholder="Edit step count" /></label>
-                            <label><strong>Sleep Tracking:</strong> <input v-model="user.sleepTracking"
-                                    placeholder="Edit sleep tracking" /></label>
-                            <label><strong>Blood Oxygen:</strong> <input v-model="user.bloodOxygen"
-                                    placeholder="Edit blood oxygen levels" /></label>
-                            <button @click="saveEdit('wearableData')">Save</button>
-                            <button @click="cancelEdit('wearableData')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.wearableData">Heart Rate: {{ user.heartRate }} | Step Count: {{
+                            user.stepCount }} | Sleep Tracking: {{ user.sleepTracking }} | Blood Oxygen: {{
+                            user.bloodOxygen }}</p>
+                        <input v-if="isEditing.wearableData" v-model="user.heartRate" placeholder="Edit heart rate" />
+                        <input v-if="isEditing.wearableData" v-model="user.stepCount" placeholder="Edit step count" />
+                        <input v-if="isEditing.wearableData" v-model="user.sleepTracking"
+                            placeholder="Edit sleep tracking" />
+                        <input v-if="isEditing.wearableData" v-model="user.bloodOxygen"
+                            placeholder="Edit blood oxygen levels" />
                     </div>
 
                     <!-- Emergency Details -->
-                    <div class="record-section">
+                    <div class="record-section" @click="toggleEdit('emergencyDetails')">
                         <h3>Emergency Details</h3>
-                        <div v-if="!isEditing.emergencyDetails" class="record-section-content">
-                            <p><strong>Organ Donor:</strong> {{ user.organDonorStatus }} | <strong>Medical
-                                    Directives:</strong> {{ user.medicalDirectives }}</p>
-                            <button @click="toggleEdit('emergencyDetails')">Edit</button>
-                        </div>
-                        <div v-else class="record-section-content">
-                            <label><strong>Organ Donor:</strong> <input v-model="user.organDonorStatus"
-                                    placeholder="Edit organ donor status" /></label>
-                            <label><strong>Medical Directives:</strong> <input v-model="user.medicalDirectives"
-                                    placeholder="Edit medical directives" /></label>
-                            <button @click="saveEdit('emergencyDetails')">Save</button>
-                            <button @click="cancelEdit('emergencyDetails')">Cancel</button>
-                        </div>
+                        <p v-if="!isEditing.emergencyDetails">Organ Donor: {{ user.organDonorStatus }} | Medical
+                            Directives: {{ user.medicalDirectives }}</p>
+                        <input v-if="isEditing.emergencyDetails" v-model="user.organDonorStatus"
+                            placeholder="Edit organ donor status" />
+                        <input v-if="isEditing.emergencyDetails" v-model="user.medicalDirectives"
+                            placeholder="Edit medical directives" />
                     </div>
                 </div>
             </div>
