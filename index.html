@@ -437,9 +437,8 @@
             <!-- Symptom Checker Section -->
             <div v-if="currentView === 'symptomChecker'" class="symptom-checker">
                 <h2 v-if="!hasDiagnosis">Symptom Checker</h2>
-                <p v-if="!hasDiagnosis">Get health advice and a diagnosis based on symptoms. Please input your
-                    primary
-                    symptom.</p>
+                <p v-if="!hasDiagnosis">Get health advice and a diagnosis based on symptoms. Please remember this isn't
+                    always accurate and you should always contact a trained doctor.</p>
 
                 <!-- Button to start the diagnosis -->
                 <button v-if="!diagnosisStarted && !hasDiagnosis" @click="startDiagnosis"
