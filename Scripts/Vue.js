@@ -871,6 +871,8 @@ const app = Vue.createApp({
             this.isEditing[key] = false;
           });
         });
+
+        
     },
 
 
@@ -904,6 +906,12 @@ const app = Vue.createApp({
       window.history.pushState({ view: 'profile' }, '', '/profile');  // Update URL
     },
 
+    handleEnterKey(event) {
+      if (event.key === "Enter") {
+        this.sendAnswer(); // Submit answer when Enter is pressed
+      }
+    }    
+    
   },
 
 
@@ -924,6 +932,8 @@ const app = Vue.createApp({
 
     this.handleRouteChange();
 
+    document.addEventListener("keydown", this.handleEnterKey);
+
     document.addEventListener("touchstart", this.handleTouchStart);
     document.addEventListener("touchmove", this.handleTouchMove);
     document.addEventListener("touchend", this.handleTouchEnd);
@@ -931,6 +941,7 @@ const app = Vue.createApp({
   },
 
   beforeUnmount() {
+    document.removeEventListener("keydown", this.handleEnterKey);
     window.removeEventListener("popstate", this.handleRouteChange);
     document.removeEventListener("touchstart", this.handleTouchStart);
     document.removeEventListener("touchmove", this.handleTouchMove);
