@@ -328,25 +328,26 @@ const app = Vue.createApp({
     },
 
     async fetchMedicalRecords() {
-      // Check if email is available before making the API call
-      if (this.user.email) {
-        try {
-          const response = await fetch(`http://localhost:3000/get-medical-records/${this.user.email}`);
-          const data = await response.json();
-
-          if (response.ok) {
-            this.user = data; // Update user object with the latest medical records
-            localStorage.setItem("user", JSON.stringify(this.user)); // Sync with local storage
-          } else {
-            console.error("Error fetching medical records:", data.message);
-          }
-        } catch (error) {
-          console.error("Error fetching medical records:", error);
+      try {
+        const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+    
+        const data = await response.json();
+        if (response.ok) {
+          this.user = data;  // Set the user object to the medical records
+        } else {
+          console.error("Error fetching medical records:", data.message);
         }
-      } else {
-        console.error("Email is not available for fetching medical records.");
+      } catch (error) {
+        console.error("Error fetching medical records:", error);
       }
     },
+    
+    
 
 
     async cancelEdit() {
@@ -467,22 +468,27 @@ const app = Vue.createApp({
         .then((res) => res.json())
         .then((data) => {
           if (data.message === "Login successful") {
-            // Remove password from user object before saving
             const userData = { ...data.user };
             delete userData.password;
-
-            localStorage.setItem("user", JSON.stringify(userData)); // Store user data
-            this.isLoggedIn = true;
-            this.user = userData;
-            this.user.password = ""; // Ensure password field is empty after login
-
-            this.navigateTo("profile"); // Redirect to profile after successful login
+    
+            // Ensure email is included in user data
+            if (userData.email) {
+              localStorage.setItem("user", JSON.stringify(userData)); // Save to localStorage
+              this.isLoggedIn = true;
+              this.user = userData;
+              this.user.password = ""; // Ensure password is empty after login
+    
+              this.navigateTo("profile"); // Redirect to profile after successful login
+            } else {
+              console.error("Email missing in user data");
+            }
           } else {
             alert("Invalid email or password.");
           }
         })
         .catch((error) => console.error("Login error:", error));
     },
+    
 
 
     // Edit user details function
