@@ -498,7 +498,7 @@
                                     <div v-if="!isEditing.appointment[patient.email]">
                                         <button @click="toggleAppointmentEdit(patient.email)">Give Appointment</button>
                                     </div>
-                                    <div v-else class="appointment-section-content1">
+                                    <div v-else class="appointment-section-content">
                                         <input type="date" v-model="appointmentData[patient.email].date"
                                             placeholder="Appointment Date" />
                                         <textarea v-model="appointmentData[patient.email].reason"
