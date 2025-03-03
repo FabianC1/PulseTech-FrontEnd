@@ -504,7 +504,8 @@
                                         <textarea v-model="appointmentData[patient.email].reason"
                                             placeholder="Enter reason"></textarea>
                                         <div class="button-container" style="margin-right: -10%;">
-                                            <button class="saveAppointment" @click="submitAppointment(patient.email)">Submit
+                                            <button class="saveAppointment"
+                                                @click="submitAppointment(patient.email)">Submit
                                                 Appointment</button>
                                             <button class="cancelAppointment"
                                                 @click="cancelAppointmentEdit(patient.email)">Cancel</button>
@@ -555,7 +556,8 @@
                                                 placeholder="Enter reason"></textarea>
 
                                             <div class="button-container">
-                                                <button class="saveAppointment" @click="submitAppointment(doctor.email)">Submit
+                                                <button class="saveAppointment"
+                                                    @click="submitAppointment(doctor.email)">Submit
                                                     Appointment</button>
                                                 <button class="cancelAppointment"
                                                     @click="cancelAppointmentEdit(doctor.email)">Cancel</button>
