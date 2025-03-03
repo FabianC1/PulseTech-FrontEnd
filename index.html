@@ -471,9 +471,13 @@
                 <h2 style="text-align: center; margin-top: -0.5%;">Appointments</h2>
 
                 <div v-if="isDoctor">
-                    <h3>Welcome, Dr. {{ user.username }}</h3>
-                    <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
-                    <button @click="appointmentsView = 'give'">Give Appointments</button>
+                    <div class="appointments-header">
+                        <h3>Welcome, Dr. {{ user.username }}</h3>
+                        <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
+                        <button @click="appointmentsView = 'give'">Give Appointments</button>
+                    </div>
+
+
 
                     <div v-if="appointmentsView === 'upcoming'">
                         <h4>Upcoming Appointments</h4>
