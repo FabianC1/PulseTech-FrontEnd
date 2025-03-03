@@ -1210,7 +1210,6 @@ button {
 
 /* Button container to center buttons */
 .button-container {
-    
     display: flex;
     justify-content: center; /* Centers the buttons horizontally */
     gap: 20px; /* Space between buttons */
@@ -2273,4 +2272,75 @@ a:hover {
 
 .appointments-header button:hover {
     background: linear-gradient(45deg, #007fb9, #7700ffce);
+}
+
+/* New class for appointment inputs and textarea */
+.appointment-inputs {
+    display: flex;
+    flex-direction: row; /* Align content horizontally */
+    align-items: center; /* Center the elements vertically */
+    justify-content: center; /* Center the elements horizontally */
+    width: 100%;
+    gap: 10%; /* Space between items */
+    margin: 0 auto; /* Center the container */
+}
+
+.appointment-inputs textarea {
+    width: 40%; /* Adjust width to make inputs longer */
+    padding: 8px;
+    font-size: 0.9em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+    font-family: 'Arial', sans-serif; /* Use a clean, modern font */
+    font-weight: bold;
+}
+
+/* Style for textareas */
+.appointment-inputs textarea {
+    resize: vertical; /* Allow vertical resizing only */
+}
+
+.appointment-inputs input[type="date"]{
+    width: 10%; /* Adjust width to make inputs longer */
+    padding: 8px;
+    font-size: 0.9em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+/* Focus and Hover Styling */
+.appointment-inputs input[type="date"]:focus,
+.appointment-inputs textarea:focus {
+    border-color: transparent;
+    box-shadow: 0 3px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+    outline: none;
+}
+
+
+/* Style for Save and Cancel Appointment buttons */
+.appointment-inputs .button-container {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 10px; /* Space between buttons */
+    margin-top: 10px; /* Add some space above the buttons */
+}
+
+.appointment-inputs .saveAppointment,
+.appointment-inputs .cancelAppointment {
+    background-color: #4a2cceda; /* Purple color */
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.appointment-inputs .saveAppointment:hover,
+.appointment-inputs .cancelAppointment:hover {
+    background-color: #1b0092ef; /* Darker purple on hover */
 }
