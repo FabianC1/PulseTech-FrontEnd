@@ -1147,7 +1147,33 @@ const app = Vue.createApp({
       } catch (error) {
         console.error("Error scheduling appointment:", error);
       }
-    }
+    },
+
+    async markAppointmentCompleted(appointment) {
+      try {
+        const response = await fetch("http://localhost:3000/update-appointment-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            doctorEmail: appointment.doctorEmail,
+            patientEmail: appointment.patientEmail,
+            date: appointment.date,
+            status: "Completed",
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("Appointment marked as completed!");
+          this.fetchAppointments(); // Refresh the appointment list
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (error) {
+        console.error("Error updating appointment status:", error);
+      }
+    },
   },
 
 

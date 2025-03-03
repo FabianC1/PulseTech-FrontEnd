@@ -483,11 +483,21 @@
                             <div v-for="(appointment, index) in upcomingAppointments" :key="index"
                                 class="appointment-section">
                                 <div class="appointment-section-content">
-                                    <strong>{{ appointment.patientName }}</strong> - {{ appointment.date }}
+                                    <strong>Patient:</strong> {{ appointment.patientEmail }} |
+                                    <strong>Date:</strong> {{ appointment.date }} |
+                                    <strong>Reason:</strong> {{ appointment.reason }} |
+                                    <strong>Status:</strong> {{ appointment.status }}
+
+                                    <!-- Show "Mark as Completed" button for doctors -->
+                                    <button v-if="appointment.status !== 'Completed'"
+                                        @click="markAppointmentCompleted(appointment)">
+                                        Mark as Completed
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <div v-if="appointmentsView === 'give'">
                         <h4>Patients List</h4>
