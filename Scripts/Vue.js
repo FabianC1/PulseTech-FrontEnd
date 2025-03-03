@@ -332,25 +332,32 @@ const app = Vue.createApp({
     },
 
     async fetchMedicalRecords() {
-      // Check if email is available before making the API call
-      if (this.user.email) {
-        try {
-          const response = await fetch(`http://localhost:3000/get-medical-records/${this.user.email}`);
-          const data = await response.json();
-
-          if (response.ok) {
-            this.user = data; // Update user object with the latest medical records
-            localStorage.setItem("user", JSON.stringify(this.user)); // Sync with local storage
-          } else {
-            console.error("Error fetching medical records:", data.message);
-          }
-        } catch (error) {
-          console.error("Error fetching medical records:", error);
+      try {
+        console.log("Fetching medical records for:", this.user.email); // Debugging
+    
+        if (!this.user.email) {
+          console.error("User email is missing. Cannot fetch medical records.");
+          return;
         }
-      } else {
-        console.error("Email is not available for fetching medical records.");
+    
+        const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          this.user = { ...this.user, ...data }; // Merge medical records into user object
+          console.log("Medical records fetched successfully:", data);
+        } else {
+          console.error("Error fetching medical records:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching medical records:", error);
       }
     },
+    
 
 
     async cancelEdit() {
