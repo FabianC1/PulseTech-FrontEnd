@@ -2364,7 +2364,7 @@ a:hover {
 .popup-content {
     background: #181818b6;
     padding: 20px;
-    width: 60%;  /* Bigger popup */
+    width: 70%;  /* Bigger popup */
     height: 80vh; /* Take up 80% of the screen */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -2397,11 +2397,13 @@ a:hover {
 
 /* Record sections inside the popup */
 .record-section {
+    width: 96%;
     background: rgba(255, 255, 255, 0.08);
     padding: 10px;
     border-radius: 8px;
     border: 2px solid #000;
     margin-bottom: 10px;
+    margin-left: 1%;
 }
 
 .record-section h4 {
@@ -2440,8 +2442,20 @@ a:hover {
     color: white;
 }
 
+.saveAppointment:hover {
+    background: #3200ba;
+    color: white;
+}
+
+
 .cancelAppointment {
     background: #e60f00;
     color: white;
 }
+
+.cancelAppointment:hover {
+    background: #960a00;
+    color: white;
+}
+
 
