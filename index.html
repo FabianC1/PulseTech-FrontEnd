@@ -497,7 +497,7 @@
                             <div v-for="(patient, index) in patientsList" :key="index" class="appointment-section">
                                 <div class="appointment-section-content">
                                     <strong>{{ patient.fullName }}</strong>
-                                    <div>
+                                    <div style="margin-right: -13%;" >
                                         <button @click="viewMedicalRecords(patient.email)">View Medical Records</button>
                                         <button @click="giveAppointment(patient.email)">Give Appointment</button>
                                     </div>
