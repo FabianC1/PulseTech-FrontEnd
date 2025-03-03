@@ -1119,7 +1119,6 @@ const app = Vue.createApp({
       this.appointmentData[email] = { date: '', reason: '' };
     },
 
-    // Submit the appointment (for both doctors and patients)
     async submitAppointment(email) {
       const appointment = this.appointmentData[email];
       if (!appointment.date || !appointment.reason) {
@@ -1128,15 +1127,19 @@ const app = Vue.createApp({
       }
 
       try {
+        // Check if the logged-in user is a doctor or patient
+        const isDoctor = this.user.role === "doctor";
+
         // Submit appointment via API
         const response = await fetch("http://localhost:3000/create-appointment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            doctorEmail: this.user.email,
-            patientEmail: email,
+            doctorEmail: isDoctor ? this.user.email : email,  // If doctor, use their email; if patient, use selected doctor
+            patientEmail: isDoctor ? email : this.user.email, // If doctor, assign patient email; otherwise, use logged-in user
             date: appointment.date,
-            reason: appointment.reason
+            reason: appointment.reason,
+            status: "Scheduled" // Default status
           })
         });
 
@@ -1148,6 +1151,7 @@ const app = Vue.createApp({
         console.error("Error scheduling appointment:", error);
       }
     },
+
 
     async markAppointmentCompleted(appointment) {
       try {
