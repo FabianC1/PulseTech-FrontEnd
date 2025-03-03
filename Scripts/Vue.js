@@ -97,7 +97,14 @@ const app = Vue.createApp({
     },
   },
 
-
+  watch: {
+    // Watch for when the current view is set to 'appointments'
+    currentView(newValue) {
+      if (newValue === 'appointments') {
+        this.fetchAppointmentsData();  // Trigger API calls only when the view is active
+      }
+    },
+  },
 
   created() {
     // Fetch the Terms and Conditions data from the backend API
@@ -923,6 +930,18 @@ const app = Vue.createApp({
       }
     },
 
+    // Fetch appointments, medical records, and patients when the appointments view is loaded
+    fetchAppointmentsData() {
+      if (this.isDoctor) {
+        this.fetchAppointments();  // Fetch appointments for the doctor
+        this.fetchPatients();  // Fetch the list of patients
+      } else {
+        this.fetchAppointments();  // Fetch appointments for the patient
+        this.fetchDoctors();  // Fetch the list of doctors
+      }
+    },
+
+    // Fetch appointments for the doctor or patient
     async fetchAppointments() {
       try {
         const response = await fetch(`http://localhost:3000/get-appointments?email=${this.user.email}`);
@@ -933,6 +952,7 @@ const app = Vue.createApp({
       }
     },
 
+    // Fetch patients list for doctors
     async fetchPatients() {
       try {
         const response = await fetch("http://localhost:3000/get-patients");
@@ -943,6 +963,7 @@ const app = Vue.createApp({
       }
     },
 
+    // Fetch doctors list for patients
     async fetchDoctors() {
       try {
         const response = await fetch("http://localhost:3000/get-doctors");
@@ -953,7 +974,7 @@ const app = Vue.createApp({
       }
     },
 
-
+    // Schedule appointment for doctor
     async scheduleAppointment(patientEmail) {
       const date = prompt("Enter appointment date (YYYY-MM-DD):");
 
@@ -972,12 +993,13 @@ const app = Vue.createApp({
 
         const data = await response.json();
         alert(data.message);
-        this.fetchAppointments();
+        this.fetchAppointments();  // Fetch updated appointments
       } catch (error) {
         console.error("Error scheduling appointment:", error);
       }
     },
 
+    // Request appointment for patient
     async requestAppointment(doctorEmail) {
       const date = prompt("Enter appointment date (YYYY-MM-DD):");
 
@@ -996,12 +1018,13 @@ const app = Vue.createApp({
 
         const data = await response.json();
         alert(data.message);
-        this.fetchAppointments();
+        this.fetchAppointments();  // Fetch updated appointments
       } catch (error) {
         console.error("Error requesting appointment:", error);
       }
     },
 
+    // View patient records (for doctor)
     async viewPatientRecords(email) {
       try {
         const response = await fetch(`http://localhost:3000/view-patient-records?email=${email}`);
@@ -1010,8 +1033,8 @@ const app = Vue.createApp({
       } catch (error) {
         console.error("Error fetching patient records:", error);
       }
-    }
-
+    },
+    
   },
 
 
