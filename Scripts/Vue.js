@@ -465,37 +465,39 @@ const app = Vue.createApp({
       return true;
     },
 
-    // Handle login form submission
-    loginUser() {
-      fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: this.loginData.email,
-          password: this.loginData.password,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.message === "Login successful") {
-            // ✅ Remove password from user object before saving
-            // Remove password from user object before saving
-            const userData = { ...data.user };
-            delete userData.password;
+// Handle login form submission
+loginUser() {
+  fetch("http://localhost:3000/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: this.loginData.email,
+      password: this.loginData.password,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.message === "Login successful") {
+        // ✅ Remove password from user object before saving
+        const userData = { ...data.user };
+        delete userData.password;
 
-            localStorage.setItem("user", JSON.stringify(userData)); // Store user data
-            this.isLoggedIn = true;
-            this.user = userData;
-            this.user.password = ""; // ✅ Ensure password field is empty after login
-            this.user.password = ""; // Ensure password field is empty after login
+        // ✅ Store user data in localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
+        this.isLoggedIn = true;
+        this.user = userData;
+        this.user.password = ""; // ✅ Ensure password field is empty
 
-            this.navigateTo("profile"); // Redirect to profile after successful login
-          } else {
-            alert("Invalid email or password.");
-          }
-        })
-        .catch((error) => console.error("Login error:", error));
-    },
+        // ✅ Fetch medical records after login
+        this.fetchMedicalRecords();
+
+        this.navigateTo("profile"); // Redirect to profile after successful login
+      } else {
+        alert("Invalid email or password.");
+      }
+    })
+    .catch((error) => console.error("Login error:", error));
+},
 
 
     // Edit user details function
@@ -730,16 +732,6 @@ const app = Vue.createApp({
     },
     redirectToSignup() {
       this.currentView = "signup"; // Switch to signup view
-    },
-    login() {
-      // Handle login logic here
-      console.log("Login logic goes here");
-      // For example, you might want to authenticate using an API
-    },
-    signup() {
-      // Handle signup logic here
-      console.log("Signup logic goes here");
-      // Example: Save the user details or call an API to register them
     },
 
 
