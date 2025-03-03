@@ -2345,3 +2345,98 @@ a:hover {
 .appointment-inputs .cancelAppointment:hover {
     background-color: #1b0092ef; /* Darker purple on hover */
 }
+
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Popup Content */
+.popup-content {
+    background: #181818b6;
+    padding: 20px;
+    width: 60%;  /* Bigger popup */
+    height: 80vh; /* Take up 80% of the screen */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    overflow-y: auto; /* Enable scrolling */
+}
+
+/* Scrollable container */
+.popup-scroll-container {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Record sections inside the popup */
+.record-section {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #000;
+    margin-bottom: 10px;
+}
+
+.record-section h4 {
+    font-weight: bold;
+}
+
+/* Textarea styling */
+.popup-content textarea {
+    width: 99%;
+    height: 80px;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #727272c2;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+/* Textarea styling */
+.popup-content textarea:focus {
+    border-color: transparent;
+    box-shadow: 0 3px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+    outline: none;
+}
+
+
+/* Scrollbar */
+.popup-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+/* Button styles */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.saveAppointment {
+    background: #008cba;
+    color: white;
+}
+
+.cancelAppointment {
+    background: #e60f00;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.8;
+}

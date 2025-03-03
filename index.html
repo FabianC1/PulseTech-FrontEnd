@@ -497,16 +497,16 @@
                                     <strong>{{ patient.fullName }}</strong>
                                     <div v-if="!isEditing.appointment[patient.email]">
                                         <button @click="toggleAppointmentEdit(patient.email)">Give Appointment</button>
+                                        <button @click="viewMedicalHistory(patient.email)">View Medical History</button>
                                     </div>
                                     <div v-else class="appointment-inputs">
                                         <input type="date" v-model="appointmentData[patient.email].date"
                                             placeholder="Appointment Date" />
                                         <textarea v-model="appointmentData[patient.email].reason"
                                             placeholder="Enter reason"></textarea>
-                                        <div class="button-container" style="margin-right: -10%;">
+                                        <div class="button-container">
                                             <button class="saveAppointment"
-                                                @click="submitAppointment(patient.email)">Submit
-                                                Appointment</button>
+                                                @click="submitAppointment(patient.email)">Submit Appointment</button>
                                             <button class="cancelAppointment"
                                                 @click="cancelAppointmentEdit(patient.email)">Cancel</button>
                                         </div>
@@ -515,6 +515,104 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Medical History Popup -->
+                    <div v-if="showMedicalHistoryPopup" class="popup-overlay">
+                        <div class="popup-content">
+                            <h3>Medical History for {{ selectedPatient.fullName }}</h3>
+                            <div class="popup-scroll-container">
+                                <!-- Personal Information -->
+                                <div class="record-section">
+                                    <h4>Personal Information</h4>
+                                    <p><strong>Name:</strong> {{ selectedPatient.fullName }} |
+                                        <strong>DOB:</strong> {{ selectedPatient.dateOfBirth }} |
+                                        <strong>Gender:</strong> {{ selectedPatient.gender }} |
+                                        <strong>Blood Type:</strong> {{ selectedPatient.bloodType }} |
+                                        <strong>Emergency Contact:</strong> {{ selectedPatient.emergencyContact }}
+                                    </p>
+                                </div>
+
+                                <!-- Medical History -->
+                                <div class="record-section">
+                                    <h4>Medical History</h4>
+                                    <textarea v-model="selectedPatient.medicalHistory"></textarea>
+                                </div>
+
+                                <!-- Current Medications -->
+                                <div class="record-section">
+                                    <h4>Current Medications</h4>
+                                    <p v-if="!selectedPatient.medications || selectedPatient.medications.length === 0">
+                                        No medications found
+                                    </p>
+                                    <ul v-else>
+                                        <li v-for="(medication, index) in selectedPatient.medications" :key="index">
+                                            {{ medication }}
+                                        </li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- Vaccination Records -->
+                                <div class="record-section">
+                                    <h4>Vaccination Records</h4>
+                                    <textarea v-model="selectedPatient.vaccinations"></textarea>
+                                </div>
+
+                                <!-- Lifestyle & Habits -->
+                                <div class="record-section">
+                                    <h4>Lifestyle & Habits</h4>
+                                    <p><strong>Smoking:</strong> {{ selectedPatient.smokingStatus }} |
+                                        <strong>Alcohol:</strong> {{ selectedPatient.alcoholConsumption }} |
+                                        <strong>Exercise:</strong> {{ selectedPatient.exerciseRoutine }} |
+                                        <strong>Sleep:</strong> {{ selectedPatient.sleepPatterns }}
+                                    </p>
+                                </div>
+
+                                <!-- Symptoms & Health Logs -->
+                                <div class="record-section">
+                                    <h4>Symptoms & Health Logs</h4>
+                                    <textarea v-model="selectedPatient.healthLogs"></textarea>
+                                </div>
+
+                                <!-- Lab Results & Reports -->
+                                <div class="record-section">
+                                    <h4>Lab Results & Reports</h4>
+                                    <textarea v-model="selectedPatient.labResults"></textarea>
+                                </div>
+
+                                <!-- Doctor Visits & Appointments -->
+                                <div class="record-section">
+                                    <h4>Doctor Visits & Appointments</h4>
+                                    <textarea v-model="selectedPatient.doctorVisits"></textarea>
+                                </div>
+
+                                <!-- Smartwatch & Wearable Data -->
+                                <div class="record-section">
+                                    <h4>Smartwatch & Wearable Data</h4>
+                                    <p><strong>Heart Rate:</strong> {{ selectedPatient.heartRate }} |
+                                        <strong>Step Count:</strong> {{ selectedPatient.stepCount }} |
+                                        <strong>Sleep Tracking:</strong> {{ selectedPatient.sleepTracking }} |
+                                        <strong>Blood Oxygen:</strong> {{ selectedPatient.bloodOxygen }}
+                                    </p>
+                                </div>
+
+                                <!-- Emergency Details -->
+                                <div class="record-section">
+                                    <h4>Emergency Details</h4>
+                                    <p><strong>Organ Donor:</strong> {{ selectedPatient.organDonorStatus }} |
+                                        <strong>Medical Directives:</strong> {{ selectedPatient.medicalDirectives }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="button-container">
+                                <button class="saveAppointment" @click="saveMedicalHistory">Save Changes</button>
+                                <button class="cancelAppointment" @click="closeMedicalHistoryPopup">Close</button>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
 
                 <div v-else>

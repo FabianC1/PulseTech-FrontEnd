@@ -82,7 +82,31 @@ const app = Vue.createApp({
       upcomingAppointments: [],
       patientsList: [],
       doctorsList: [],
-      appointmentData: {} // Store appointment data for each patient or doctor
+      appointmentData: {}, // Store appointment data for each patient or doctor
+      showMedicalHistoryPopup: false,
+      selectedPatient: {
+        fullName: "",
+        dateOfBirth: "",
+        gender: "",
+        bloodType: "",
+        emergencyContact: "",
+        medicalHistory: "",
+        medications: [],
+        vaccinations: "",
+        smokingStatus: "",
+        alcoholConsumption: "",
+        exerciseRoutine: "",
+        sleepPatterns: "",
+        healthLogs: "",
+        labResults: "",
+        doctorVisits: "",
+        heartRate: "",
+        stepCount: "",
+        sleepTracking: "",
+        bloodOxygen: "",
+        organDonorStatus: "",
+        medicalDirectives: ""
+      },
     };
   },
 
@@ -378,7 +402,48 @@ const app = Vue.createApp({
       }
     },
 
+    // Fetch and show medical history in popup
+    async viewMedicalHistory(email) {
+      try {
+        const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(email)}`);
+        const data = await response.json();
 
+        if (response.ok) {
+          this.selectedPatient = { email, ...data }; // Store patient data
+          this.showMedicalHistoryPopup = true; // Show popup
+        } else {
+          console.error("Error fetching medical history:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching medical history:", error);
+      }
+    },
+
+    // Save updated medical history
+    async saveMedicalHistory() {
+      try {
+        const response = await fetch("http://localhost:3000/save-medical-records", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.selectedPatient),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert("Medical history updated.");
+          this.showMedicalHistoryPopup = false;
+        } else {
+          console.error("Error updating medical history:", data.message);
+        }
+      } catch (error) {
+        console.error("Error updating medical history:", error);
+      }
+    },
+
+    // Close the popup
+    closeMedicalHistoryPopup() {
+      this.showMedicalHistoryPopup = false;
+    },
 
     async cancelEdit() {
       // Set the editing flag for all fields back to false
