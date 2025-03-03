@@ -238,8 +238,8 @@
                                 <input v-model="user.bloodType" placeholder="Edit Blood Type" />
                                 <input v-model="user.emergencyContact" placeholder="Edit Emergency Contact" />
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -254,8 +254,8 @@
                             <div v-else class="record-section-content">
                                 <textarea v-model="user.medicalHistory" placeholder="Enter medical history"></textarea>
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -282,8 +282,8 @@
                                 </div>
                                 <button @click="addMedication" class="add-btn">Add Medication</button>
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -299,8 +299,8 @@
                             <div v-else class="record-section-content">
                                 <textarea v-model="user.vaccinations" placeholder="Enter vaccinations"></textarea>
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -322,8 +322,8 @@
                                 <input v-model="user.exerciseRoutine" placeholder="Edit exercise routine" />
                                 <input v-model="user.sleepPatterns" placeholder="Edit sleep patterns" />
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -338,8 +338,8 @@
                             <div v-else class="record-section-content">
                                 <textarea v-model="user.healthLogs" placeholder="Enter symptoms"></textarea>
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -354,8 +354,8 @@
                             <div v-else class="record-section-content">
                                 <textarea v-model="user.labResults" placeholder="Enter lab results"></textarea>
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -371,8 +371,8 @@
                                 <textarea v-model="user.doctorVisits"
                                     placeholder="Enter doctor visit records"></textarea>
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -394,8 +394,8 @@
                                 <input v-model="user.sleepTracking" placeholder="Edit sleep tracking" />
                                 <input v-model="user.bloodOxygen" placeholder="Edit blood oxygen levels" />
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -412,8 +412,8 @@
                                 <input v-model="user.organDonorStatus" placeholder="Edit organ donor status" />
                                 <input v-model="user.medicalDirectives" placeholder="Edit medical directives" />
                                 <div class="button-container">
-                                    <button class="save-btn">Save</button>
-                                    <button class="cancel-btn">Cancel</button>
+                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
+                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
                                 </div>
                             </div>
                         </div>

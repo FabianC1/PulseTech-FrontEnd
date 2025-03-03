@@ -55,7 +55,17 @@ const app = Vue.createApp({
         password: false,
         dateOfBirth: false,
         ethnicity: false,
-        address: false
+        address: false,
+        personalInfo: false,
+        medicalHistory: false,
+        medications: false,
+        vaccinations: false,
+        lifestyle: false,
+        healthLogs: false,
+        labResults: false,
+        doctorVisits: false,
+        wearableData: false,
+        emergencyDetails: false,
       },
       diagnosisStarted: false,
       question: "",
@@ -64,7 +74,7 @@ const app = Vue.createApp({
       diagnosisResult: "",
       formattedDiagnosisResult: [],
       hasDiagnosis: false, // To track whether a diagnosis is already made
-      
+      originalUser: {}, // Store the original data to cancel changes
     };
   },
 
@@ -159,12 +169,22 @@ const app = Vue.createApp({
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       this.user = JSON.parse(storedUser);
-      this.user.password = ""; // ✅ Ensure the password field is empty on load
+      this.user.password = ""; // Ensure password is empty
       this.isLoggedIn = true;
+
+      // Debugging to check if email exists
+      console.log("User email:", this.user.email);
+
+      // If email is still undefined, provide a fallback or reset user
+      if (!this.user.email) {
+        console.error("No email found, resetting user data.");
+        this.logout(); // Log the user out if the email is missing
+      } else {
+        this.fetchMedicalRecords(); // Fetch medical records if email exists
+      }
     } else {
       this.isLoggedIn = false;
     }
-
     // Listen for changes in the browser's history (back/forward buttons)
     window.addEventListener("popstate", this.handleRouteChange);
 
@@ -257,6 +277,83 @@ const app = Vue.createApp({
       this.hasDiagnosis = false;
       this.showInput = false;
       this.startDiagnosis(); // Start the diagnosis again
+    },
+
+    async saveMedicalRecords() {
+      const medicalRecords = {
+        email: this.user.email,
+        fullName: this.user.fullName,
+        dateOfBirth: this.user.dateOfBirth,
+        gender: this.user.gender,
+        bloodType: this.user.bloodType,
+        emergencyContact: this.user.emergencyContact,
+        medicalHistory: this.user.medicalHistory,
+        medications: this.user.medications,
+        vaccinations: this.user.vaccinations,
+        smokingStatus: this.user.smokingStatus,
+        alcoholConsumption: this.user.alcoholConsumption,
+        exerciseRoutine: this.user.exerciseRoutine,
+        sleepPatterns: this.user.sleepPatterns,
+        healthLogs: this.user.healthLogs,
+        labResults: this.user.labResults,
+        doctorVisits: this.user.doctorVisits,
+        heartRate: this.user.heartRate,
+        stepCount: this.user.stepCount,
+        sleepTracking: this.user.sleepTracking,
+        bloodOxygen: this.user.bloodOxygen,
+        organDonorStatus: this.user.organDonorStatus,
+        medicalDirectives: this.user.medicalDirectives,
+      };
+
+      try {
+        const response = await fetch("http://localhost:3000/save-medical-records", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(medicalRecords),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          console.log("Medical records saved successfully");
+          // Set the editing flag for all fields back to false
+          Object.keys(this.isEditing).forEach((key) => {
+            this.isEditing[key] = false;
+          });
+        } else {
+          console.error("Error saving medical records:", data.message);
+        }
+      } catch (error) {
+        console.error("Error saving medical records:", error);
+      }
+    },
+
+    async fetchMedicalRecords() {
+      // Check if email is available before making the API call
+      if (this.user.email) {
+        try {
+          const response = await fetch(`http://localhost:3000/get-medical-records/${this.user.email}`);
+          const data = await response.json();
+
+          if (response.ok) {
+            this.user = data; // Update user object with the latest medical records
+            localStorage.setItem("user", JSON.stringify(this.user)); // Sync with local storage
+          } else {
+            console.error("Error fetching medical records:", data.message);
+          }
+        } catch (error) {
+          console.error("Error fetching medical records:", error);
+        }
+      } else {
+        console.error("Email is not available for fetching medical records.");
+      }
+    },
+
+
+    async cancelEdit() {
+      // Set the editing flag for all fields back to false
+      Object.keys(this.isEditing).forEach((key) => {
+        this.isEditing[key] = false;
+      });
     },
 
 
@@ -370,14 +467,14 @@ const app = Vue.createApp({
         .then((res) => res.json())
         .then((data) => {
           if (data.message === "Login successful") {
-            // ✅ Remove password from user object before saving
+            // Remove password from user object before saving
             const userData = { ...data.user };
             delete userData.password;
 
             localStorage.setItem("user", JSON.stringify(userData)); // Store user data
             this.isLoggedIn = true;
             this.user = userData;
-            this.user.password = ""; // ✅ Ensure password field is empty after login
+            this.user.password = ""; // Ensure password field is empty after login
 
             this.navigateTo("profile"); // Redirect to profile after successful login
           } else {
@@ -800,7 +897,6 @@ const app = Vue.createApp({
       this.currentView = 'profile';  // Set the current view to 'profile'
       window.history.pushState({ view: 'profile' }, '', '/profile');  // Update URL
     },
-
   },
 
 
