@@ -2371,12 +2371,29 @@ a:hover {
     overflow-y: auto; /* Enable scrolling */
 }
 
+
+
 /* Scrollable container */
 .popup-scroll-container {
     max-height: 65vh;
     overflow-y: auto;
     padding-right: 10px;
 }
+
+/* Custom scrollbar for popup */
+.popup-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.popup-scroll-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+
+.popup-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 
 /* Record sections inside the popup */
 .record-section {
@@ -2411,16 +2428,6 @@ a:hover {
 }
 
 
-/* Scrollbar */
-.popup-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.popup-content::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-}
-
 /* Button styles */
 .button-container {
     display: flex;
@@ -2438,6 +2445,3 @@ a:hover {
     color: white;
 }
 
-button:hover {
-    opacity: 0.8;
-}
