@@ -2393,7 +2393,8 @@ a:hover {
 
 /* Textarea styling */
 .popup-content textarea {
-    width: 99%;
+    margin-left: 1%;
+    width: 96%;
     height: 80px;
     padding: 10px;
     font-size: 1em;
