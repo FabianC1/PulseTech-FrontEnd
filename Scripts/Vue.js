@@ -1153,31 +1153,29 @@ const app = Vue.createApp({
     },
 
 
-    async markAppointmentCompleted(appointment) {
+    // Function to mark the appointment as completed
+    async markAppointmentAsCompleted(appointmentId) {
       try {
         const response = await fetch("http://localhost:3000/update-appointment-status", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            doctorEmail: appointment.doctorEmail,
-            patientEmail: appointment.patientEmail,
-            date: appointment.date,
-            status: "Completed",
-          }),
+            appointmentId: appointmentId, // Pass only the appointment ID
+          })
         });
 
         const data = await response.json();
-
         if (response.ok) {
-          alert("Appointment marked as completed!");
-          this.fetchAppointments(); // Refresh the appointment list
+          alert(data.message);  // Success message
+          this.fetchAppointments();  // Refresh the appointments list
         } else {
-          alert("Error: " + data.message);
+          alert(data.message || "Failed to update appointment status.");
         }
       } catch (error) {
-        console.error("Error updating appointment status:", error);
+        console.error("Error marking appointment as completed:", error);
       }
-    },
+    }
+
   },
 
 

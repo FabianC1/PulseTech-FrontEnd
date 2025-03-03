@@ -488,11 +488,13 @@
                                     <strong>Reason:</strong> {{ appointment.reason }} |
                                     <strong>Status:</strong> {{ appointment.status }}
 
-                                    <!-- Show "Mark as Completed" button for doctors -->
+                                    <!-- Example Button to Mark Appointment as Completed -->
                                     <button v-if="appointment.status !== 'Completed'"
-                                        @click="markAppointmentCompleted(appointment)">
+                                        @click="markAppointmentAsCompleted(appointment._id)">
                                         Mark as Completed
                                     </button>
+
+
                                 </div>
                             </div>
                         </div>
