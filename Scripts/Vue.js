@@ -67,6 +67,7 @@ const app = Vue.createApp({
         doctorVisits: false,
         wearableData: false,
         emergencyDetails: false,
+        appointment: {},
       },
       diagnosisStarted: false,
       question: "",
@@ -80,7 +81,8 @@ const app = Vue.createApp({
       appointmentsView: "upcoming",
       upcomingAppointments: [],
       patientsList: [],
-      doctorsList: []
+      doctorsList: [],
+      appointmentData: {} // Store appointment data for each patient or doctor
     };
   },
 
@@ -1034,7 +1036,53 @@ const app = Vue.createApp({
         console.error("Error fetching patient records:", error);
       }
     },
-    
+
+    // Toggle appointment edit mode
+    toggleAppointmentEdit(email) {
+      // Directly modify the object in Vue 3
+      this.isEditing.appointment[email] = true;
+      // Initialize appointment data if not already present
+      if (!this.appointmentData[email]) {
+        this.appointmentData[email] = { date: '', reason: '' };
+      }
+    },
+
+    // Cancel editing and reset input fields
+    cancelAppointmentEdit(email) {
+      // Directly modify the object in Vue 3
+      this.isEditing.appointment[email] = false;
+      this.appointmentData[email] = { date: '', reason: '' };
+    },
+
+    // Submit the appointment (for both doctors and patients)
+    async submitAppointment(email) {
+      const appointment = this.appointmentData[email];
+      if (!appointment.date || !appointment.reason) {
+        alert('Please fill in both date and reason.');
+        return;
+      }
+
+      try {
+        // Submit appointment via API
+        const response = await fetch("http://localhost:3000/create-appointment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            doctorEmail: this.user.email,
+            patientEmail: email,
+            date: appointment.date,
+            reason: appointment.reason
+          })
+        });
+
+        const data = await response.json();
+        alert(data.message);
+        this.fetchAppointments(); // Refresh appointments list
+        this.cancelAppointmentEdit(email); // Reset form
+      } catch (error) {
+        console.error("Error scheduling appointment:", error);
+      }
+    }
   },
 
 

@@ -477,8 +477,6 @@
                         <button @click="appointmentsView = 'give'">Give Appointments</button>
                     </div>
 
-
-
                     <div v-if="appointmentsView === 'upcoming'">
                         <h4>Upcoming Appointments</h4>
                         <div class="appointments-scroll-container">
@@ -497,9 +495,20 @@
                             <div v-for="(patient, index) in patientsList" :key="index" class="appointment-section">
                                 <div class="appointment-section-content">
                                     <strong>{{ patient.fullName }}</strong>
-                                    <div style="margin-right: -13%;" >
-                                        <button @click="viewMedicalRecords(patient.email)">View Medical Records</button>
-                                        <button @click="giveAppointment(patient.email)">Give Appointment</button>
+                                    <div v-if="!isEditing.appointment[patient.email]">
+                                        <button @click="toggleAppointmentEdit(patient.email)">Give Appointment</button>
+                                    </div>
+                                    <div v-else class="appointment-section-content1">
+                                        <input type="date" v-model="appointmentData[patient.email].date"
+                                            placeholder="Appointment Date" />
+                                        <textarea v-model="appointmentData[patient.email].reason"
+                                            placeholder="Enter reason"></textarea>
+                                        <div class="button-container">
+                                            <button class="save-btn" @click="submitAppointment(patient.email)">Submit
+                                                Appointment</button>
+                                            <button class="cancel-btn"
+                                                @click="cancelAppointmentEdit(patient.email)">Cancel</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -532,13 +541,34 @@
                             <div v-for="(doctor, index) in doctorsList" :key="index" class="appointment-section">
                                 <div class="appointment-section-content">
                                     <strong>{{ doctor.fullName }}</strong>
-                                    <button @click="requestAppointment(doctor.email)">Request Appointment</button>
+                                    <div v-if="!isEditing.appointment[doctor.email]">
+                                        <button @click="toggleAppointmentEdit(doctor.email)">Request
+                                            Appointment</button>
+                                    </div>
+                                    <div v-else>
+                                        <div class="appointment-inputs">
+                                            <label for="date">Appointment Date:</label>
+                                            <input type="date" v-model="appointmentData[doctor.email].date" />
+
+                                            <label for="reason">Reason:</label>
+                                            <textarea v-model="appointmentData[doctor.email].reason"
+                                                placeholder="Enter reason"></textarea>
+
+                                            <div class="button-container">
+                                                <button class="save-btn" @click="submitAppointment(doctor.email)">Submit
+                                                    Appointment</button>
+                                                <button class="cancel-btn"
+                                                    @click="cancelAppointmentEdit(doctor.email)">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
 
 
 
