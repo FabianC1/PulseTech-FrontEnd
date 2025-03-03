@@ -638,11 +638,15 @@
                             <div v-for="(appointment, index) in upcomingAppointments" :key="index"
                                 class="appointment-section">
                                 <div class="appointment-section-content">
-                                    <strong>{{ appointment.doctorName }}</strong> - {{ appointment.date }}
+                                    <strong>Doctor:</strong> {{ appointment.doctorEmail }} |
+                                    <strong>Date:</strong> {{ appointment.date }} |
+                                    <strong>Reason:</strong> {{ appointment.reason }} |
+                                    <strong>Status:</strong> {{ appointment.status }}
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <div v-if="appointmentsView === 'request'">
                         <h4>Doctors List</h4>
