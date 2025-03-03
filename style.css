@@ -2147,3 +2147,35 @@ a:hover {
         padding: 15px;
     }
 }
+
+
+/* Main Medical Records Container */
+.appointments-container {
+    text-align: left;
+    padding: 20px;
+    margin: 5px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 650px;
+    overflow-y: auto; /* Enable scrolling */
+    font-size: 1.2em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+}
+
+
+/* Custom scrollbar */
+.appointments-container::-webkit-scrollbar {
+    width: 8px;
+}
+.appointments-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+.appointments-container::-webkit-scrollbar-track {
+    background: transparent;
+}

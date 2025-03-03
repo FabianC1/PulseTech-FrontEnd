@@ -438,7 +438,8 @@
             <div v-if="currentView === 'symptomChecker'" class="symptom-checker">
                 <h2 v-if="!hasDiagnosis">Symptom Checker</h2>
                 <p v-if="!hasDiagnosis">Get health advice and a diagnosis based on symptoms.</p>
-                <p v-if="!hasDiagnosis">Please remember this isn't always accurate and you should always contact a trained doctor.</p>
+                <p v-if="!hasDiagnosis">Please remember this isn't always accurate and you should always contact a
+                    trained doctor.</p>
 
                 <!-- Button to start the diagnosis -->
                 <button v-if="!diagnosisStarted && !hasDiagnosis" @click="startDiagnosis"
@@ -466,13 +467,61 @@
 
 
             <!-- Appointments Section -->
-            <div v-if="currentView === 'appointments'">
-                <h2>Appointments</h2>
-                <p>View all your appoitsments here.</p>
+            <div v-if="currentView === 'appointments'" class="appointments-container ">
+                <h2 style="text-align: center; margin-top: -0.5%;">Appointments</h2>
 
-                <p>if doctor is logged in, they can give appointments to patients.
-                    if patient is logged in, they can request appointments with doctors.</p>
+                <div v-if="isDoctor">
+                    <h3>Doctor's View</h3>
+                    <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
+                    <button @click="appointmentsView = 'give'">Give Appointments</button>
+
+                    <div v-if="appointmentsView === 'upcoming'">
+                        <h4>Upcoming Appointments</h4>
+                        <ul>
+                            <li v-for="(appointment, index) in upcomingAppointments" :key="index">
+                                <strong>{{ appointment.patientName }}</strong> - {{ appointment.date }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div v-if="appointmentsView === 'give'">
+                        <h4>Patients List</h4>
+                        <ul>
+                            <li v-for="(patient, index) in patientsList" :key="index">
+                                {{ patient.fullName }}
+                                <button @click="viewMedicalRecords(patient.email)">View Medical Records</button>
+                                <button @click="giveAppointment(patient.email)">Give Appointment</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div v-else>
+                    <h3>Patient's View</h3>
+                    <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
+                    <button @click="appointmentsView = 'request'">Request Appointments</button>
+
+                    <div v-if="appointmentsView === 'upcoming'">
+                        <h4>Upcoming Appointments</h4>
+                        <ul>
+                            <li v-for="(appointment, index) in upcomingAppointments" :key="index">
+                                <strong>{{ appointment.doctorName }}</strong> - {{ appointment.date }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div v-if="appointmentsView === 'request'">
+                        <h4>Doctors List</h4>
+                        <ul>
+                            <li v-for="(doctor, index) in doctorsList" :key="index">
+                                {{ doctor.fullName }}
+                                <button @click="requestAppointment(doctor.email)">Request Appointment</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+
 
             <!-- Medication Section -->
             <div v-if="currentView === 'medication'">

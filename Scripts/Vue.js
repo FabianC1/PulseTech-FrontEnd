@@ -75,8 +75,12 @@ const app = Vue.createApp({
       diagnosisResult: "",
       formattedDiagnosisResult: [],
       hasDiagnosis: false, // To track whether a diagnosis is already made
-      
+
       originalUser: {}, // Store the original data to cancel changes
+      appointmentsView: "upcoming",
+      upcomingAppointments: [],
+      patientsList: [],
+      doctorsList: []
     };
   },
 
@@ -169,25 +173,32 @@ const app = Vue.createApp({
 
     // Retrieve user data from localStorage once
     const storedUser = localStorage.getItem("user");
+
     if (storedUser) {
       this.user = JSON.parse(storedUser);
       this.user.password = ""; // ✅ Ensure the password field is empty on load
-      this.user.password = ""; // Ensure password is empty
       this.isLoggedIn = true;
+      this.isDoctor = this.user.role === "doctor"; // Check if user is a doctor
 
-      // Debugging to check if email exists
+      // Debugging: Ensure email is present
       console.log("User email:", this.user.email);
 
-      // If email is still undefined, provide a fallback or reset user
       if (!this.user.email) {
         console.error("No email found, resetting user data.");
         this.logout(); // Log the user out if the email is missing
       } else {
         this.fetchMedicalRecords(); // Fetch medical records if email exists
+        this.fetchAppointments(); // Fetch appointments immediately
+        if (this.isDoctor) {
+          this.fetchPatients(); // Fetch patients list for doctors
+        } else {
+          this.fetchDoctors(); // Fetch doctors list for patients
+        }
       }
     } else {
       this.isLoggedIn = false;
     }
+
 
     // Listen for changes in the browser's history (back/forward buttons)
     window.addEventListener("popstate", this.handleRouteChange);
@@ -334,19 +345,19 @@ const app = Vue.createApp({
     async fetchMedicalRecords() {
       try {
         console.log("Fetching medical records for:", this.user.email); // Debugging
-    
+
         if (!this.user.email) {
           console.error("User email is missing. Cannot fetch medical records.");
           return;
         }
-    
+
         const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-    
+
         const data = await response.json();
-    
+
         if (response.ok) {
           this.user = { ...this.user, ...data }; // Merge medical records into user object
           console.log("Medical records fetched successfully:", data);
@@ -357,7 +368,7 @@ const app = Vue.createApp({
         console.error("Error fetching medical records:", error);
       }
     },
-    
+
 
 
     async cancelEdit() {
@@ -465,39 +476,40 @@ const app = Vue.createApp({
       return true;
     },
 
-// Handle login form submission
-loginUser() {
-  fetch("http://localhost:3000/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: this.loginData.email,
-      password: this.loginData.password,
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.message === "Login successful") {
-        // ✅ Remove password from user object before saving
-        const userData = { ...data.user };
-        delete userData.password;
+    // Handle login form submission
+    loginUser() {
+      fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: this.loginData.email,
+          password: this.loginData.password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.message === "Login successful") {
+            // ✅ Remove password from user object before saving
+            const userData = { ...data.user };
+            delete userData.password;
 
-        // ✅ Store user data in localStorage
-        localStorage.setItem("user", JSON.stringify(userData));
-        this.isLoggedIn = true;
-        this.user = userData;
-        this.user.password = ""; // ✅ Ensure password field is empty
+            // ✅ Store user data in localStorage
+            localStorage.setItem("user", JSON.stringify(userData));
+            this.isLoggedIn = true;
+            this.user = userData;
+            this.user.password = ""; // ✅ Ensure password field is empty
+            this.isDoctor = userData.role === "doctor";
 
-        // ✅ Fetch medical records after login
-        this.fetchMedicalRecords();
+            // ✅ Fetch medical records after login
+            this.fetchMedicalRecords();
 
-        this.navigateTo("profile"); // Redirect to profile after successful login
-      } else {
-        alert("Invalid email or password.");
-      }
-    })
-    .catch((error) => console.error("Login error:", error));
-},
+            this.navigateTo("profile"); // Redirect to profile after successful login
+          } else {
+            alert("Invalid email or password.");
+          }
+        })
+        .catch((error) => console.error("Login error:", error));
+    },
 
 
     // Edit user details function
@@ -871,7 +883,7 @@ loginUser() {
           });
         });
 
-        
+
     },
 
 
@@ -909,8 +921,97 @@ loginUser() {
       if (event.key === "Enter") {
         this.sendAnswer(); // Submit answer when Enter is pressed
       }
-    }    
-    
+    },
+
+    async fetchAppointments() {
+      try {
+        const response = await fetch(`http://localhost:3000/get-appointments?email=${this.user.email}`);
+        const data = await response.json();
+        this.upcomingAppointments = data;
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+    },
+
+    async fetchPatients() {
+      try {
+        const response = await fetch("http://localhost:3000/get-patients");
+        const data = await response.json();
+        this.patientsList = data;
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    },
+
+    async fetchDoctors() {
+      try {
+        const response = await fetch("http://localhost:3000/get-doctors");
+        const data = await response.json();
+        this.doctorsList = data;
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
+    },
+
+
+    async scheduleAppointment(patientEmail) {
+      const date = prompt("Enter appointment date (YYYY-MM-DD):");
+
+      if (!date) return;
+
+      try {
+        const response = await fetch("http://localhost:3000/create-appointment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            doctorEmail: this.user.email,
+            patientEmail,
+            date,
+          }),
+        });
+
+        const data = await response.json();
+        alert(data.message);
+        this.fetchAppointments();
+      } catch (error) {
+        console.error("Error scheduling appointment:", error);
+      }
+    },
+
+    async requestAppointment(doctorEmail) {
+      const date = prompt("Enter appointment date (YYYY-MM-DD):");
+
+      if (!date) return;
+
+      try {
+        const response = await fetch("http://localhost:3000/create-appointment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            doctorEmail,
+            patientEmail: this.user.email,
+            date,
+          }),
+        });
+
+        const data = await response.json();
+        alert(data.message);
+        this.fetchAppointments();
+      } catch (error) {
+        console.error("Error requesting appointment:", error);
+      }
+    },
+
+    async viewPatientRecords(email) {
+      try {
+        const response = await fetch(`http://localhost:3000/view-patient-records?email=${email}`);
+        const data = await response.json();
+        alert(`Medical Records: ${JSON.stringify(data)}`);
+      } catch (error) {
+        console.error("Error fetching patient records:", error);
+      }
+    }
+
   },
 
 
