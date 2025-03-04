@@ -263,19 +263,22 @@
                         <!-- Current Medications -->
                         <div class="record-section">
                             <h3>Current Medications</h3>
-                            <div v-if="!isEditing.medications" class="record-section-content">
-                                <p><strong>Medications:</strong></p>
-                                <div class="medications-scroll-container">
-                                    <ul>
-                                        <li v-for="(medication, index) in user.medications" :key="index">
-                                            {{ medication.name }} - {{ medication.dosage }} - {{ medication.frequency }}
-                                            <br>
-                                            <strong>Diagnosis:</strong> {{ medication.diagnosis }}
-                                        </li>
-                                    </ul>
-                                </div>
+
+                            <div v-if="user.medications && user.medications.length > 0" class="medications-container">
+                                <p v-for="(medication, index) in user.medications" :key="index">
+                                    <strong>Medication {{ index + 1 }}:</strong>
+                                    {{ medication.name }} |
+                                    <strong>Dosage:</strong> {{ medication.dosage }} |
+                                    <strong>Frequency:</strong> {{ medication.frequency }} |
+                                    <strong>Diagnosis:</strong> {{ medication.diagnosis }}
+                                </p>
                             </div>
+
+                            <p v-else>No medications recorded.</p>
                         </div>
+
+
+
 
 
 
@@ -607,7 +610,8 @@
                                         <h5>Medication Details</h5>
                                         <input v-model="selectedMedication.name" placeholder="Medication Name"
                                             type="text" />
-                                        <input v-model="selectedMedication.dosage" placeholder="Dosage per take" type="text" />
+                                        <input v-model="selectedMedication.dosage" placeholder="Dosage per take"
+                                            type="text" />
                                         <input v-model="selectedMedication.frequency" placeholder="Frequency"
                                             type="text" />
                                         <input v-model="selectedMedication.diagnosis" placeholder="Diagnosis"
@@ -664,12 +668,27 @@
 
 
 
-
             <!-- Medication Section -->
             <div v-if="currentView === 'medication'">
                 <h2>Medication</h2>
                 <p>Track your prescribed medications and dosage here.</p>
+
+                <!-- Current Medications -->
+                <div class="record-section">
+                    <h3>Current Medications</h3>
+
+                    <div v-if="user.medications && user.medications.length > 0" class="medications-container">
+                        <p v-for="(medication, index) in user.medications" :key="index" class="medication-item">
+                            <strong>{{ medication.name }}</strong> - {{ medication.dosage }} - {{ medication.frequency
+                            }}
+                            <span class="diagnosis-text"><strong>Diagnosis:</strong> {{ medication.diagnosis }}</span>
+                        </p>
+                    </div>
+
+                    <p v-else>No medications found.</p>
+                </div>
             </div>
+
 
             <div v-if="currentView === 'messages'">
                 <h2>Messages</h2>

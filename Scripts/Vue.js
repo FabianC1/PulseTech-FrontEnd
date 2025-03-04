@@ -1231,7 +1231,7 @@ const app = Vue.createApp({
         console.error("No patient selected or no patient email found.");
         return;
       }
-  
+    
       // Prepare the medication data to be saved
       const medicationData = {
         email: this.selectedPatient.email,  // Use the selected patient's email
@@ -1242,7 +1242,7 @@ const app = Vue.createApp({
           diagnosis: this.selectedMedication.diagnosis
         }
       };
-  
+    
       // Send the data to the backend to save it in the database
       fetch("http://localhost:3000/save-medication", {
         method: "POST",
@@ -1253,7 +1253,17 @@ const app = Vue.createApp({
       .then(data => {
         if (data.message === "Medication saved successfully!") {
           alert("Medication saved successfully!");
-          // Optionally reset the form or close the popup
+    
+          //Clear the input fields after successful save
+          this.selectedMedication = { name: "", dosage: "", frequency: "", diagnosis: "" };
+          this.currentMedicationInput = ""; // Clear the medication name input
+          this.medicationSuggestions = []; // Clear suggestions
+    
+          // Fetch updated medical records to reflect the changes
+          this.fetchMedicalRecords(); 
+    
+          // Close the popup after saving (if needed)
+          this.showMedicalHistoryPopup = false; 
         } else {
           console.error("Error saving medication:", data.message);
         }
@@ -1262,6 +1272,7 @@ const app = Vue.createApp({
         console.error("Error saving medication:", error);
       });
     },
+    
     
     
 

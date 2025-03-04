@@ -2529,3 +2529,22 @@ a:hover {
     width:98%;
     margin-top: -1%;
   }
+
+
+  .medications-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between medication entries */
+}
+
+.medication-item {
+    padding: 10px;
+    background: #f9f9f900;
+    border-radius: 5px;
+    border-left: 4px solid #008CBA; /* Adds a blue accent */
+}
+
+.medication-item h4 {
+    margin: 0 0 5px;
+    color: #008CBA;
+}
