@@ -265,13 +265,16 @@
                             <h3>Current Medications</h3>
 
                             <div v-if="user.medications && user.medications.length > 0" class="medications-container">
-                                <p v-for="(medication, index) in user.medications" :key="index">
-                                    <strong>Medication {{ index + 1 }}:</strong>
-                                    {{ medication.name }} |
-                                    <strong>Dosage:</strong> {{ medication.dosage }} |
-                                    <strong>Frequency:</strong> {{ medication.frequency }} |
-                                    <strong>Diagnosis:</strong> {{ medication.diagnosis }}
-                                </p>
+                                <div v-for="(medication, index) in user.medications" :key="index"
+                                    class="medication-item">
+                                    <p>
+                                        <strong>Medication {{ index + 1 }}:</strong>
+                                        {{ medication.name }} |
+                                        <strong>Dosage:</strong> {{ medication.dosage }} |
+                                        <strong>Frequency:</strong> {{ medication.frequency }} |
+                                        <strong>Diagnosis:</strong> {{ medication.diagnosis }}
+                                    </p>
+                                </div>
                             </div>
 
                             <p v-else>No medications recorded.</p>
