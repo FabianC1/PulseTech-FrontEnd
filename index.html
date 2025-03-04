@@ -720,52 +720,18 @@
 
 
             <!-- Medication Section -->
-            <div v-if="currentView === 'medication'" class="medication-container">
-                <h2>Medication</h2>
-                <p>Track your prescribed medications and dosage here.</p>
+            <div v-if="currentView === 'medication'" class="medications-container">
 
                 <!-- Show Current Medications if Logged In -->
                 <div v-if="isLoggedIn">
-                    <h3>Current Medications</h3>
-
-                    <div v-if="user.medications && user.medications.length > 0" class="medications-container">
-                        <div v-for="(medication, index) in user.medications" :key="index" class="medication-card">
-                            <!-- Medication Card -->
-                            <div class="medication-card-header">
-                                <h4>{{ medication.name }}</h4>
-                                <button class="mark-as-taken" @click="markAsTaken(medication)">Mark as Taken</button>
-                            </div>
-
-                            <div class="medication-details">
-                                <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
-                                <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
-                                <p><strong>Next Dose:</strong> {{ medication.nextDoseTime }}</p>
-
-                                <!-- Medication Logs -->
-                                <h5>Medication Logs:</h5>
-                                <ul>
-                                    <li v-for="(log, logIndex) in medication.logs" :key="logIndex"
-                                        :class="getLogStatusClass(log)">
-                                        {{ log.time }} - {{ log.status }}
-                                    </li>
-                                </ul>
-
-                                <!-- Refill Tracking -->
-                                <div class="refill-tracking">
-                                    <p><strong>Pills Left:</strong> {{ medication.pillsLeft }}</p>
-                                    <p v-if="medication.pillsLeft <= 5" class="refill-warning">Refill Needed Soon!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p v-else>No medications found.</p>
+                    <h2>Medication</h2>
+                    <p>Track your prescribed medications and dosage here.</p>
                 </div>
 
                 <!-- Show Login/Signup Prompt if Not Logged In -->
                 <div v-else class="auth-prompt">
                     <h2>You need to log in or sign up</h2>
-                    <p>To access your appointments, please log in or create an account.</p>
+                    <p>To access your medications, please log in or create an account.</p>
                     <div class="button-container">
                         <button class="auth-button" @click="navigateTo('login')">Login</button>
                         <button class="auth-button" @click="navigateTo('signup')">Sign Up</button>
@@ -776,9 +742,21 @@
 
 
 
-            <div v-if="currentView === 'messages'">
-                <h2>Messages</h2>
-                <p>Your messages and communication with healthcare providers will appear here.</p>
+            <div v-if="currentView === 'messages'" class="messages-container">
+                <!-- Show messages if Logged In -->
+                <div v-if="isLoggedIn">
+                    <h2>Messages</h2>
+                    <p>Your messages and communication with healthcare providers will appear here.</p>
+                </div>
+                <!-- Show Login/Signup Prompt if Not Logged In -->
+                <div v-else class="auth-prompt">
+                    <h2>You need to log in or sign up</h2>
+                    <p>To access your medications, please log in or create an account.</p>
+                    <div class="button-container">
+                        <button class="auth-button" @click="navigateTo('login')">Login</button>
+                        <button class="auth-button" @click="navigateTo('signup')">Sign Up</button>
+                    </div>
+                </div>
             </div>
 
 
