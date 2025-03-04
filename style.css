@@ -2459,3 +2459,26 @@ a:hover {
 }
 
 
+/* Button Group - Aligns Buttons to the Right */
+.button-group1 {
+    margin-left: auto; /* Push buttons to the right */
+    display: flex;
+    gap: 10px; /* Add space between buttons */
+}
+
+/* Style the Buttons */
+.button-group1 button {
+    background-color: #4a2cceda;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover Effect */
+.button-group1 button:hover {
+    background-color: #1b0092ef;
+}

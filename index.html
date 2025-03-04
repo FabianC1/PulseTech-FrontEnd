@@ -505,11 +505,11 @@
                             <div v-for="(patient, index) in patientsList" :key="index" class="appointment-section">
                                 <div class="appointment-section-content">
                                     <strong>{{ patient.fullName }}</strong>
-                                    <div v-if="!isEditing.appointment[patient.email]">
+                                    <div v-if="!isEditing.appointment[patient.email]" class="button-group1">
                                         <button @click="toggleAppointmentEdit(patient.email)">Give Appointment</button>
                                         <button @click="viewMedicalHistory(patient.email)">View Medical History</button>
                                     </div>
-                                    <div v-else class="appointment-inputs">
+                                    <div v-else class="appointment-inputs" >
                                         <input type="date" v-model="appointmentData[patient.email].date"
                                             placeholder="Appointment Date" />
                                         <textarea v-model="appointmentData[patient.email].reason"
