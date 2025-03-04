@@ -108,7 +108,14 @@ const app = Vue.createApp({
         medicalDirectives: ""
       },
       medicationSuggestions: [], // Initialize as an empty array
-      selectedMedication: null, // Start with null value
+      selectedMedication: {
+        name: "",
+        dosage: "",
+        frequency: "",
+        time: "",
+        duration: "",
+        diagnosis: ""
+      },
       currentMedicationInput: "", // Start with an empty input
       isAddingMedication: false, // Control whether the medication form is being added
     };
@@ -127,13 +134,18 @@ const app = Vue.createApp({
     },
 
     isSaveDisabled() {
-      // Check if any of the required fields are empty
+      if (!this.selectedMedication) {
+        return true; // Disable save button if selectedMedication is not initialized
+      }
+
       return !this.selectedMedication.name ||
         !this.selectedMedication.dosage ||
         !this.selectedMedication.frequency ||
         !this.selectedMedication.time ||
+        !this.selectedMedication.duration ||
         !this.selectedMedication.diagnosis;
     }
+
   },
 
   watch: {
@@ -1255,6 +1267,7 @@ const app = Vue.createApp({
           name: this.selectedMedication.name,
           dosage: this.selectedMedication.dosage,
           frequency: this.selectedMedication.frequency,
+          duration: this.selectedMedication.duration,
           diagnosis: this.selectedMedication.diagnosis
         }
       };
@@ -1271,7 +1284,7 @@ const app = Vue.createApp({
             alert("Medication saved successfully!");
 
             // Clear the input fields after successful save
-            this.selectedMedication = { name: "", dosage: "", frequency: "", diagnosis: "" };
+            this.selectedMedication = { name: "", dosage: "", frequency: "", duration: "", diagnosis: "" };
             this.currentMedicationInput = ""; // Clear the medication name input
             this.medicationSuggestions = []; // Clear suggestions
 
@@ -1312,7 +1325,45 @@ const app = Vue.createApp({
       this.closeMedicalHistoryPopup(); // Close the popup after saving
     },
 
+    async markAsTaken(medication) {
+      try {
+        const response = await fetch("http://localhost:3000/mark-medication-taken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: this.user.email, medicationName: medication.name }),
+        });
 
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("Medication marked as taken!");
+
+          // Fetch updated medical records to refresh logs & next dose time
+          this.fetchMedicalRecords();
+        } else {
+          console.error("Error marking medication as taken:", data.message);
+        }
+      } catch (error) {
+        console.error("Error marking medication as taken:", error);
+      }
+    },
+
+    getLogStatusClass(log) {
+      return log.status === "Taken" ? "log-taken" : "log-missed";
+    },
+
+    formatTime(timestamp) {
+      return new Date(timestamp).toLocaleString();
+    },
+
+    isMissedDose(medication) {
+      if (!medication.nextDoseTime) return false; // No next dose set
+
+      const now = new Date();
+      const nextDose = new Date(medication.nextDoseTime);
+
+      return now > nextDose; // True if current time is past the next dose time
+    }
 
 
   },

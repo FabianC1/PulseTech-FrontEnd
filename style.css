@@ -2381,6 +2381,7 @@ a:hover {
 
 /* Popup Content */
 .popup-content {
+    margin-top: 1%;
     background: #181818b6;
     padding: 20px;
     width: 70%;  /* Bigger popup */
@@ -2577,7 +2578,7 @@ a:hover {
 
 /* Input styling */
 .input-field, .input-dropdown {
-    width: 100%;
+    width: 98%;
     padding: 10px;
     font-size: 14px;
     border: 1px solid #ccc;
@@ -2643,10 +2644,78 @@ a:hover {
     flex-wrap: wrap;
     gap: 20px;
     justify-content: flex-start;
+    overflow-y: scroll;
   }
   
+/* Optional: Optional limits on the scroll position */
+.medications-page-container::-webkit-scrollbar {
+    width: 8px;
+}
 
+.medications-page-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
 
+.medications-page-container::-webkit-scrollbar-track {
+    background: transparent;
+
+}
+
+  .medication-card {
+    background: rgba(255, 255, 255, 0.185);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid #008CBA;
+    margin-bottom: 15px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.medication-card-header {
+    font-weight: bold;
+
+    display: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mark-as-taken {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.medication-log-list {
+    list-style: none;
+    padding: 0;
+}
+
+.medication-log-list li {
+    padding: 5px;
+    border-left: 4px solid;
+}
+
+.log-taken {
+    border-color: green;
+    color: green;
+}
+
+.log-missed {
+    border-color: red;
+    color: red;
+}
+
+.warning {
+    color: red;
+}
+
+.refill-warning {
+    color: orange;
+    font-weight: bold;
+}
 
 
 

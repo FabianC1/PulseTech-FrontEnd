@@ -272,6 +272,7 @@
                                         {{ medication.name }} |
                                         <strong>Dosage:</strong> {{ medication.dosage }} |
                                         <strong>Frequency:</strong> {{ medication.frequency }} |
+                                        <strong>Duration:</strong> {{ medication.duration }} |
                                         <strong>Diagnosis:</strong> {{ medication.diagnosis }}
                                     </p>
                                 </div>
@@ -590,6 +591,26 @@
                                     </p>
                                 </div>
 
+                                <!-- Show Current Medications (New Section) -->
+                                <div class="record-section">
+                                    <h4>Current Medications</h4>
+
+                                    <!-- Display the patient's current medications -->
+                                    <div v-if="selectedPatient.medications && selectedPatient.medications.length > 0">
+                                        <div v-for="(medication, index) in selectedPatient.medications" :key="index"
+                                            class="medication-item">
+                                            <p><strong>Medication {{ index + 1 }}:</strong> {{ medication.name }} |
+                                                <strong>Dosage:</strong> {{ medication.dosage }} |
+                                                <strong>Frequency:</strong> {{ medication.frequency }} |
+                                                <strong>Diagnosis:</strong> {{ medication.diagnosis }} |
+                                                <strong>Duration:</strong> {{ medication.duration }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <p v-else>No current medications recorded for this patient.</p>
+                                </div>
+
                                 <!-- Current Medications -->
                                 <div class="record-section">
                                     <h4>Current Medications</h4>
@@ -597,7 +618,7 @@
                                     <!-- Medication Input -->
                                     <input v-model="currentMedicationInput" @input="fetchMedications"
                                         :placeholder="currentMedicationInput || 'Start typing medication name...'"
-                                        type="text" />
+                                        type="text" style="width: 98%;" />
 
                                     <!-- Display Medication Suggestions -->
                                     <ul v-if="medicationSuggestions.length > 0" class="suggestions-list">
@@ -657,12 +678,27 @@
                                             </select>
                                         </div>
 
+                                        <!-- NEW: Duration Dropdown -->
+                                        <div class="input-group">
+                                            <label>Duration:</label>
+                                            <select v-model="selectedMedication.duration" class="input-dropdown"
+                                                :class="{'input-error': !selectedMedication.duration}">
+                                                <option value="3 days">3 days</option>
+                                                <option value="5 days">5 days</option>
+                                                <option value="1 week">1 week</option>
+                                                <option value="2 weeks">2 weeks</option>
+                                                <option value="1 month">1 month</option>
+                                                <option value="Until further notice">Until further notice</option>
+                                            </select>
+                                        </div>
+
                                         <!-- Diagnosis Input -->
                                         <div class="input-group">
                                             <label>Diagnosis:</label>
                                             <input v-model="selectedMedication.diagnosis" placeholder="Diagnosis"
                                                 type="text" class="input-field"
-                                                :class="{'input-error': !selectedMedication.diagnosis}" />
+                                                :class="{'input-error': !selectedMedication.diagnosis}"
+                                                style="width: 98%;" />
                                         </div>
                                     </div>
 
@@ -670,10 +706,6 @@
                                     <button class="saveMedicine" @click="saveMedication" :disabled="isSaveDisabled">Save
                                         Medication</button>
                                 </div>
-
-
-
-
 
 
                                 <div class="record-section">
@@ -726,6 +758,41 @@
                 <div v-if="isLoggedIn">
                     <h2>Medication</h2>
                     <p>Track your prescribed medications and dosage here.</p>
+
+                    <div v-if="user.medications && user.medications.length > 0" class="medications-container">
+                        <div v-for="(medication, index) in user.medications" :key="index" class="medication-card">
+                            <div class="medication-card-header">
+                                <h4>{{ medication.name }}</h4>
+                                <button class="mark-as-taken" @click="markAsTaken(medication)">Mark as Taken</button>
+                            </div>
+
+                            <div class="medication-details">
+                                <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
+                                <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
+                                <p><strong>Next Dose:</strong> <span :class="{ 'warning': isMissedDose(medication) }">
+                                        {{ medication.nextDoseTime ? formatTime(medication.nextDoseTime) : "Not set"
+                                        }}</span></p>
+
+                                <!-- Medication Logs -->
+                                <h5>Medication Logs:</h5>
+                                <ul class="medication-log-list">
+                                    <li v-for="(log, logIndex) in medication.logs" :key="logIndex"
+                                        :class="getLogStatusClass(log)">
+                                        {{ formatTime(log.time) }} - {{ log.status }}
+                                    </li>
+                                </ul>
+
+                                <!-- Refill Tracking -->
+                                <div class="refill-tracking">
+                                    <p><strong>Pills Left:</strong> {{ medication.pillsLeft }}</p>
+                                    <p v-if="Number(medication.pillsLeft) <= 5" class="refill-warning">⚠️ Refill Needed
+                                        Soon</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p v-else>No medications found.</p>
                 </div>
 
                 <!-- Show Login/Signup Prompt if Not Logged In -->
@@ -738,6 +805,7 @@
                     </div>
                 </div>
             </div>
+
 
 
 
