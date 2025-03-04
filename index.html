@@ -466,59 +466,61 @@
             </div>
 
 
-            <!-- Appointments Section -->
-            <div v-if="currentView === 'appointments'" class="appointments-container">
-                <h2 style="text-align: center; margin-top: -0.5%;">Appointments</h2>
+            <div v-if="currentView === 'appointments'">
+                <div v-if="isLoggedIn" class="appointments-container">
+                    <h2 style="text-align: center; margin-top: -0.5%;">Appointments</h2>
 
-                <div v-if="isDoctor">
-                    <div class="appointments-header">
-                        <h3>Welcome, Dr. {{ user.username }}</h3>
-                        <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
-                        <button @click="appointmentsView = 'give'">Give Appointments</button>
-                    </div>
+                    <div v-if="isDoctor">
+                        <div class="appointments-header">
+                            <h3>Welcome, Dr. {{ user.username }}</h3>
+                            <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
+                            <button @click="appointmentsView = 'give'">Give Appointments</button>
+                        </div>
 
-                    <div v-if="appointmentsView === 'upcoming'">
-                        <h4>Upcoming Appointments</h4>
-                        <div class="appointments-scroll-container">
-                            <div v-for="(appointment, index) in upcomingAppointments" :key="index"
-                                class="appointment-section">
-                                <div class="appointment-section-content">
-                                    <strong>Patient:</strong> {{ appointment.patientEmail }} |
-                                    <strong>Date:</strong> {{ appointment.date }} |
-                                    <strong>Reason:</strong> {{ appointment.reason }} |
-                                    <strong>Status:</strong> {{ appointment.status }}
+                        <div v-if="appointmentsView === 'upcoming'">
+                            <h4>Upcoming Appointments</h4>
+                            <div class="appointments-scroll-container">
+                                <div v-for="(appointment, index) in upcomingAppointments" :key="index"
+                                    class="appointment-section">
+                                    <div class="appointment-section-content">
+                                        <strong>Patient:</strong> {{ appointment.patientEmail }} |
+                                        <strong>Date:</strong> {{ appointment.date }} |
+                                        <strong>Reason:</strong> {{ appointment.reason }} |
+                                        <strong>Status:</strong> {{ appointment.status }}
 
-                                    <!-- Example Button to Mark Appointment as Completed -->
-                                    <button v-if="appointment.status !== 'Completed'"
-                                        @click="markAppointmentAsCompleted(appointment._id)">
-                                        Mark as Completed
-                                    </button>
+                                        <button v-if="appointment.status !== 'Completed'"
+                                            @click="markAppointmentAsCompleted(appointment._id)">
+                                            Mark as Completed
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-
-                    <div v-if="appointmentsView === 'give'">
-                        <h4>Patients List</h4>
-                        <div class="appointments-scroll-container">
-                            <div v-for="(patient, index) in patientsList" :key="index" class="appointment-section">
-                                <div class="appointment-section-content">
-                                    <strong>{{ patient.fullName }}</strong>
-                                    <div v-if="!isEditing.appointment[patient.email]" class="button-group1">
-                                        <button @click="toggleAppointmentEdit(patient.email)">Give Appointment</button>
-                                        <button @click="viewMedicalHistory(patient.email)">View Medical History</button>
-                                    </div>
-                                    <div v-else class="appointment-inputs" >
-                                        <input type="date" v-model="appointmentData[patient.email].date"
-                                            placeholder="Appointment Date" />
-                                        <textarea v-model="appointmentData[patient.email].reason"
-                                            placeholder="Enter reason"></textarea>
-                                        <div class="button-container">
-                                            <button class="saveAppointment"
-                                                @click="submitAppointment(patient.email)">Submit Appointment</button>
-                                            <button class="cancelAppointment"
-                                                @click="cancelAppointmentEdit(patient.email)">Cancel</button>
+                        <div v-if="appointmentsView === 'give'">
+                            <h4>Patients List</h4>
+                            <div class="appointments-scroll-container">
+                                <div v-for="(patient, index) in patientsList" :key="index" class="appointment-section">
+                                    <div class="appointment-section-content">
+                                        <strong>{{ patient.fullName }}</strong>
+                                        <div v-if="!isEditing.appointment[patient.email]" class="button-group1">
+                                            <button @click="toggleAppointmentEdit(patient.email)">Give
+                                                Appointment</button>
+                                            <button @click="viewMedicalHistory(patient.email)">View Medical
+                                                History</button>
+                                        </div>
+                                        <div v-else class="appointment-inputs">
+                                            <input type="date" v-model="appointmentData[patient.email].date"
+                                                placeholder="Appointment Date" />
+                                            <textarea v-model="appointmentData[patient.email].reason"
+                                                placeholder="Enter reason"></textarea>
+                                            <div class="button-container">
+                                                <button class="saveAppointment"
+                                                    @click="submitAppointment(patient.email)">Submit
+                                                    Appointment</button>
+                                                <button class="cancelAppointment"
+                                                    @click="cancelAppointmentEdit(patient.email)">Cancel</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -526,156 +528,68 @@
                         </div>
                     </div>
 
-                    <!-- Medical History Popup -->
-                    <div v-if="showMedicalHistoryPopup" class="popup-overlay">
-                        <div class="popup-content">
-                            <h3>Medical History for {{ selectedPatient.fullName }}</h3>
-                            <div class="popup-scroll-container">
-                                <!-- Personal Information -->
-                                <div class="record-section">
-                                    <h4>Personal Information</h4>
-                                    <p><strong>Name:</strong> {{ selectedPatient.fullName }} |
-                                        <strong>DOB:</strong> {{ selectedPatient.dateOfBirth }} |
-                                        <strong>Gender:</strong> {{ selectedPatient.gender }} |
-                                        <strong>Blood Type:</strong> {{ selectedPatient.bloodType }} |
-                                        <strong>Emergency Contact:</strong> {{ selectedPatient.emergencyContact }}
-                                    </p>
-                                </div>
+                    <div v-else>
+                        <div class="appointments-header">
+                            <h3>Welcome, {{ user.username }}</h3>
+                            <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
+                            <button @click="appointmentsView = 'request'">Request Appointments</button>
+                        </div>
 
-                                <!-- Medical History -->
-                                <div class="record-section">
-                                    <h4>Medical History</h4>
-                                    <textarea v-model="selectedPatient.medicalHistory"></textarea>
-                                </div>
-
-                                <!-- Current Medications -->
-                                <div class="record-section">
-                                    <h4>Current Medications</h4>
-                                    <p v-if="!selectedPatient.medications || selectedPatient.medications.length === 0">
-                                        No medications found
-                                    </p>
-                                    <ul v-else>
-                                        <li v-for="(medication, index) in selectedPatient.medications" :key="index">
-                                            {{ medication }}
-                                        </li>
-                                    </ul>
-                                </div>
-
-
-                                <!-- Vaccination Records -->
-                                <div class="record-section">
-                                    <h4>Vaccination Records</h4>
-                                    <textarea v-model="selectedPatient.vaccinations"></textarea>
-                                </div>
-
-                                <!-- Lifestyle & Habits -->
-                                <div class="record-section">
-                                    <h4>Lifestyle & Habits</h4>
-                                    <p><strong>Smoking:</strong> {{ selectedPatient.smokingStatus }} |
-                                        <strong>Alcohol:</strong> {{ selectedPatient.alcoholConsumption }} |
-                                        <strong>Exercise:</strong> {{ selectedPatient.exerciseRoutine }} |
-                                        <strong>Sleep:</strong> {{ selectedPatient.sleepPatterns }}
-                                    </p>
-                                </div>
-
-                                <!-- Symptoms & Health Logs -->
-                                <div class="record-section">
-                                    <h4>Symptoms & Health Logs</h4>
-                                    <textarea v-model="selectedPatient.healthLogs"></textarea>
-                                </div>
-
-                                <!-- Lab Results & Reports -->
-                                <div class="record-section">
-                                    <h4>Lab Results & Reports</h4>
-                                    <textarea v-model="selectedPatient.labResults"></textarea>
-                                </div>
-
-                                <!-- Doctor Visits & Appointments -->
-                                <div class="record-section">
-                                    <h4>Doctor Visits & Appointments</h4>
-                                    <textarea v-model="selectedPatient.doctorVisits"></textarea>
-                                </div>
-
-                                <!-- Smartwatch & Wearable Data -->
-                                <div class="record-section">
-                                    <h4>Smartwatch & Wearable Data</h4>
-                                    <p><strong>Heart Rate:</strong> {{ selectedPatient.heartRate }} |
-                                        <strong>Step Count:</strong> {{ selectedPatient.stepCount }} |
-                                        <strong>Sleep Tracking:</strong> {{ selectedPatient.sleepTracking }} |
-                                        <strong>Blood Oxygen:</strong> {{ selectedPatient.bloodOxygen }}
-                                    </p>
-                                </div>
-
-                                <!-- Emergency Details -->
-                                <div class="record-section">
-                                    <h4>Emergency Details</h4>
-                                    <p><strong>Organ Donor:</strong> {{ selectedPatient.organDonorStatus }} |
-                                        <strong>Medical Directives:</strong> {{ selectedPatient.medicalDirectives }}
-                                    </p>
+                        <div v-if="appointmentsView === 'upcoming'">
+                            <h4>Upcoming Appointments</h4>
+                            <div class="appointments-scroll-container">
+                                <div v-for="(appointment, index) in upcomingAppointments" :key="index"
+                                    class="appointment-section">
+                                    <div class="appointment-section-content">
+                                        <strong>Doctor:</strong> {{ appointment.doctorEmail }} |
+                                        <strong>Date:</strong> {{ appointment.date }} |
+                                        <strong>Reason:</strong> {{ appointment.reason }} |
+                                        <strong>Status:</strong> {{ appointment.status }}
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="button-container">
-                                <button class="saveAppointment" @click="saveMedicalHistory">Save Changes</button>
-                                <button class="cancelAppointment" @click="closeMedicalHistoryPopup">Close</button>
+                        <div v-if="appointmentsView === 'request'">
+                            <h4>Doctors List</h4>
+                            <div class="appointments-scroll-container">
+                                <div v-for="(doctor, index) in doctorsList" :key="index" class="appointment-section">
+                                    <div class="appointment-section-content">
+                                        <strong>{{ doctor.fullName }}</strong>
+                                        <div v-if="!isEditing.appointment[doctor.email]">
+                                            <button @click="toggleAppointmentEdit(doctor.email)">Request
+                                                Appointment</button>
+                                        </div>
+                                        <div v-else class="appointment-inputs">
+                                            <input type="date" v-model="appointmentData[doctor.email].date"
+                                                placeholder="Appointment Date" />
+                                            <textarea v-model="appointmentData[doctor.email].reason"
+                                                placeholder="Enter reason"></textarea>
+                                            <div class="button-container">
+                                                <button class="saveAppointment"
+                                                    @click="submitAppointment(doctor.email)">Submit Appointment</button>
+                                                <button class="cancelAppointment"
+                                                    @click="cancelAppointmentEdit(doctor.email)">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
 
-                <div v-else>
-                    <div class="appointments-header">
-                        <h3>Welcome, {{ user.username }}</h3>
-                        <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
-                        <button @click="appointmentsView = 'request'">Request Appointments</button>
-                    </div>
-
-                    <div v-if="appointmentsView === 'upcoming'">
-                        <h4>Upcoming Appointments</h4>
-                        <div class="appointments-scroll-container">
-                            <div v-for="(appointment, index) in upcomingAppointments" :key="index"
-                                class="appointment-section">
-                                <div class="appointment-section-content">
-                                    <strong>Doctor:</strong> {{ appointment.doctorEmail }} |
-                                    <strong>Date:</strong> {{ appointment.date }} |
-                                    <strong>Reason:</strong> {{ appointment.reason }} |
-                                    <strong>Status:</strong> {{ appointment.status }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div v-if="appointmentsView === 'request'">
-                        <h4>Doctors List</h4>
-                        <div class="appointments-scroll-container">
-                            <div v-for="(doctor, index) in doctorsList" :key="index" class="appointment-section">
-                                <div class="appointment-section-content">
-                                    <strong>{{ doctor.fullName }}</strong>
-                                    <div v-if="!isEditing.appointment[doctor.email]">
-                                        <button @click="toggleAppointmentEdit(doctor.email)">Request
-                                            Appointment</button>
-                                    </div>
-                                    <div v-else class="appointment-inputs">
-                                        <input type="date" v-model="appointmentData[doctor.email].date"
-                                            placeholder="Appointment Date" />
-                                        <textarea v-model="appointmentData[doctor.email].reason"
-                                            placeholder="Enter reason"></textarea>
-                                        <div class="button-container">
-                                            <button class="saveAppointment"
-                                                @click="submitAppointment(doctor.email)">Submit Appointment</button>
-                                            <button class="cancelAppointment"
-                                                @click="cancelAppointmentEdit(doctor.email)">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Show Login/Signup Prompt if Not Logged In -->
+                <div v-else class="auth-prompt">
+                    <h2>You need to log in or sign up</h2>
+                    <p>To access your appointments, please log in or create an account.</p>
+                    <div class="button-container">
+                        <button class="auth-button" @click="navigateTo('login')">Login</button>
+                        <button class="auth-button" @click="navigateTo('signup')">Sign Up</button>
                     </div>
                 </div>
             </div>
+
 
 
 
