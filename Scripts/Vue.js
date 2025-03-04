@@ -125,6 +125,15 @@ const app = Vue.createApp({
     toggleClass() {
       return this.theme === "dark" ? "active" : ""; // If theme is dark, add active class to the button
     },
+
+    isSaveDisabled() {
+      // Check if any of the required fields are empty
+      return !this.selectedMedication.name ||
+        !this.selectedMedication.dosage ||
+        !this.selectedMedication.frequency ||
+        !this.selectedMedication.time ||
+        !this.selectedMedication.diagnosis;
+    }
   },
 
   watch: {
@@ -1229,9 +1238,16 @@ const app = Vue.createApp({
       // Ensure that the patient is selected and medication data exists
       if (!this.selectedPatient || !this.selectedPatient.email) {
         console.error("No patient selected or no patient email found.");
+        alert("Error: No patient selected.");
         return;
       }
-    
+
+      // Ensure all medication fields are filled before proceeding
+      if (!this.selectedMedication.name || !this.selectedMedication.dosage || !this.selectedMedication.frequency || !this.selectedMedication.diagnosis) {
+        alert("Please fill in all medication details before saving.");
+        return;
+      }
+
       // Prepare the medication data to be saved
       const medicationData = {
         email: this.selectedPatient.email,  // Use the selected patient's email
@@ -1242,39 +1258,38 @@ const app = Vue.createApp({
           diagnosis: this.selectedMedication.diagnosis
         }
       };
-    
+
       // Send the data to the backend to save it in the database
       fetch("http://localhost:3000/save-medication", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(medicationData)
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message === "Medication saved successfully!") {
-          alert("Medication saved successfully!");
-    
-          //Clear the input fields after successful save
-          this.selectedMedication = { name: "", dosage: "", frequency: "", diagnosis: "" };
-          this.currentMedicationInput = ""; // Clear the medication name input
-          this.medicationSuggestions = []; // Clear suggestions
-    
-          // Fetch updated medical records to reflect the changes
-          this.fetchMedicalRecords(); 
-    
-          // Close the popup after saving (if needed)
-          this.showMedicalHistoryPopup = false; 
-        } else {
-          console.error("Error saving medication:", data.message);
-        }
-      })
-      .catch(error => {
-        console.error("Error saving medication:", error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === "Medication saved successfully!") {
+            alert("Medication saved successfully!");
+
+            // Clear the input fields after successful save
+            this.selectedMedication = { name: "", dosage: "", frequency: "", diagnosis: "" };
+            this.currentMedicationInput = ""; // Clear the medication name input
+            this.medicationSuggestions = []; // Clear suggestions
+
+            // Fetch updated medical records to reflect the changes
+            this.fetchMedicalRecords();
+
+            // Optionally, close the popup after saving
+            this.showMedicalHistoryPopup = false;
+          } else {
+            console.error("Error saving medication:", data.message);
+            alert("Error saving medication: " + data.message);
+          }
+        })
+        .catch(error => {
+          console.error("Error saving medication:", error);
+          alert("An error occurred while saving the medication.");
+        });
     },
-    
-    
-    
 
 
     // Save the updated medical history (including medications)

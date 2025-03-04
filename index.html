@@ -614,7 +614,8 @@
                                         <!-- Dosage Dropdown -->
                                         <div class="input-group">
                                             <label>Dosage:</label>
-                                            <select v-model="selectedMedication.dosage" class="input-dropdown">
+                                            <select v-model="selectedMedication.dosage" class="input-dropdown"
+                                                :class="{'input-error': !selectedMedication.dosage}">
                                                 <option value="1 pill">1 pill</option>
                                                 <option value="2 pills">2 pills</option>
                                                 <option value="5ml syrup">5ml syrup</option>
@@ -629,7 +630,8 @@
                                         <!-- Frequency Dropdown -->
                                         <div class="input-group">
                                             <label>Frequency:</label>
-                                            <select v-model="selectedMedication.frequency" class="input-dropdown">
+                                            <select v-model="selectedMedication.frequency" class="input-dropdown"
+                                                :class="{'input-error': !selectedMedication.frequency}">
                                                 <option value="Once a day">Once a day</option>
                                                 <option value="Twice a day">Twice a day</option>
                                                 <option value="Every 4 hours">Every 4 hours</option>
@@ -643,7 +645,8 @@
                                         <!-- Time to Take Dropdown -->
                                         <div class="input-group">
                                             <label>Time to Take:</label>
-                                            <select v-model="selectedMedication.time" class="input-dropdown">
+                                            <select v-model="selectedMedication.time" class="input-dropdown"
+                                                :class="{'input-error': !selectedMedication.time}">
                                                 <option value="8 AM">8 AM</option>
                                                 <option value="12 PM">12 PM</option>
                                                 <option value="4 PM">4 PM</option>
@@ -658,13 +661,16 @@
                                         <div class="input-group">
                                             <label>Diagnosis:</label>
                                             <input v-model="selectedMedication.diagnosis" placeholder="Diagnosis"
-                                                type="text" style="width: 98%;" />
+                                                type="text" class="input-field"
+                                                :class="{'input-error': !selectedMedication.diagnosis}" />
                                         </div>
                                     </div>
 
                                     <!-- Save Medication Button -->
-                                    <button class="saveMedicine" @click="saveMedication">Save Medication</button>
+                                    <button class="saveMedicine" @click="saveMedication" :disabled="isSaveDisabled">Save
+                                        Medication</button>
                                 </div>
+
 
 
 

@@ -2604,3 +2604,22 @@ a:hover {
 .saveMedicine:hover {
     background-color: #006b8e;
 }
+
+
+  .saveMedicine:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Optional: highlight input fields with red border for missing values */
+  .input-dropdown:invalid, .input-field:invalid {
+    border-color: red;
+  }
+  
+  .input-dropdown, .input-field {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
