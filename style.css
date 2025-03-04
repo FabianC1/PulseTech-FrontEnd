@@ -2547,3 +2547,60 @@ a:hover {
 .medication-item p {
     margin: 0;
 }
+
+/* Styling for Medication Section */
+.selected-medication {
+    margin-top: 20px;
+    padding: 10px;
+    background: #f9f9f986;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.selected-medication h5 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Grouping inputs together */
+.input-group {
+    margin-bottom: 15px;
+}
+
+/* Labels styling */
+.input-group label {
+    font-weight: bold;
+    color: #008CBA;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Input styling */
+.input-field, .input-dropdown {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+/* Focus effect for inputs */
+.input-field:focus, .input-dropdown:focus {
+    border-color: #008CBA;
+}
+
+/* Button Styling */
+.saveMedicine {
+    padding: 10px 20px;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.saveMedicine:hover {
+    background-color: #006b8e;
+}
