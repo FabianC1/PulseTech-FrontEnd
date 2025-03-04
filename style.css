@@ -2624,7 +2624,7 @@ a:hover {
   }
   
 
-  .medications-container {
+  .medications-page-container {
     text-align: center;
     padding: 20px;
     margin: 5px auto;
@@ -2644,6 +2644,19 @@ a:hover {
     gap: 20px;
     justify-content: flex-start;
   }
+  
+
+
+
+
+
+
+
+
+
+
+
+
   
   .messages-container{
     text-align: center;
