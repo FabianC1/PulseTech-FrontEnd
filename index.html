@@ -264,29 +264,20 @@
                         <div class="record-section">
                             <h3>Current Medications</h3>
                             <div v-if="!isEditing.medications" class="record-section-content">
-                                <p>
-                                    <strong>Medications:</strong>
-                                <ul>
-                                    <li v-for="(medication, index) in user.medications" :key="index">{{ medication }}
-                                    </li>
-                                </ul>
-                                </p>
-                                <button @click="toggleEdit('medications')">Edit</button>
-                            </div>
-                            <div v-else class="record-section-content">
-                                <div v-for="(medication, index) in user.medications" :key="index"
-                                    class="medication-input">
-                                    <input v-model="user.medications[index]"
-                                        :placeholder="'Medication ' + (index + 1)" />
-                                    <button @click="removeMedication(index)" class="remove-btn">Remove</button>
-                                </div>
-                                <button @click="addMedication" class="add-btn">Add Medication</button>
-                                <div class="button-container">
-                                    <button class="save-btn" @click="saveMedicalRecords">Save</button>
-                                    <button class="cancel-btn" @click="cancelEdit">Cancel</button>
+                                <p><strong>Medications:</strong></p>
+                                <div class="medications-scroll-container">
+                                    <ul>
+                                        <li v-for="(medication, index) in user.medications" :key="index">
+                                            {{ medication.name }} - {{ medication.dosage }} - {{ medication.frequency }}
+                                            <br>
+                                            <strong>Diagnosis:</strong> {{ medication.diagnosis }}
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+
+
 
 
                         <!-- Vaccination Records -->
@@ -578,7 +569,7 @@
                         </div>
                     </div>
 
-                    <!--Medical History Popup (Moved inside isLoggedIn) -->
+                    <!--Medical History Popup-->
                     <div v-if="showMedicalHistoryPopup" class="popup-overlay">
                         <div class="popup-content">
                             <h3>Medical History for {{ selectedPatient.fullName }}</h3>
@@ -593,19 +584,62 @@
                                     </p>
                                 </div>
 
-                                <div class="record-section">
-                                    <h4>Medical History</h4>
-                                    <textarea v-model="selectedPatient.medicalHistory"></textarea>
-                                </div>
-
+                                <!-- Current Medications Section -->
                                 <div class="record-section">
                                     <h4>Current Medications</h4>
-                                    <p v-if="!selectedPatient.medications || selectedPatient.medications.length === 0">
-                                        No medications found</p>
-                                    <ul v-else>
-                                        <li v-for="(medication, index) in selectedPatient.medications" :key="index">{{
-                                            medication }}</li>
+
+                                    <!-- List current medications -->
+                                    <ul v-if="selectedPatient.medications && selectedPatient.medications.length > 0">
+                                        <li v-for="(medication, index) in selectedPatient.medications" :key="index">
+                                            {{ medication.name }} - {{ medication.dosage }} - {{ medication.frequency }}
+                                            |
+                                            <strong>Diagnosis:</strong> {{ medication.diagnosis }}
+                                        </li>
                                     </ul>
+                                    <p v-else>No medications found.</p>
+
+
+                                    <!-- Edit button to add a new medication -->
+                                    <button @click="toggleAddMedicationForm">Add Medication</button>
+
+                                    <!-- New Medication Form (Appears when 'Add Medication' is clicked) -->
+                                    <div v-if="isAddingMedication" class="new-medication-form">
+                                        <h4>Add New Medication</h4>
+
+                                        <input v-model="currentMedicationInput" @input="fetchMedications"
+                                            placeholder="Search medication name..." type="text" />
+
+                                        <!-- Display Medication Suggestions -->
+                                        <ul v-if="medicationSuggestions && medicationSuggestions.length > 0"
+                                            class="suggestions-list">
+                                            <li v-for="(medication, index) in medicationSuggestions" :key="index"
+                                                @click="selectMedication(medication)">
+                                                {{ medication.name }} - {{ medication.dosage }} - {{
+                                                medication.frequency }}
+                                            </li>
+                                        </ul>
+
+
+                                        <!-- Editable Fields for Adding a New Medication -->
+                                        <div v-if="selectedMedication">
+                                            <label for="medName">Name:</label>
+                                            <input id="medName" v-model="selectedMedication.name" type="text" />
+
+                                            <label for="medDosage">Dosage:</label>
+                                            <input id="medDosage" v-model="selectedMedication.dosage" type="text" />
+
+                                            <label for="medFrequency">Frequency:</label>
+                                            <input id="medFrequency" v-model="selectedMedication.frequency"
+                                                type="text" />
+
+                                            <label for="medDiagnosis">Diagnosis:</label>
+                                            <input id="medDiagnosis" v-model="selectedMedication.diagnosis"
+                                                type="text" />
+
+                                            <!-- Save Medication Button -->
+                                            <button @click="saveMedication">Save Medication</button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="record-section">

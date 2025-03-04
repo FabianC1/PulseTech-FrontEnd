@@ -107,6 +107,10 @@ const app = Vue.createApp({
         organDonorStatus: "",
         medicalDirectives: ""
       },
+      medicationSuggestions: [], // Initialize as an empty array
+      selectedMedication: null, // Start with null value
+      currentMedicationInput: "", // Start with an empty input
+      isAddingMedication: false, // Control whether the medication form is being added
     };
   },
 
@@ -1178,7 +1182,74 @@ const app = Vue.createApp({
       } catch (error) {
         console.error("Error marking appointment as completed:", error);
       }
-    }
+    },
+
+    // Toggle the visibility of the medication form
+    toggleAddMedicationForm() {
+      this.isAddingMedication = !this.isAddingMedication;
+      this.selectedMedication = null; // Reset selected medication when form is toggled
+      this.currentMedicationInput = ""; // Reset input field
+      this.medicationSuggestions = []; // Clear suggestions
+    },
+
+    // Fetch medication suggestions based on the input
+    async fetchMedications() {
+      if (this.currentMedicationInput.trim() === "") {
+        this.medicationSuggestions = [];
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/collections/Medications?name=${this.currentMedicationInput}`);
+        const data = await response.json();
+        this.medicationSuggestions = data; // Assuming response is an array of medications
+      } catch (error) {
+        console.error("Error fetching medications:", error);
+      }
+    },
+
+    selectMedication(medication) {
+      this.selectedMedication = { ...medication }; // Create a copy of the selected medication
+      this.currentMedicationInput = medication.name; // Populate the input field with the selected medication name
+      this.medicationSuggestions = []; // Clear suggestions after selection
+    },
+
+
+    saveMedication() {
+      if (!this.selectedMedication.name || !this.selectedMedication.dosage || !this.selectedMedication.frequency || !this.selectedMedication.diagnosis) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      // Add the new medication to the patient's medication list
+      this.selectedPatient.medications.push(this.selectedMedication); // Add it to the medications list
+      this.selectedMedication = null; // Reset the selected medication
+      this.currentMedicationInput = ""; // Clear input field
+      this.isAddingMedication = false; // Close the form
+    },
+
+
+    // Save the updated medical history (including medications)
+    saveMedicalHistory() {
+      const updatedPatient = { ...this.selectedPatient };
+
+      fetch("http://localhost:3000/save-medical-records", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedPatient),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message === "Medical history updated.") {
+            alert("Medical history updated successfully.");
+            this.closeMedicalHistoryPopup(); // Close the popup after saving
+          }
+        })
+        .catch((error) => console.error("Error saving medical history:", error));
+    },
+
+
+
 
   },
 
