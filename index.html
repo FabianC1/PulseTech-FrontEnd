@@ -584,63 +584,40 @@
                                     </p>
                                 </div>
 
-                                <!-- Current Medications Section -->
+                                <!-- Current Medications -->
                                 <div class="record-section">
                                     <h4>Current Medications</h4>
 
-                                    <!-- List current medications -->
-                                    <ul v-if="selectedPatient.medications && selectedPatient.medications.length > 0">
-                                        <li v-for="(medication, index) in selectedPatient.medications" :key="index">
+                                    <!-- Medication Input with dynamic placeholder -->
+                                    <input v-model="currentMedicationInput" @input="fetchMedications"
+                                        :placeholder="currentMedicationInput || 'Start typing medication name...'"
+                                        type="text" />
+
+                                    <!-- Display Medication Suggestions -->
+                                    <ul v-if="medicationSuggestions.length > 0" class="suggestions-list">
+                                        <li v-for="(medication, index) in medicationSuggestions" :key="index"
+                                            @click="selectMedication(medication)">
                                             {{ medication.name }} - {{ medication.dosage }} - {{ medication.frequency }}
-                                            |
-                                            <strong>Diagnosis:</strong> {{ medication.diagnosis }}
                                         </li>
                                     </ul>
-                                    <p v-else>No medications found.</p>
 
 
-                                    <!-- Edit button to add a new medication -->
-                                    <button @click="toggleAddMedicationForm">Add Medication</button>
-
-                                    <!-- New Medication Form (Appears when 'Add Medication' is clicked) -->
-                                    <div v-if="isAddingMedication" class="new-medication-form">
-                                        <h4>Add New Medication</h4>
-
-                                        <input v-model="currentMedicationInput" @input="fetchMedications"
-                                            placeholder="Search medication name..." type="text" />
-
-                                        <!-- Display Medication Suggestions -->
-                                        <ul v-if="medicationSuggestions && medicationSuggestions.length > 0"
-                                            class="suggestions-list">
-                                            <li v-for="(medication, index) in medicationSuggestions" :key="index"
-                                                @click="selectMedication(medication)">
-                                                {{ medication.name }} - {{ medication.dosage }} - {{
-                                                medication.frequency }}
-                                            </li>
-                                        </ul>
-
-
-                                        <!-- Editable Fields for Adding a New Medication -->
-                                        <div v-if="selectedMedication">
-                                            <label for="medName">Name:</label>
-                                            <input id="medName" v-model="selectedMedication.name" type="text" />
-
-                                            <label for="medDosage">Dosage:</label>
-                                            <input id="medDosage" v-model="selectedMedication.dosage" type="text" />
-
-                                            <label for="medFrequency">Frequency:</label>
-                                            <input id="medFrequency" v-model="selectedMedication.frequency"
-                                                type="text" />
-
-                                            <label for="medDiagnosis">Diagnosis:</label>
-                                            <input id="medDiagnosis" v-model="selectedMedication.diagnosis"
-                                                type="text" />
-
-                                            <!-- Save Medication Button -->
-                                            <button @click="saveMedication">Save Medication</button>
-                                        </div>
+                                    <!-- Show Selected Medication Details -->
+                                    <div v-if="selectedMedication">
+                                        <h5>Medication Details</h5>
+                                        <input v-model="selectedMedication.name" placeholder="Medication Name"
+                                            type="text" />
+                                        <input v-model="selectedMedication.dosage" placeholder="Dosage" type="text" />
+                                        <input v-model="selectedMedication.frequency" placeholder="Frequency"
+                                            type="text" />
+                                        <input v-model="selectedMedication.diagnosis" placeholder="Diagnosis"
+                                            type="text" />
                                     </div>
+
+                                    <!-- Save Medication Button -->
+                                    <button class="saveAppointment" @click="saveMedication">Save Medication</button>
                                 </div>
+
 
                                 <div class="record-section">
                                     <h4>Vaccination Records</h4>
