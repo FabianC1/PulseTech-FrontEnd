@@ -2431,7 +2431,7 @@ a:hover {
 
 
 /* Button styles */
-.button-container {
+.button-containerMedical {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
@@ -2480,5 +2480,5 @@ a:hover {
 
 /* Hover Effect */
 .button-group1 button:hover {
-    background-color: #1900a7ef;
+    background-color: #2600ffef;
 }
