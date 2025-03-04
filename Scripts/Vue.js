@@ -798,6 +798,10 @@ const app = Vue.createApp({
       localStorage.removeItem("user"); // Clear user session
       this.isLoggedIn = false;
 
+      // Clear login input fields
+      this.loginEmail = "";
+      this.loginPassword = "";
+
       // Instead of null, reset user to an empty object to avoid errors
       this.user = {
         fullName: "",
