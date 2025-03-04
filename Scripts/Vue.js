@@ -1184,71 +1184,86 @@ const app = Vue.createApp({
       }
     },
 
+    // Fetch medications based on the input query
     async fetchMedications() {
-      if (this.currentMedicationInput.trim().length < 3) {
-        this.medicationSuggestions = [];  // Clear suggestions if input is too short
+      // Check if the input has at least 3 characters to start searching
+      if (this.currentMedicationInput.length < 3) {
+        this.medicationSuggestions = [];  // Don't search if less than 3 chars
         return;
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/collections/Medications?name=${encodeURIComponent(this.currentMedicationInput)}`);
+        // Make the fetch request to the backend to get the medications list
+        const response = await fetch(`/collections/Medications?name=${this.currentMedicationInput}`);
         const data = await response.json();
 
-        // Debugging log to check the response
-        console.log("Fetched medications:", data);
-
-        if (data && Array.isArray(data)) {
-          // Ensure we're getting an array of medications
-          this.medicationSuggestions = data.map(med => ({
-            name: med.name,
-            dosage: med.dosage,
-            frequency: med.frequency,
-            diagnosis: med.diagnosis
-          }));
+        // Check if the response contains valid medication data
+        if (data && data[0] && Array.isArray(data[0].medications)) {
+          // Filter medications that match the search input (case-insensitive)
+          this.medicationSuggestions = data[0].medications.filter((medication) =>
+            medication.toLowerCase().includes(this.currentMedicationInput.toLowerCase())
+          );
         } else {
-          this.medicationSuggestions = [];  // Clear if no results
+          // Clear the suggestions list if no data is found
+          this.medicationSuggestions = [];
         }
       } catch (error) {
         console.error("Error fetching medications:", error);
-        this.medicationSuggestions = [];  // Clear suggestions on error
+        this.medicationSuggestions = [];  // Reset on error
       }
     },
 
-
+    // Select medication from the suggestions list
     selectMedication(medication) {
-      // Set the selected medication
-      this.selectedMedication = { ...medication };  // Make a copy to avoid direct mutation
-      this.currentMedicationInput = medication.name; // Fill input with selected name
+      this.selectedMedication = {
+        name: medication,  // Set the selected medication name
+        dosage: "",        // Add a default empty value for dosage
+        frequency: "",     // Add a default empty value for frequency
+        diagnosis: "",     // Add a default empty value for diagnosis
+      };
+      this.currentMedicationInput = medication;  // Update the input field with selected medication
       this.medicationSuggestions = [];  // Clear suggestions after selection
     },
 
-
     saveMedication() {
-      // Ensure selectedPatient.medications is initialized as an array
-      if (!this.selectedPatient.medications) {
-        this.selectedPatient.medications = [];  // Initialize as an empty array if it's null or undefined
-      }
-
-      // Check if all fields (name, dosage, frequency, diagnosis) are filled
-      if (!this.selectedMedication || !this.selectedMedication.name || !this.selectedMedication.dosage || !this.selectedMedication.frequency || !this.selectedMedication.diagnosis) {
-        alert("Please fill in all medication details.");
+      // Ensure that the patient is selected and medication data exists
+      if (!this.selectedPatient || !this.selectedPatient.email) {
+        console.error("No patient selected or no patient email found.");
         return;
       }
-
-      // Add the medication to the medications array
-      this.selectedPatient.medications.push({
-        name: this.selectedMedication.name,
-        dosage: this.selectedMedication.dosage,
-        frequency: this.selectedMedication.frequency,
-        diagnosis: this.selectedMedication.diagnosis,
+  
+      // Prepare the medication data to be saved
+      const medicationData = {
+        email: this.selectedPatient.email,  // Use the selected patient's email
+        medication: {
+          name: this.selectedMedication.name,
+          dosage: this.selectedMedication.dosage,
+          frequency: this.selectedMedication.frequency,
+          diagnosis: this.selectedMedication.diagnosis
+        }
+      };
+  
+      // Send the data to the backend to save it in the database
+      fetch("http://localhost:3000/save-medication", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(medicationData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message === "Medication saved successfully!") {
+          alert("Medication saved successfully!");
+          // Optionally reset the form or close the popup
+        } else {
+          console.error("Error saving medication:", data.message);
+        }
+      })
+      .catch(error => {
+        console.error("Error saving medication:", error);
       });
-
-      // Clear the selected medication fields after saving
-      this.selectedMedication = null;
-
-      // Optionally, log the medications array to confirm
-      console.log("Updated medications:", this.selectedPatient.medications);
     },
+    
+    
 
 
     // Save the updated medical history (including medications)
@@ -1268,7 +1283,7 @@ const app = Vue.createApp({
           }
         })
         .catch((error) => console.error("Error saving medical history:", error));
-        this.closeMedicalHistoryPopup(); // Close the popup after saving
+      this.closeMedicalHistoryPopup(); // Close the popup after saving
     },
 
 

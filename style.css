@@ -2501,3 +2501,31 @@ a:hover {
 .button-group1 button:hover {
     background-color: #2600ffef;
 }
+
+
+.suggestions-list {
+    color: rgb(0, 0, 0);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    border: 1px solid #ddd;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 10px;
+  }
+  
+  .suggestions-list li {
+    background: transparent;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .suggestions-list li:hover {
+    background-color: #ddd;
+  }
+  
+  .selected-medication{
+    width:98%;
+    margin-top: -1%;
+  }

@@ -594,20 +594,20 @@
                                         type="text" />
 
                                     <!-- Display Medication Suggestions -->
-                                    <ul v-if="medicationSuggestions.length > 0" class="suggestions-list">
+                                    <ul v-if="medicationSuggestions.length > 0" class="suggestions-list"
+                                        style="max-height: 150px; overflow-y: auto; background-color: white; border: 1px solid #ccc;">
                                         <li v-for="(medication, index) in medicationSuggestions" :key="index"
                                             @click="selectMedication(medication)">
-                                            {{ medication.name }} - {{ medication.dosage }} - {{ medication.frequency }}
+                                            {{ medication }}
                                         </li>
                                     </ul>
 
-
                                     <!-- Show Selected Medication Details -->
-                                    <div v-if="selectedMedication">
+                                    <div v-if="selectedMedication" class="selected-medication">
                                         <h5>Medication Details</h5>
                                         <input v-model="selectedMedication.name" placeholder="Medication Name"
                                             type="text" />
-                                        <input v-model="selectedMedication.dosage" placeholder="Dosage" type="text" />
+                                        <input v-model="selectedMedication.dosage" placeholder="Dosage per take" type="text" />
                                         <input v-model="selectedMedication.frequency" placeholder="Frequency"
                                             type="text" />
                                         <input v-model="selectedMedication.diagnosis" placeholder="Diagnosis"
@@ -617,6 +617,7 @@
                                     <!-- Save Medication Button -->
                                     <button class="saveAppointment" @click="saveMedication">Save Medication</button>
                                 </div>
+
 
 
                                 <div class="record-section">
@@ -670,11 +671,11 @@
                 <p>Track your prescribed medications and dosage here.</p>
             </div>
 
-            <!-- Messages Section -->
             <div v-if="currentView === 'messages'">
                 <h2>Messages</h2>
                 <p>Your messages and communication with healthcare providers will appear here.</p>
             </div>
+
 
 
             <!-- Profile Section -->
