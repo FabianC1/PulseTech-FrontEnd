@@ -2210,38 +2210,48 @@ a:hover {
 /* Individual Appointment Sections */
 .appointment-section {
     background: rgba(255, 255, 255, 0.068);
-    width: calc(100% - 2px); /* Slightly smaller than parent container */
-    height: 10%; /* Each section is 10% of the main container */
-    min-height: 60px; /* Ensure small sections don't collapse */
-    padding: 10px;
+    width: 98%; /* Take full width of the container */
+    padding: 15px;
     border-radius: 8px;
     border: 2px solid #000;
     transition: transform 0.3s ease, background-color 0.3s ease;
+    margin-bottom: 10px; /* Adding space between the sections */
 }
 
-.appointment-section h3 {
-    font-weight: bold;
-}
-
-/* Flexbox container for the content in appointment-section */
+/* Flex container for appointment details */
 .appointment-section-content {
     display: flex;
-    flex-direction: row; /* Align content horizontally */
-    justify-content: space-between;
-    align-items: center; /* Vertically center the content */
+    justify-content: space-between; /* Space between details and button */
+    align-items: flex-start; /* Align items to start */
 }
 
-/* View Medical Records and Book Appointment buttons */
+/* Appointment details group */
+.appointment-details {
+    display: flex;
+    flex-direction:row; /* Stack the content vertically */
+    gap: 12%; /* Add some space between each field */
+    flex: 1; /* Make sure the details container takes the available space */
+}
+
+/* Individual Appointment Fields */
+.appointment-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the left */
+    font-size: 1.1em; /* Make text a bit larger */
+}
+
+/* Button styling */
 .appointment-section-content button {
     margin-top: 1%;
-    margin-right: 1%; /* Push the button to the right */
     background-color: #4a2cceda;
     color: white;
-    padding: 5px 10px;
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
     border: none;
     font-size: 1.1em;
+    align-self: flex-start; /* Align button to the top */
 }
 
 /* Button hover effect */
@@ -2249,7 +2259,7 @@ a:hover {
     background-color: #1b0092ef;
 }
 
-
+/* Scrollbar styling */
 .appointment-section::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
@@ -2270,6 +2280,7 @@ a:hover {
     align-items: center; /* Vertically center the content */
     border-radius: 5px;
 }
+
 
 .appointments-header {
     text-align: center;

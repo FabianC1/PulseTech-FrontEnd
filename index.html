@@ -482,11 +482,20 @@
                                 <div v-for="(appointment, index) in upcomingAppointments" :key="index"
                                     class="appointment-section">
                                     <div class="appointment-section-content">
-                                        <strong>Patient:</strong> {{ appointment.patientEmail }} |
-                                        <strong>Date:</strong> {{ appointment.date }} |
-                                        <strong>Reason:</strong> {{ appointment.reason }} |
-                                        <strong>Status:</strong> {{ appointment.status }}
-
+                                        <div class="appointment-details">
+                                            <div class="appointment-item">
+                                                <strong>Patient:</strong> {{ appointment.patientEmail }}
+                                            </div>
+                                            <div class="appointment-item">
+                                                <strong>Date:</strong> {{ appointment.date }}
+                                            </div>
+                                            <div class="appointment-item">
+                                                <strong>Reason:</strong> {{ appointment.reason }}
+                                            </div>
+                                            <div class="appointment-item">
+                                                <strong>Status:</strong> {{ appointment.status }}
+                                            </div>
+                                        </div>
                                         <button v-if="appointment.status !== 'Completed'"
                                             @click="markAppointmentAsCompleted(appointment._id)">
                                             Mark as Completed
@@ -495,6 +504,7 @@
                                 </div>
                             </div>
                         </div>
+
 
                         <div v-if="appointmentsView === 'give'">
                             <h4>Patients List</h4>
@@ -540,14 +550,25 @@
                                 <div v-for="(appointment, index) in upcomingAppointments" :key="index"
                                     class="appointment-section">
                                     <div class="appointment-section-content">
-                                        <strong>Doctor:</strong> {{ appointment.doctorEmail }} |
-                                        <strong>Date:</strong> {{ appointment.date }} |
-                                        <strong>Reason:</strong> {{ appointment.reason }} |
-                                        <strong>Status:</strong> {{ appointment.status }}
+                                        <div class="appointment-details">
+                                            <div class="appointment-item">
+                                                <strong>Doctor:</strong> {{ appointment.doctorEmail }}
+                                            </div>
+                                            <div class="appointment-item">
+                                                <strong>Date:</strong> {{ appointment.date }}
+                                            </div>
+                                            <div class="appointment-item">
+                                                <strong>Reason:</strong> {{ appointment.reason }}
+                                            </div>
+                                            <div class="appointment-item">
+                                                <strong>Status:</strong> {{ appointment.status }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <div v-if="appointmentsView === 'request'">
                             <h4>Doctors List</h4>
