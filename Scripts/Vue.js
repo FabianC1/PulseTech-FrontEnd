@@ -112,7 +112,7 @@ const app = Vue.createApp({
         name: "",
         dosage: "",
         frequency: "",
-        time: "",
+        timeToTake: "",
         duration: "",
         diagnosis: ""
       },
@@ -1241,10 +1241,13 @@ const app = Vue.createApp({
         dosage: "",        // Add a default empty value for dosage
         frequency: "",     // Add a default empty value for frequency
         diagnosis: "",     // Add a default empty value for diagnosis
+        timeToTake: "",    // Add the time to take field
+        duration: ""       // Add the duration field
       };
       this.currentMedicationInput = medication;  // Update the input field with selected medication
       this.medicationSuggestions = [];  // Clear suggestions after selection
     },
+
 
     saveMedication() {
       // Ensure that the patient is selected and medication data exists
@@ -1255,7 +1258,7 @@ const app = Vue.createApp({
       }
 
       // Ensure all medication fields are filled before proceeding
-      if (!this.selectedMedication.name || !this.selectedMedication.dosage || !this.selectedMedication.frequency || !this.selectedMedication.diagnosis) {
+      if (!this.selectedMedication.name || !this.selectedMedication.dosage || !this.selectedMedication.frequency || !this.selectedMedication.diagnosis || !this.selectedMedication.time || !this.selectedMedication.duration) {
         alert("Please fill in all medication details before saving.");
         return;
       }
@@ -1267,8 +1270,9 @@ const app = Vue.createApp({
           name: this.selectedMedication.name,
           dosage: this.selectedMedication.dosage,
           frequency: this.selectedMedication.frequency,
-          duration: this.selectedMedication.duration,
-          diagnosis: this.selectedMedication.diagnosis
+          diagnosis: this.selectedMedication.diagnosis,
+          timeToTake: this.selectedMedication.time,  // Include time to take
+          duration: this.selectedMedication.duration       // Include duration
         }
       };
 
@@ -1284,7 +1288,7 @@ const app = Vue.createApp({
             alert("Medication saved successfully!");
 
             // Clear the input fields after successful save
-            this.selectedMedication = { name: "", dosage: "", frequency: "", duration: "", diagnosis: "" };
+            this.selectedMedication = { name: "", dosage: "", frequency: "", time: "", duration: "", diagnosis: "" };
             this.currentMedicationInput = ""; // Clear the medication name input
             this.medicationSuggestions = []; // Clear suggestions
 

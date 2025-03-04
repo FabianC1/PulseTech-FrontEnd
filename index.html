@@ -272,6 +272,7 @@
                                         {{ medication.name }} |
                                         <strong>Dosage:</strong> {{ medication.dosage }} |
                                         <strong>Frequency:</strong> {{ medication.frequency }} |
+                                        <strong>Time to Take:</strong> {{ medication.timeToTake }} |
                                         <strong>Duration:</strong> {{ medication.duration }} |
                                         <strong>Diagnosis:</strong> {{ medication.diagnosis }}
                                     </p>
@@ -602,8 +603,9 @@
                                             <p><strong>Medication {{ index + 1 }}:</strong> {{ medication.name }} |
                                                 <strong>Dosage:</strong> {{ medication.dosage }} |
                                                 <strong>Frequency:</strong> {{ medication.frequency }} |
+                                                <strong>Time to Take:</strong> {{ medication.timetoTake }} |
+                                                <strong>Duration:</strong> {{ medication.duration }} |
                                                 <strong>Diagnosis:</strong> {{ medication.diagnosis }} |
-                                                <strong>Duration:</strong> {{ medication.duration }}
                                             </p>
                                         </div>
                                     </div>
@@ -613,7 +615,7 @@
 
                                 <!-- Current Medications -->
                                 <div class="record-section">
-                                    <h4>Current Medications</h4>
+                                    <h4>Prescribe Medications</h4>
 
                                     <!-- Medication Input -->
                                     <input v-model="currentMedicationInput" @input="fetchMedications"
@@ -668,13 +670,13 @@
                                             <label>Time to Take:</label>
                                             <select v-model="selectedMedication.time" class="input-dropdown"
                                                 :class="{'input-error': !selectedMedication.time}">
+                                                <option value="7 AM">7 AM</option>
                                                 <option value="8 AM">8 AM</option>
                                                 <option value="12 PM">12 PM</option>
+                                                <option value="1 PM">1 PM</option>
                                                 <option value="4 PM">4 PM</option>
                                                 <option value="8 PM">8 PM</option>
                                                 <option value="10 PM">10 PM</option>
-                                                <option value="7 AM">7 AM</option>
-                                                <option value="1 PM">1 PM</option>
                                             </select>
                                         </div>
 
