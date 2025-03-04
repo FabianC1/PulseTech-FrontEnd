@@ -577,6 +577,64 @@
                             </div>
                         </div>
                     </div>
+
+                    <!--Medical History Popup (Moved inside isLoggedIn) -->
+                    <div v-if="showMedicalHistoryPopup" class="popup-overlay">
+                        <div class="popup-content">
+                            <h3>Medical History for {{ selectedPatient.fullName }}</h3>
+                            <div class="popup-scroll-container">
+                                <div class="record-section">
+                                    <h4>Personal Information</h4>
+                                    <p><strong>Name:</strong> {{ selectedPatient.fullName }} |
+                                        <strong>DOB:</strong> {{ selectedPatient.dateOfBirth }} |
+                                        <strong>Gender:</strong> {{ selectedPatient.gender }} |
+                                        <strong>Blood Type:</strong> {{ selectedPatient.bloodType }} |
+                                        <strong>Emergency Contact:</strong> {{ selectedPatient.emergencyContact }}
+                                    </p>
+                                </div>
+
+                                <div class="record-section">
+                                    <h4>Medical History</h4>
+                                    <textarea v-model="selectedPatient.medicalHistory"></textarea>
+                                </div>
+
+                                <div class="record-section">
+                                    <h4>Current Medications</h4>
+                                    <p v-if="!selectedPatient.medications || selectedPatient.medications.length === 0">
+                                        No medications found</p>
+                                    <ul v-else>
+                                        <li v-for="(medication, index) in selectedPatient.medications" :key="index">{{
+                                            medication }}</li>
+                                    </ul>
+                                </div>
+
+                                <div class="record-section">
+                                    <h4>Vaccination Records</h4>
+                                    <textarea v-model="selectedPatient.vaccinations"></textarea>
+                                </div>
+
+                                <div class="record-section">
+                                    <h4>Symptoms & Health Logs</h4>
+                                    <textarea v-model="selectedPatient.healthLogs"></textarea>
+                                </div>
+
+                                <div class="record-section">
+                                    <h4>Smartwatch & Wearable Data</h4>
+                                    <p><strong>Heart Rate:</strong> {{ selectedPatient.heartRate }} |
+                                        <strong>Step Count:</strong> {{ selectedPatient.stepCount }} |
+                                        <strong>Sleep Tracking:</strong> {{ selectedPatient.sleepTracking }} |
+                                        <strong>Blood Oxygen:</strong> {{ selectedPatient.bloodOxygen }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="button-container">
+                                <button class="saveAppointment" @click="saveMedicalHistory">Save Changes</button>
+                                <button class="cancelAppointment" @click="closeMedicalHistoryPopup">Close</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Show Login/Signup Prompt if Not Logged In -->
@@ -589,6 +647,7 @@
                     </div>
                 </div>
             </div>
+
 
 
 
