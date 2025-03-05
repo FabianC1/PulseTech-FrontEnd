@@ -799,7 +799,7 @@
                                     <strong>Duration:</strong> {{ medication.duration }}
                                     <p>
                                         <strong>Next Dose:</strong>
-                                        <span :class="getDoseClass(medication)">
+                                        <span>
                                             {{ getNextDoseCountdown(medication) }}
                                         </span>
                                     </p>
@@ -807,10 +807,10 @@
 
                                     <!-- Mark as Taken Button -->
                                     <button v-if="showMarkAsTaken(medication)" class="mark-as-taken"
-                                        :class="getDoseClass(medication)" @click="markAsTaken(medication)">
+                                        :class="getDoseClass(medication)" @click="markAsTaken(medication)"
+                                        :disabled="medication.isMarking">
                                         Mark as Taken
                                     </button>
-
                                 </div>
 
                                 <!-- Right Side: Medication Logs -->

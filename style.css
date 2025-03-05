@@ -2730,7 +2730,6 @@ a:hover {
 
 /* Mark as Taken Button */
 .mark-as-taken {
-    background: #28a745;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -2740,23 +2739,14 @@ a:hover {
   
   /* Colors for different states */
   .upcoming-dose {
-    background-color: green;
+    background-color: blue;
   } /* Normal state */
   
   .warning-dose {
-    background-color: blue; /* Blue for 30 mins before */
+    background-color: red; /* red for 30 mins before */
     color: white;
   }
-  
-  .late-dose {
-    background-color: red;
-  } /* 30 mins overdue */
-  
-  .missed-dose {
-    background-color: lightgray;
-    pointer-events: none; /* Disables button if missed */
-  }
-  
+
 
 
 

@@ -1458,8 +1458,8 @@ const app = Vue.createApp({
       const nextDose = new Date(medication.nextDoseTime);
       const diffMinutes = Math.floor((nextDose - now) / 60000);
     
-      if (diffMinutes < -30) return "missed-dose";  // Missed (Over 30 mins late)
-      if (diffMinutes < 0) return "late-dose";      // Overdue (0 to -30 mins)
+      if (diffMinutes < -30) return "";  // Missed (Over 30 mins late)
+      if (diffMinutes < 0) return "warning-dose";      // Overdue (0 to -30 mins)
       if (diffMinutes <= 60) return "upcoming-dose"; // Upcoming (1 hour before)
     
       return "";
