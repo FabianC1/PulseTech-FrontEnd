@@ -780,7 +780,7 @@
 
                 <!-- Show Current Medications if Logged In -->
                 <div v-if="isLoggedIn">
-                    <h2>Welcome, {{ user.username }}</h2>
+                    <h2>Here are your meds, {{ user.username }}</h2>
                     <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> in <strong>{{
                             getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
                             }}</strong>.</p>

@@ -150,7 +150,7 @@ const app = Vue.createApp({
       const validMedications = this.user.medications
         .filter(med => med.nextDoseTime != null)
         .sort((a, b) => new Date(a.nextDoseTime) - new Date(b.nextDoseTime));
-    
+
       return validMedications.length > 0
         ? validMedications[0] // Closest one
         : { name: "None", timeToTake: "N/A", dosage: "N/A" };
@@ -1344,6 +1344,7 @@ const app = Vue.createApp({
         const nextDose = new Date(medication.nextDoseTime);
         const diffMinutes = Math.floor((nextDose - now) / 60000);
     
+        // Prevent taking too early or marking missed
         if (diffMinutes > 60) {
           alert("Too early to take this medication.");
           return;
@@ -1352,12 +1353,12 @@ const app = Vue.createApp({
         if (diffMinutes < -30) {
           alert("Too late! This dose has been missed.");
           medication.status = "Missed";
-          medication.nextDoseTime = null; 
+          medication.nextDoseTime = null; // Don't show next dose yet
           this.fetchMedicalRecords(); // Refresh UI
           return;
         }
     
-        // Send request to backend
+        // Mark the medication as taken
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1371,14 +1372,7 @@ const app = Vue.createApp({
     
         if (response.ok) {
           alert("Medication marked as taken!");
-    
-          // Update UI immediately instead of waiting for backend
-          medication.logs.push({ time: now.toISOString(), status: "Taken" });
-    
-          // **Force Vue to update UI**
-          this.refreshMedicationUI();
-    
-          this.fetchMedicalRecords(); // Refresh backend records
+          this.fetchMedicalRecords(); // Refresh records to update UI
         } else {
           console.error("Error marking medication as taken:", data.message);
         }
@@ -1386,26 +1380,21 @@ const app = Vue.createApp({
         console.error("Error marking medication as taken:", error);
       }
     },
-    
-
-
-
-
 
     getNextDoseCountdown(medication) {
       const now = new Date();
       const nextDose = this.calculateNextDoseTime(medication);
       const diffMs = nextDose - now;
       const diffMinutes = Math.floor(diffMs / 60000);
-    
+
       if (diffMinutes < 0) {
         return "⏳ Time to take now";
       } else {
         return `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m left`;
       }
     },
-    
-    
+
+
 
 
 
@@ -1450,21 +1439,23 @@ const app = Vue.createApp({
         default: return 0;
       }
     },
-    
+
 
 
     getDoseClass(medication) {
       if (!medication.nextDoseTime) return "";
-
+    
       const now = new Date();
       const nextDose = new Date(medication.nextDoseTime);
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-
-      if (diffMinutes <= -30) return "missed-dose";
-      if (diffMinutes < 0) return "late-dose";
-      if (diffMinutes <= 30) return "upcoming-dose";
+    
+      if (diffMinutes < -30) return "missed-dose"; // Missed (Over 30 mins late)
+      if (diffMinutes < 0) return "late-dose"; // Overdue (0 to -30 mins)
+      if (diffMinutes <= 60) return "upcoming-dose"; // Upcoming (1 hour before)
+      
       return "";
     },
+    
 
 
 
@@ -1483,18 +1474,18 @@ const app = Vue.createApp({
       const nextDose = new Date(medication.nextDoseTime);
       const diffMinutes = Math.floor((nextDose - now) / 60000);
     
-      console.log(`Checking: ${medication.name} | Next Dose in ${diffMinutes} min`);
+      console.log(`Checking: ${medication.name} | Next Dose in ${diffMinutes} min | Should Show: ${diffMinutes <= 60 && diffMinutes >= -30}`);
     
-      // Show button for every medication if within time range
       return diffMinutes <= 60 && diffMinutes >= -30;
     },
+    
     
 
     refreshMedicationUI() {
       this.user.medications = [...this.user.medications]; // Trigger Vue reactivity update
     }
-    
-    
+
+
   },
 
 
