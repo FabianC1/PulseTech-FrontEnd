@@ -144,7 +144,28 @@ const app = Vue.createApp({
         !this.selectedMedication.time ||
         !this.selectedMedication.duration ||
         !this.selectedMedication.diagnosis;
+    },
+
+    nextMedication() {
+      // Ensure medications exist and are an array
+      const medications = this.user && this.user.medications ? this.user.medications : [];
+    
+      // Filter medications to only include those with a valid nextDoseTime
+      const validMedications = medications.filter(med => med.nextDoseTime != null);
+    
+      // If no valid medications, return a default value
+      if (validMedications.length === 0) {
+        return { name: "None", timeToTake: "N/A", dosage: "N/A" };
+      }
+    
+      // Find the medication with the closest next dose time
+      return validMedications.reduce((closest, med) => {
+        const medTime = new Date(med.nextDoseTime);
+        const closestTime = new Date(closest.nextDoseTime);
+        return medTime < closestTime ? med : closest;
+      });
     }
+    
 
   },
 
@@ -1329,20 +1350,46 @@ const app = Vue.createApp({
       this.closeMedicalHistoryPopup(); // Close the popup after saving
     },
 
-    // Marks medication as taken & updates logs
     async markAsTaken(medication) {
       try {
+        const now = new Date();
+        const nextDose = new Date(medication.nextDoseTime);
+        const diffMinutes = Math.floor((nextDose - now) / 60000);
+    
+        // Allow marking only within the allowed time window
+        if (diffMinutes > 60) {
+          alert("Too early to take this medication.");
+          return;
+        }
+    
+        if (diffMinutes < -30) {
+          alert("Too late! This dose has been missed.");
+          medication.status = "Missed";
+          medication.nextDoseTime = null;  // Don't show next dose yet
+          this.fetchMedicalRecords();  // Refresh UI
+          return;
+        }
+    
+        console.log("Sending data to backend:", {
+          email: this.user.email,
+          medicationName: medication.name,
+        });
+    
+        // Send request to backend to update medication log
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: this.user.email, medicationName: medication.name }),
+          body: JSON.stringify({
+            email: this.user.email,
+            medicationName: medication.name,
+          }),
         });
-
+    
         const data = await response.json();
-
+    
         if (response.ok) {
           alert("Medication marked as taken!");
-          this.fetchMedicalRecords();
+          this.fetchMedicalRecords(); // Refresh records to update UI
         } else {
           console.error("Error marking medication as taken:", data.message);
         }
@@ -1350,16 +1397,19 @@ const app = Vue.createApp({
         console.error("Error marking medication as taken:", error);
       }
     },
+    
 
-    // Determines the next dose countdown
+
+
+
     getNextDoseCountdown(medication) {
-      if (!medication.nextDoseTime) return "Not set";
-
+      if (!medication.timeToTake || !medication.frequency) return "Not set";
+    
       const now = new Date();
-      const nextDose = new Date(medication.nextDoseTime);
+      const nextDose = this.calculateNextDoseTime(medication);
       const diffMs = nextDose - now;
       const diffMinutes = Math.floor(diffMs / 60000);
-
+    
       if (diffMinutes <= -30) {
         return "❌ Missed";
       } else if (diffMinutes < 0) {
@@ -1370,25 +1420,74 @@ const app = Vue.createApp({
         return `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m left`;
       }
     },
+    
+    
+    calculateNextDoseTime(medication) {
+      const now = new Date();
+    
+      // Parse the "timeToTake" value (e.g., "8 AM")
+      const [hour, period] = medication.timeToTake.split(" ");
+      let targetHour = parseInt(hour);
+    
+      if (period === "PM" && targetHour !== 12) targetHour += 12;
+      if (period === "AM" && targetHour === 12) targetHour = 0;
+    
+      const nextDose = new Date(now);
+      nextDose.setHours(targetHour, 0, 0, 0); // Set time to the specified hour and reset minutes, seconds, and milliseconds.
+    
+      // Calculate next dose time based on frequency
+      while (nextDose <= now) {
+        nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
+      }
+    
+      return nextDose;
+    },
+    
 
-    // Changes the color of the next dose based on time left
+    getNextDoseTime(medication) {
+      if (!medication.nextDoseTime) return "Not set";  // If there's no next dose time, return 'Not set'
+
+      const nextDose = new Date(medication.nextDoseTime);
+      return nextDose.toLocaleTimeString(); // Safely call this function
+    },
+
+    getFrequencyHours(frequency) {
+      switch (frequency) {
+        case "Every 4 hours": return 4;
+        case "Every 6 hours": return 6;
+        case "Every 8 hours": return 8;
+        case "Every 12 hours": return 12;
+        case "Once a day": return 24;
+        case "Once a week": return 168;
+        default: return 0;  // Default to 0 hours if no frequency matches
+      }
+    },
+    
+
     getDoseClass(medication) {
-      if (!medication.nextDoseTime) return "";
-
       const now = new Date();
       const nextDose = new Date(medication.nextDoseTime);
-      const diffMs = nextDose - now;
-      const diffMinutes = Math.floor(diffMs / 60000);
+      const diffMinutes = Math.floor((nextDose - now) / 60000); // Get the difference in minutes
 
-      if (diffMinutes <= -30) {
-        return "missed-dose"; // Grey
-      } else if (diffMinutes < 0) {
-        return "late-dose"; // Red
-      } else if (diffMinutes <= 30) {
-        return "upcoming-dose"; // Blue
+      console.log(`Next dose time: ${nextDose}`);
+      console.log(`Current time: ${now}`);
+      console.log(`Difference in minutes: ${diffMinutes}`);
+
+
+      if (diffMinutes <= 30 && diffMinutes >= 0) {
+        return "warning-dose"; // 30 minutes before the dose (blue)
       }
-      return "";
+      if (diffMinutes < 0 && diffMinutes >= -30) {
+        return "warning-dose"; // Grace period (within 30 minutes after the dose)
+      }
+      if (diffMinutes < -30) {
+        return "missed-dose"; // Missed dose
+      }
+
+      return ""; // Default if outside this range
     },
+
+
 
     formatTime(timestamp) {
       return new Date(timestamp).toLocaleString();
@@ -1396,8 +1495,19 @@ const app = Vue.createApp({
 
     getLogStatusClass(log) {
       return log.status === "Taken" ? "log-taken" : "log-missed";
-    }
+    },
 
+    showMarkAsTaken(medication) {
+      const now = new Date();
+      const nextDose = this.calculateNextDoseTime(medication);
+      const diffMinutes = Math.floor((nextDose - now) / 60000);
+    
+      // Show button only if the current time is within the allowed window (e.g., 30 minutes before or after)
+      if (diffMinutes <= 30 && diffMinutes >= -30) {
+        return true;
+      }
+      return false;  // Hide the button if outside this window
+    }
   },
 
 

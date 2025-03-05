@@ -2673,7 +2673,8 @@ a:hover {
 
 }
 
-  .medication-card {
+ /* Medication Cards */
+.medication-card {
     background: rgba(255, 255, 255, 0.185);
     padding: 15px;
     border-radius: 8px;
@@ -2682,23 +2683,30 @@ a:hover {
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
 }
 
-.medication-card-header {
-    font-weight: bold;
-
-    display: center;
+/* Medication Content - Split Layout */
+.medication-card-content {
+    display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 20px;
 }
 
-.mark-as-taken {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 5px 10px;
+/* Left Side - Medication Details */
+.medication-details {
+    width: 50%;
+    text-align: left;
+}
+
+/* Right Side - Medication Logs */
+.medication-logs {
+    width: 50%;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
     border-radius: 5px;
-    cursor: pointer;
 }
 
+/* Medication Logs List */
 .medication-log-list {
     list-style: none;
     padding: 0;
@@ -2709,9 +2717,10 @@ a:hover {
     border-left: 4px solid;
 }
 
+/* Status Colors */
 .log-taken {
     border-color: green;
-    color: green;
+    color: rgb(255, 255, 255);
 }
 
 .log-missed {
@@ -2719,20 +2728,35 @@ a:hover {
     color: red;
 }
 
-.warning {
-    color: red;
-}
-
-.refill-warning {
-    color: orange;
-    font-weight: bold;
-}
-
-
-
-
-
-
+/* Mark as Taken Button */
+.mark-as-taken {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Colors for different states */
+  .upcoming-dose {
+    background-color: green;
+  } /* Normal state */
+  
+  .warning-dose {
+    background-color: blue; /* Blue for 30 mins before */
+    color: white;
+  }
+  
+  .late-dose {
+    background-color: red;
+  } /* 30 mins overdue */
+  
+  .missed-dose {
+    background-color: lightgray;
+    pointer-events: none; /* Disables button if missed */
+  }
+  
 
 
 

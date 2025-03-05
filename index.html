@@ -779,46 +779,48 @@
 
                 <!-- Show Current Medications if Logged In -->
                 <div v-if="isLoggedIn">
-                    <h2>Medication</h2>
-                    <p>Track your prescribed medications and dosage here.</p>
+                    <h2>Welcome, {{ user.username }}</h2>
+                    <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> at
+                        <strong>{{ getNextDoseTime(nextMedication) }}</strong>
+                        (<strong>{{ getNextDoseCountdown(nextMedication) }}</strong>).
+                    </p>
+
 
                     <div v-if="user.medications && user.medications.length > 0" class="medications-container">
                         <div v-for="(medication, index) in user.medications" :key="index" class="medication-card">
 
-                            <!-- Medication Header -->
-                            <div class="medication-card-header">
-                                <h4>{{ medication.name }}</h4>
-                                <button class="mark-as-taken" @click="markAsTaken(medication)">Mark as Taken</button>
-                            </div>
+                            <div class="medication-card-content">
+                                <!-- Left Side: Medication Details -->
+                                <div class="medication-details">
+                                    <h4>{{ medication.name }}</h4>
+                                    <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
+                                    <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
+                                    <p><strong>Time to Take:</strong> {{ medication.timeToTake }}</p>
+                                    <p>
+                                        <strong>Next Dose:</strong>
+                                        <span :class="getDoseClass(medication)">
+                                            {{ getNextDoseCountdown(medication) }}
+                                        </span>
+                                    </p>
+                                    <p><strong>Diagnosis:</strong> {{ medication.diagnosis }}</p>
+                                    <!-- Mark as Taken Button -->
+                                    <button v-if="showMarkAsTaken(medication)" class="mark-as-taken"
+                                        :class="getDoseClass(medication)" @click="markAsTaken(medication)">
+                                        Mark as Taken
+                                    </button>
 
-                            <!-- Medication Details -->
-                            <div class="medication-details">
-                                <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
-                                <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
-                                <p><strong>Time to Take:</strong> {{ medication.timeToTake }}</p>
 
-                                <!-- Live Countdown Timer for Next Dose -->
-                                <p>
-                                    <strong>Next Dose:</strong>
-                                    <span :class="getDoseClass(medication)">
-                                        {{ getNextDoseCountdown(medication) }}
-                                    </span>
-                                </p>
+                                </div>
 
-                                <!-- Medication Logs -->
-                                <h5>Medication Logs:</h5>
-                                <ul class="medication-log-list">
-                                    <li v-for="(log, logIndex) in medication.logs" :key="logIndex"
-                                        :class="getLogStatusClass(log)">
-                                        {{ formatTime(log.time) }} - {{ log.status }}
-                                    </li>
-                                </ul>
-
-                                <!-- Refill Tracking -->
-                                <div class="refill-tracking">
-                                    <p><strong>Pills Left:</strong> {{ medication.pillsLeft }}</p>
-                                    <p v-if="Number(medication.pillsLeft) <= 5" class="refill-warning">⚠️ Refill Needed
-                                        Soon</p>
+                                <!-- Right Side: Medication Logs -->
+                                <div class="medication-logs">
+                                    <h5>Medication Logs</h5>
+                                    <ul class="medication-log-list">
+                                        <li v-for="(log, logIndex) in medication.logs" :key="logIndex"
+                                            :class="getLogStatusClass(log)">
+                                            {{ formatTime(log.time) }} - {{ log.status }}
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
