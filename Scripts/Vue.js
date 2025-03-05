@@ -147,14 +147,19 @@ const app = Vue.createApp({
     },
 
     nextMedication() {
+      if (!this.user || !Array.isArray(this.user.medications)) {
+        return { name: "None", timeToTake: "N/A", dosage: "N/A" };
+      }
+    
       const validMedications = this.user.medications
-        .filter(med => med.nextDoseTime != null)
+        .filter(med => med.nextDoseTime) // Ensure nextDoseTime exists
         .sort((a, b) => new Date(a.nextDoseTime) - new Date(b.nextDoseTime));
-
+    
       return validMedications.length > 0
         ? validMedications[0] // Closest one
         : { name: "None", timeToTake: "N/A", dosage: "N/A" };
-    },
+    }
+    
   },
 
   watch: {
@@ -411,23 +416,25 @@ const app = Vue.createApp({
 
     async fetchMedicalRecords() {
       try {
-        console.log("Fetching medical records for:", this.user.email); // Debugging
-
+        console.log("Fetching medical records for:", this.user.email);
+    
         if (!this.user.email) {
           console.error("User email is missing. Cannot fetch medical records.");
           return;
         }
-
+    
         const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-
+    
         const data = await response.json();
-
+    
         if (response.ok) {
-          this.user = { ...this.user, ...data }; // Merge medical records into user object
           console.log("Medical records fetched successfully:", data);
+    
+          // Ensure Vue updates the UI properly by replacing the medications array
+          this.user = { ...this.user, medications: [...data.medications] };
         } else {
           console.error("Error fetching medical records:", data.message);
         }
@@ -435,7 +442,7 @@ const app = Vue.createApp({
         console.error("Error fetching medical records:", error);
       }
     },
-
+    
     // Fetch and show medical history in popup
     async viewMedicalHistory(email) {
       try {
@@ -1398,23 +1405,25 @@ const app = Vue.createApp({
 
 
 
-    // Calculate next dose time based on frequency and current time
     calculateNextDoseTime(medication) {
+      if (!medication.timeToTake || !medication.frequency) return null;
+    
       const now = new Date();
       const [hour, period] = medication.timeToTake.split(" ");
       let targetHour = parseInt(hour);
       if (period === "PM" && targetHour !== 12) targetHour += 12;
       if (period === "AM" && targetHour === 12) targetHour = 0;
-
-      const nextDose = new Date(now);
-      nextDose.setHours(targetHour, 0, 0, 0);  // Set the initial dose time
-
+    
+      let nextDose = new Date(now);
+      nextDose.setHours(targetHour, 0, 0, 0);
+    
       while (nextDose <= now) {
         nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
       }
-
+    
       return nextDose;
     },
+    
 
 
     getNextDoseTime(medication) {
@@ -1468,16 +1477,18 @@ const app = Vue.createApp({
     },
 
     showMarkAsTaken(medication) {
-      if (!medication.nextDoseTime) return false;
+      if (!medication.timeToTake || !medication.frequency) return false;
     
       const now = new Date();
-      const nextDose = new Date(medication.nextDoseTime);
+      const nextDose = this.calculateNextDoseTime(medication); // Ensure it's calculated
       const diffMinutes = Math.floor((nextDose - now) / 60000);
     
       console.log(`Checking: ${medication.name} | Next Dose in ${diffMinutes} min | Should Show: ${diffMinutes <= 60 && diffMinutes >= -30}`);
     
       return diffMinutes <= 60 && diffMinutes >= -30;
     },
+    
+    
     
     
 
