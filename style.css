@@ -2673,7 +2673,7 @@ a:hover {
 
 }
 
- /* Medication Cards */
+/* Medication Cards */
 .medication-card {
     background: rgba(255, 255, 255, 0.185);
     padding: 15px;
@@ -2695,16 +2695,38 @@ a:hover {
 .medication-details {
     width: 50%;
     text-align: left;
+    margin-left: 2%;
 }
 
 /* Right Side - Medication Logs */
 .medication-logs {
+    margin-top: 4%;
     width: 50%;
     text-align: left;
     background: rgba(255, 255, 255, 0.1);
     padding: 10px;
     border-radius: 5px;
+    max-height: 300px; /* Set a fixed height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
+
+/* Optional: Optional limits on the scroll position */
+.medication-logs::-webkit-scrollbar {
+    width: 8px;
+}
+
+.medication-logs::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+
+.medication-logs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 
 /* Medication Logs List */
 .medication-log-list {
@@ -2730,11 +2752,13 @@ a:hover {
 
 /* Mark as Taken Button */
 .mark-as-taken {
+    background-color: blue;
     color: white;
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
+
   }
   
   /* Colors for different states */
