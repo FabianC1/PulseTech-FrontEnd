@@ -785,6 +785,7 @@
                             getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
                             }}</strong>.</p>
 
+
                     <!-- Display Current Medications -->
                     <div v-if="user.medications && user.medications.length > 0" class="medications-container">
                         <div v-for="(medication, index) in user.medications" :key="index" class="medication-card">
@@ -815,7 +816,7 @@
 
                                 <!-- Right Side: Medication Logs -->
                                 <div class="medication-logs">
-                                    <h5>Medication Logs</h5>
+                                    <h5 style="text-decoration: underline;">Medication Logs</h5>
                                     <ul class="medication-log-list">
                                         <li v-for="(log, logIndex) in medication.logs" :key="logIndex"
                                             :class="getLogStatusClass(log)">

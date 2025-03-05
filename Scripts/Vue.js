@@ -147,19 +147,28 @@ const app = Vue.createApp({
     },
 
     nextMedication() {
-      if (!this.user || !Array.isArray(this.user.medications)) {
+      // Check if the user or medications array is defined
+      if (!this.user || !this.user.medications || this.user.medications.length === 0) {
         return { name: "None", timeToTake: "N/A", dosage: "N/A" };
       }
-    
+  
+      // Filter out medications that don't have a valid nextDoseTime
       const validMedications = this.user.medications
-        .filter(med => med.nextDoseTime) // Ensure nextDoseTime exists
-        .sort((a, b) => new Date(a.nextDoseTime) - new Date(b.nextDoseTime));
-    
-      return validMedications.length > 0
-        ? validMedications[0] // Closest one
+        .filter(med => med.nextDoseTime)
+        .map(med => ({
+          ...med,
+          // Calculate time difference to current time
+          diffMinutes: Math.floor((new Date(med.nextDoseTime) - new Date()) / 60000)
+        }));
+  
+      // Sort medications by the closest upcoming dose (ascending order of time)
+      const sortedMedications = validMedications.sort((a, b) => a.diffMinutes - b.diffMinutes);
+  
+      // Return the medication closest to being taken, or a default if no valid medications are found
+      return sortedMedications.length > 0
+        ? sortedMedications[0] // Closest medication
         : { name: "None", timeToTake: "N/A", dosage: "N/A" };
     }
-    
   },
 
   watch: {
@@ -1349,23 +1358,24 @@ const app = Vue.createApp({
       try {
         const now = new Date();
         const nextDose = new Date(medication.nextDoseTime);
-        const diffMinutes = Math.floor((nextDose - now) / 60000);
+        const diffMinutes = Math.floor((nextDose - now) / 60000);  // Difference in minutes
     
-        // Prevent taking too early or marking missed
+        // If it's more than 60 minutes before the scheduled time, prevent taking it too early
         if (diffMinutes > 60) {
           alert("Too early to take this medication.");
           return;
         }
     
+        // If it's more than 30 minutes late, mark it as missed and prevent taking
         if (diffMinutes < -30) {
           alert("Too late! This dose has been missed.");
-          medication.status = "Missed";
-          medication.nextDoseTime = null; // Don't show next dose yet
-          this.fetchMedicalRecords(); // Refresh UI
+          medication.status = "Missed";  // Update medication status to "Missed"
+          medication.nextDoseTime = null; // Don't show next dose until it's marked as taken or missed
+          this.fetchMedicalRecords();  // Refresh UI to reflect missed dose
           return;
         }
     
-        // Mark the medication as taken
+        // If it's within the valid window (1 hour before or 30 minutes after the scheduled time), mark it as taken
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1379,7 +1389,7 @@ const app = Vue.createApp({
     
         if (response.ok) {
           alert("Medication marked as taken!");
-          this.fetchMedicalRecords(); // Refresh records to update UI
+          this.fetchMedicalRecords();  // Refresh records to update UI
         } else {
           console.error("Error marking medication as taken:", data.message);
         }
@@ -1387,6 +1397,8 @@ const app = Vue.createApp({
         console.error("Error marking medication as taken:", error);
       }
     },
+    
+    
 
     getNextDoseCountdown(medication) {
       const now = new Date();
