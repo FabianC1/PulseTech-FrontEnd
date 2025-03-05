@@ -796,7 +796,7 @@
                                     <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
                                     <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
                                     <p><strong>Time to Take:</strong> {{ medication.timeToTake }}</p>
-                                    <strong>Duration:</strong> {{ medication.duration }} 
+                                    <strong>Duration:</strong> {{ medication.duration }}
                                     <p>
                                         <strong>Next Dose:</strong>
                                         <span :class="getDoseClass(medication)">
@@ -810,6 +810,7 @@
                                         :class="getDoseClass(medication)" @click="markAsTaken(medication)">
                                         Mark as Taken
                                     </button>
+
                                 </div>
 
                                 <!-- Right Side: Medication Logs -->
