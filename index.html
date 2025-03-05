@@ -780,12 +780,10 @@
                 <!-- Show Current Medications if Logged In -->
                 <div v-if="isLoggedIn">
                     <h2>Welcome, {{ user.username }}</h2>
-                    <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> at
-                        <strong>{{ getNextDoseTime(nextMedication) }}</strong>
-                        (<strong>{{ getNextDoseCountdown(nextMedication) }}</strong>).
-                    </p>
+                    <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> at <strong>{{
+                            nextMedication.timeToTake }}</strong>, <strong>{{ nextMedication.dosage }}</strong>.</p>
 
-
+                    <!-- Display Current Medications -->
                     <div v-if="user.medications && user.medications.length > 0" class="medications-container">
                         <div v-for="(medication, index) in user.medications" :key="index" class="medication-card">
 
@@ -803,13 +801,12 @@
                                         </span>
                                     </p>
                                     <p><strong>Diagnosis:</strong> {{ medication.diagnosis }}</p>
+
                                     <!-- Mark as Taken Button -->
                                     <button v-if="showMarkAsTaken(medication)" class="mark-as-taken"
                                         :class="getDoseClass(medication)" @click="markAsTaken(medication)">
                                         Mark as Taken
                                     </button>
-
-
                                 </div>
 
                                 <!-- Right Side: Medication Logs -->
@@ -839,6 +836,7 @@
                     </div>
                 </div>
             </div>
+
 
 
 

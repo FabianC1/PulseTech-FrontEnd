@@ -147,25 +147,20 @@ const app = Vue.createApp({
     },
 
     nextMedication() {
-      // Ensure medications exist and are an array
-      const medications = this.user && this.user.medications ? this.user.medications : [];
-    
-      // Filter medications to only include those with a valid nextDoseTime
-      const validMedications = medications.filter(med => med.nextDoseTime != null);
-    
-      // If no valid medications, return a default value
+      const validMedications = this.user.medications.filter(med => med.nextDoseTime != null);
+
       if (validMedications.length === 0) {
         return { name: "None", timeToTake: "N/A", dosage: "N/A" };
       }
-    
-      // Find the medication with the closest next dose time
+
       return validMedications.reduce((closest, med) => {
         const medTime = new Date(med.nextDoseTime);
         const closestTime = new Date(closest.nextDoseTime);
         return medTime < closestTime ? med : closest;
       });
     }
-    
+
+
 
   },
 
@@ -1355,13 +1350,13 @@ const app = Vue.createApp({
         const now = new Date();
         const nextDose = new Date(medication.nextDoseTime);
         const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
+
         // If the dose is too early to be marked (before the scheduled time)
         if (diffMinutes > 60) {
           alert("Too early to take this medication.");
           return;
         }
-    
+
         // If it's more than 30 minutes past the scheduled time, it's considered missed
         if (diffMinutes < -30) {
           alert("Too late! This dose has been missed.");
@@ -1370,7 +1365,7 @@ const app = Vue.createApp({
           this.fetchMedicalRecords();  // Refresh UI
           return;
         }
-    
+
         // Send request to backend to update medication log
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
@@ -1380,12 +1375,12 @@ const app = Vue.createApp({
             medicationName: medication.name,
           }),
         });
-    
+
         const data = await response.json();
-    
+
         if (response.ok) {
           alert("Medication marked as taken!");
-    
+
           // Fetch updated medical records to update next dose time
           this.fetchMedicalRecords(); // Refresh records to update UI
         } else {
@@ -1395,7 +1390,7 @@ const app = Vue.createApp({
         console.error("Error marking medication as taken:", error);
       }
     },
-    
+
 
 
 
@@ -1408,55 +1403,36 @@ const app = Vue.createApp({
       const diffMs = nextDose - now;
       const diffMinutes = Math.floor(diffMs / 60000);
     
-      if (diffMinutes <= -30) {
-        return "❌ Missed";
-      } else if (diffMinutes < 0) {
-        return "⚠️ Overdue";
+      // Only show time left for next dose (not "Overdue" or "Missed" here)
+      if (diffMinutes < 0) {
+        return "⚠️ Overdue";  // To handle overdue doses
       } else if (diffMinutes <= 30) {
         return `⏳ ${diffMinutes} mins left`;
       } else {
         return `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m left`;
       }
     },
-    
-    
+
+
+
+    // Calculate next dose time based on frequency and current time
     calculateNextDoseTime(medication) {
       const now = new Date();
       const [hour, period] = medication.timeToTake.split(" ");
       let targetHour = parseInt(hour);
       if (period === "PM" && targetHour !== 12) targetHour += 12;
       if (period === "AM" && targetHour === 12) targetHour = 0;
-    
+
       const nextDose = new Date(now);
-      nextDose.setHours(targetHour, 0, 0, 0);
-    
-      // Set next dose based on frequency
-      switch (medication.frequency) {
-        case "Every 4 hours":
-          nextDose.setHours(nextDose.getHours() + 4);
-          break;
-        case "Every 6 hours":
-          nextDose.setHours(nextDose.getHours() + 6);
-          break;
-        case "Every 8 hours":
-          nextDose.setHours(nextDose.getHours() + 8);
-          break;
-        case "Every 12 hours":
-          nextDose.setHours(nextDose.getHours() + 12);
-          break;
-        case "Once a day":
-          nextDose.setDate(nextDose.getDate() + 1);
-          break;
-        case "Once a week":
-          nextDose.setDate(nextDose.getDate() + 7);
-          break;
-        default:
-          return null;
+      nextDose.setHours(targetHour, 0, 0, 0);  // Set the initial dose time
+
+      while (nextDose <= now) {
+        nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
       }
-    
+
       return nextDose;
     },
-    
+
 
     getNextDoseTime(medication) {
       if (!medication.nextDoseTime) return "Not set";  // If there's no next dose time, return 'Not set'
@@ -1473,18 +1449,18 @@ const app = Vue.createApp({
         case "Every 12 hours": return 12;
         case "Once a day": return 24;
         case "Once a week": return 168;
-        default: return 0;  // Default to 0 hours if no frequency matches
+        default: return 0;
       }
     },
-    
+
 
     getDoseClass(medication) {
       if (!medication.nextDoseTime) return "";
-    
+
       const now = new Date();
       const nextDose = new Date(medication.nextDoseTime);
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
+
       if (diffMinutes <= -30) return "missed-dose";
       if (diffMinutes < 0) return "late-dose";
       if (diffMinutes <= 30) return "upcoming-dose";
@@ -1505,12 +1481,12 @@ const app = Vue.createApp({
       const now = new Date();
       const nextDose = new Date(medication.nextDoseTime);
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
+
       // Show button only within 30 minutes of the next dose
       if (diffMinutes <= 30 && diffMinutes >= -30) {
         return true;
       }
-    
+
       return false;
     },
   },
