@@ -784,17 +784,26 @@
 
                     <div v-if="user.medications && user.medications.length > 0" class="medications-container">
                         <div v-for="(medication, index) in user.medications" :key="index" class="medication-card">
+
+                            <!-- Medication Header -->
                             <div class="medication-card-header">
                                 <h4>{{ medication.name }}</h4>
                                 <button class="mark-as-taken" @click="markAsTaken(medication)">Mark as Taken</button>
                             </div>
 
+                            <!-- Medication Details -->
                             <div class="medication-details">
                                 <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
                                 <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
-                                <p><strong>Next Dose:</strong> <span :class="{ 'warning': isMissedDose(medication) }">
-                                        {{ medication.nextDoseTime ? formatTime(medication.nextDoseTime) : "Not set"
-                                        }}</span></p>
+                                <p><strong>Time to Take:</strong> {{ medication.timeToTake }}</p>
+
+                                <!-- Live Countdown Timer for Next Dose -->
+                                <p>
+                                    <strong>Next Dose:</strong>
+                                    <span :class="getDoseClass(medication)">
+                                        {{ getNextDoseCountdown(medication) }}
+                                    </span>
+                                </p>
 
                                 <!-- Medication Logs -->
                                 <h5>Medication Logs:</h5>
@@ -828,6 +837,7 @@
                     </div>
                 </div>
             </div>
+
 
 
 

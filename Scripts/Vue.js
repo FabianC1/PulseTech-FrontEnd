@@ -1329,6 +1329,7 @@ const app = Vue.createApp({
       this.closeMedicalHistoryPopup(); // Close the popup after saving
     },
 
+    // Marks medication as taken & updates logs
     async markAsTaken(medication) {
       try {
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
@@ -1341,8 +1342,6 @@ const app = Vue.createApp({
 
         if (response.ok) {
           alert("Medication marked as taken!");
-
-          // Fetch updated medical records to refresh logs & next dose time
           this.fetchMedicalRecords();
         } else {
           console.error("Error marking medication as taken:", data.message);
@@ -1352,23 +1351,52 @@ const app = Vue.createApp({
       }
     },
 
-    getLogStatusClass(log) {
-      return log.status === "Taken" ? "log-taken" : "log-missed";
+    // Determines the next dose countdown
+    getNextDoseCountdown(medication) {
+      if (!medication.nextDoseTime) return "Not set";
+
+      const now = new Date();
+      const nextDose = new Date(medication.nextDoseTime);
+      const diffMs = nextDose - now;
+      const diffMinutes = Math.floor(diffMs / 60000);
+
+      if (diffMinutes <= -30) {
+        return "❌ Missed";
+      } else if (diffMinutes < 0) {
+        return "⚠️ Overdue";
+      } else if (diffMinutes <= 30) {
+        return `⏳ ${diffMinutes} mins left`;
+      } else {
+        return `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m left`;
+      }
+    },
+
+    // Changes the color of the next dose based on time left
+    getDoseClass(medication) {
+      if (!medication.nextDoseTime) return "";
+
+      const now = new Date();
+      const nextDose = new Date(medication.nextDoseTime);
+      const diffMs = nextDose - now;
+      const diffMinutes = Math.floor(diffMs / 60000);
+
+      if (diffMinutes <= -30) {
+        return "missed-dose"; // Grey
+      } else if (diffMinutes < 0) {
+        return "late-dose"; // Red
+      } else if (diffMinutes <= 30) {
+        return "upcoming-dose"; // Blue
+      }
+      return "";
     },
 
     formatTime(timestamp) {
       return new Date(timestamp).toLocaleString();
     },
 
-    isMissedDose(medication) {
-      if (!medication.nextDoseTime) return false; // No next dose set
-
-      const now = new Date();
-      const nextDose = new Date(medication.nextDoseTime);
-
-      return now > nextDose; // True if current time is past the next dose time
+    getLogStatusClass(log) {
+      return log.status === "Taken" ? "log-taken" : "log-missed";
     }
-
 
   },
 
