@@ -1396,22 +1396,22 @@ const app = Vue.createApp({
 
 
     getNextDoseCountdown(medication) {
-      if (!medication.timeToTake || !medication.frequency) return "Not set";
-    
       const now = new Date();
       const nextDose = this.calculateNextDoseTime(medication);
       const diffMs = nextDose - now;
       const diffMinutes = Math.floor(diffMs / 60000);
     
-      // Only show time left for next dose (not "Overdue" or "Missed" here)
-      if (diffMinutes < 0) {
-        return "⚠️ Overdue";  // To handle overdue doses
+      if (diffMinutes <= -30) {
+        return "❌ Missed";
+      } else if (diffMinutes < 0) {
+        return "⚠️ Overdue";
       } else if (diffMinutes <= 30) {
         return `⏳ ${diffMinutes} mins left`;
       } else {
         return `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m left`;
       }
     },
+    
 
 
 

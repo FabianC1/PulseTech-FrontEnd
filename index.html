@@ -780,8 +780,10 @@
                 <!-- Show Current Medications if Logged In -->
                 <div v-if="isLoggedIn">
                     <h2>Welcome, {{ user.username }}</h2>
-                    <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> at <strong>{{
-                            nextMedication.timeToTake }}</strong>, <strong>{{ nextMedication.dosage }}</strong>.</p>
+                    <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> in <strong>{{
+                            getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
+                            }}</strong>.</p>
+
 
                     <!-- Display Current Medications -->
                     <div v-if="user.medications && user.medications.length > 0" class="medications-container">
@@ -790,7 +792,7 @@
                             <div class="medication-card-content">
                                 <!-- Left Side: Medication Details -->
                                 <div class="medication-details">
-                                    <h4>{{ medication.name }}</h4>
+                                    <h4 style="text-decoration: underline;">{{ medication.name }}</h4>
                                     <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
                                     <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
                                     <p><strong>Time to Take:</strong> {{ medication.timeToTake }}</p>
