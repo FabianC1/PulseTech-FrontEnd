@@ -678,6 +678,7 @@
                                                 :class="{'input-error': !selectedMedication.frequency}">
                                                 <option value="Once a day">Once a day</option>
                                                 <option value="Twice a day">Twice a day</option>
+                                                <option value="Every hour">Every hour</option>
                                                 <option value="Every 4 hours">Every 4 hours</option>
                                                 <option value="Every 6 hours">Every 6 hours</option>
                                                 <option value="Every 8 hours">Every 8 hours</option>
@@ -796,6 +797,7 @@
                                     <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
                                     <p><strong>Frequency:</strong> {{ medication.frequency }}</p>
                                     <p><strong>Time to Take:</strong> {{ medication.timeToTake }}</p>
+                                    <strong>Duration:</strong> {{ medication.duration }} 
                                     <p>
                                         <strong>Next Dose:</strong>
                                         <span :class="getDoseClass(medication)">
