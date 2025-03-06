@@ -151,7 +151,7 @@ const app = Vue.createApp({
       if (!this.user || !this.user.medications || this.user.medications.length === 0) {
         return { name: "None", timeToTake: "N/A", dosage: "N/A" };
       }
-  
+
       // Filter out medications that don't have a valid nextDoseTime
       const validMedications = this.user.medications
         .filter(med => med.nextDoseTime)
@@ -160,10 +160,10 @@ const app = Vue.createApp({
           // Calculate time difference to current time
           diffMinutes: Math.floor((new Date(med.nextDoseTime) - new Date()) / 60000)
         }));
-  
+
       // Sort medications by the closest upcoming dose (ascending order of time)
       const sortedMedications = validMedications.sort((a, b) => a.diffMinutes - b.diffMinutes);
-  
+
       // Return the medication closest to being taken, or a default if no valid medications are found
       return sortedMedications.length > 0
         ? sortedMedications[0] // Closest medication
@@ -257,7 +257,7 @@ const app = Vue.createApp({
 
     if (storedUser) {
       this.user = JSON.parse(storedUser);
-      this.user.password = ""; // ✅ Ensure the password field is empty on load
+      this.user.password = ""; //  Ensure the password field is empty on load
       this.isLoggedIn = true;
       this.isDoctor = this.user.role === "doctor"; // Check if user is a doctor
 
@@ -426,22 +426,22 @@ const app = Vue.createApp({
     async fetchMedicalRecords() {
       try {
         console.log("Fetching medical records for:", this.user.email);
-    
+
         if (!this.user.email) {
           console.error("User email is missing. Cannot fetch medical records.");
           return;
         }
-    
+
         const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-    
+
         const data = await response.json();
-    
+
         if (response.ok) {
           console.log("Medical records fetched successfully:", data);
-    
+
           // Ensure Vue updates the UI properly by replacing the medications array
           this.user = { ...this.user, medications: [...data.medications] };
         } else {
@@ -451,7 +451,7 @@ const app = Vue.createApp({
         console.error("Error fetching medical records:", error);
       }
     },
-    
+
     // Fetch and show medical history in popup
     async viewMedicalHistory(email) {
       try {
@@ -613,18 +613,18 @@ const app = Vue.createApp({
         .then((res) => res.json())
         .then((data) => {
           if (data.message === "Login successful") {
-            // ✅ Remove password from user object before saving
+            //  Remove password from user object before saving
             const userData = { ...data.user };
             delete userData.password;
 
-            // ✅ Store user data in localStorage
+            //  Store user data in localStorage
             localStorage.setItem("user", JSON.stringify(userData));
             this.isLoggedIn = true;
             this.user = userData;
-            this.user.password = ""; // ✅ Ensure password field is empty
+            this.user.password = ""; //  Ensure password field is empty
             this.isDoctor = userData.role === "doctor";
 
-            // ✅ Fetch medical records after login
+            //  Fetch medical records after login
             this.fetchMedicalRecords();
 
             this.navigateTo("profile"); // Redirect to profile after successful login
@@ -1354,55 +1354,47 @@ const app = Vue.createApp({
       this.closeMedicalHistoryPopup(); // Close the popup after saving
     },
 
-    async markAsTaken(medication) {
-      try {
-        const now = new Date();
-        const nextDose = new Date(medication.nextDoseTime);
-        const diffMinutes = Math.floor((nextDose - now) / 60000);  // Difference in minutes
-    
-        // If it's more than 60 minutes before the scheduled time, prevent taking it too early
-        if (diffMinutes > 60) {
-          alert("Too early to take this medication.");
-          return;
-        }
-    
-        // If it's more than 30 minutes late, mark it as missed and prevent taking
-        if (diffMinutes < -30) {
-          alert("Too late! This dose has been missed.");
-          medication.status = "Missed";  // Update medication status to "Missed"
-          medication.nextDoseTime = null; // Don't show next dose until it's marked as taken or missed
-          this.fetchMedicalRecords();  // Refresh UI to reflect missed dose
-          return;
-        }
-    
-        // If it's within the valid window (1 hour before or 30 minutes after the scheduled time), mark it as taken
-        const response = await fetch("http://localhost:3000/mark-medication-taken", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: this.user.email,
-            medicationName: medication.name,
-          }),
-        });
-    
-        const data = await response.json();
-    
-        if (response.ok) {
-          alert("Medication marked as taken!");
-          this.fetchMedicalRecords();  // Refresh records to update UI
-        } else {
-          console.error("Error marking medication as taken:", data.message);
-        }
-      } catch (error) {
-        console.error("Error marking medication as taken:", error);
-      }
-    },
-    
-    
 
-    getNextDoseCountdown(medication) {
+    //  Calculate the next dose time based on frequency
+    calculateNextDoseTime(medication) {
       const now = new Date();
-      const nextDose = this.calculateNextDoseTime(medication);
+      const [hour, period] = medication.timeToTake.split(" ");
+      let targetHour = parseInt(hour);
+
+      if (period === "PM" && targetHour !== 12) targetHour += 12;
+      if (period === "AM" && targetHour === 12) targetHour = 0;
+
+      let nextDose = new Date(now);
+      nextDose.setHours(targetHour, 0, 0, 0);
+
+      while (nextDose <= now) {
+        nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
+      }
+
+      return nextDose;
+    },
+
+    //  Determines the class for the "Mark as Taken" button based on time
+    getDoseClass(medication) {
+      if (!medication.nextDoseTime) return "";
+
+      const now = new Date();
+      const nextDose = new Date(medication.nextDoseTime);
+      const diffMinutes = Math.floor((nextDose - now) / 60000);
+
+      if (diffMinutes < -30) return ""; //  Missed dose, button should disappear
+      if (diffMinutes < 0) return "warning-dose"; //  Overdue (0 to -30 mins)
+      if (diffMinutes <= 60) return "upcoming-dose"; //  Show button 1 hour before
+
+      return "";
+    },
+
+    //  Calculates how much time is left until the next dose
+    getNextDoseCountdown(medication) {
+      if (!medication.nextDoseTime) return "Not set";
+
+      const now = new Date();
+      const nextDose = new Date(medication.nextDoseTime);
       const diffMs = nextDose - now;
       const diffMinutes = Math.floor(diffMs / 60000);
 
@@ -1413,100 +1405,86 @@ const app = Vue.createApp({
       }
     },
 
+    //  Determine when the "Mark as Taken" button should be visible
+    showMarkAsTaken(medication) {
+      if (!medication.nextDoseTime) return false;
 
-
-
-
-    calculateNextDoseTime(medication) {
-      if (!medication.timeToTake || !medication.frequency) return null;
-    
-      const now = new Date();
-      const [hour, period] = medication.timeToTake.split(" ");
-      let targetHour = parseInt(hour);
-      if (period === "PM" && targetHour !== 12) targetHour += 12;
-      if (period === "AM" && targetHour === 12) targetHour = 0;
-    
-      let nextDose = new Date(now);
-      nextDose.setHours(targetHour, 0, 0, 0);
-    
-      while (nextDose <= now) {
-        nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
-      }
-    
-      return nextDose;
-    },
-    
-
-
-    getNextDoseTime(medication) {
-      this.refreshMedicationUI(); // Ensure UI updates
-      if (!medication.nextDoseTime) return "Not set";  // If there's no next dose time, return 'Not set'
-
-      const nextDose = new Date(medication.nextDoseTime);
-      return nextDose.toLocaleTimeString(); // Safely call this function
-    },
-
-    getFrequencyHours(frequency) {
-      switch (frequency) {
-        case "Every hour": return 1;
-        case "Every 2 hours": return 2;
-        case "Every 3 hours": return 3;
-        case "Every 4 hours": return 4;
-        case "Every 6 hours": return 6;
-        case "Every 8 hours": return 8;
-        case "Every 12 hours": return 12;
-        case "Once a day": return 24;
-        case "Once a week": return 168;
-        default: return 0;
-      }
-    },
-
-
-
-    getDoseClass(medication) {
-      if (!medication.nextDoseTime) return "";
-    
       const now = new Date();
       const nextDose = new Date(medication.nextDoseTime);
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
-      if (diffMinutes < -30) return "";  // Missed (Over 30 mins late)
-      if (diffMinutes < 0) return "warning-dose";      // Overdue (0 to -30 mins)
-      if (diffMinutes <= 60) return "upcoming-dose"; // Upcoming (1 hour before)
-    
-      return "";
+
+      return diffMinutes <= 60 && diffMinutes >= -30; //  1 hour before → 30 minutes after
     },
-    
 
+    //  Marks medication as taken and updates database
+    async markAsTaken(medication) {
+      try {
+        const response = await fetch("http://localhost:3000/mark-medication-taken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: this.user.email,
+            medicationName: medication.name,
+          }),
+        });
 
+        if (response.ok) {
+          alert("Medication marked as taken!");
+          this.fetchMedicalRecords(); //  Refresh medication data
+        }
+      } catch (error) {
+        console.error("Error marking medication as taken:", error);
+      }
+    },
 
+    // Run every minute to check if any medications should be marked as "Missed"
+    checkMissedMedications() {
+      this.user.medications.forEach(async (medication) => {
+        const now = new Date();
+        const nextDose = new Date(medication.nextDoseTime);
+        const diffMinutes = Math.floor((nextDose - now) / 60000);
+
+        if (diffMinutes < -30 && !medication.logs.some(log => log.time === nextDose.toISOString())) {
+          await this.markAsMissed(medication);
+        }
+      });
+    },
+
+    // Log medication as missed in the database
+    async markAsMissed(medication) {
+      try {
+        await fetch("http://localhost:3000/mark-medication-missed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: this.user.email,
+            medicationName: medication.name,
+          }),
+        });
+
+        this.fetchMedicalRecords(); //  Refresh medication list
+      } catch (error) {
+        console.error("Error marking medication as missed:", error);
+      }
+    },
+
+    // Formats timestamps (ISO strings) into readable date & time
     formatTime(timestamp) {
-      return new Date(timestamp).toLocaleString();
+      if (!timestamp) return "Unknown"; // Handle missing values
+      return new Date(timestamp).toLocaleString(); // Converts to local time
     },
 
+
+    // Assigns a class to logs based on status (Taken = Green, Missed = Red)
     getLogStatusClass(log) {
       return log.status === "Taken" ? "log-taken" : "log-missed";
     },
 
-    showMarkAsTaken(medication) {
-      if (!medication.timeToTake || !medication.frequency) return false;
-    
-      const now = new Date();
-      const nextDose = this.calculateNextDoseTime(medication); // Ensure it's calculated
-      const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
-      console.log(`Checking: ${medication.name} | Next Dose in ${diffMinutes} min | Should Show: ${diffMinutes <= 60 && diffMinutes >= -30}`);
-    
-      return diffMinutes <= 60 && diffMinutes >= -30;
-    },
-    
-    
-    
-    
+
 
     refreshMedicationUI() {
       this.user.medications = [...this.user.medications]; // Trigger Vue reactivity update
-    }
+    },
 
 
   },
@@ -1535,6 +1513,9 @@ const app = Vue.createApp({
     document.addEventListener("touchmove", this.handleTouchMove);
     document.addEventListener("touchend", this.handleTouchEnd);
     document.addEventListener("click", this.closeConfirmationPopup);
+
+    // Run every 60 seconds (1 minute) to check if medications are missed
+    setInterval(this.checkMissedMedications, 60000);
   },
 
   beforeUnmount() {
