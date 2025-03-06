@@ -1355,28 +1355,35 @@ const app = Vue.createApp({
       this.closeMedicalHistoryPopup(); // Close the popup after saving
     },
 
-
     calculateNextDoseTime(medication) {
       if (!medication.timeToTake || !medication.frequency) return null;
-    
+
+      // If we've already locked in a next dose time, use it.
+      if (medication.fixedNextDose) {
+        return new Date(medication.fixedNextDose);
+      }
+
       const now = this.getCurrentTime(); // Use simulated time
       const [hour, period] = medication.timeToTake.split(" ");
       let targetHour = parseInt(hour);
-    
       if (period === "PM" && targetHour !== 12) targetHour += 12;
       if (period === "AM" && targetHour === 12) targetHour = 0;
-    
+
       let nextDose = new Date(now);
       nextDose.setHours(targetHour, 0, 0, 0);
-    
+
+      // Loop until nextDose is in the future.
       while (nextDose <= now) {
         nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
       }
-    
+
+      // Lock in this next dose time.
+      medication.fixedNextDose = nextDose.toISOString();
       return nextDose;
     },
-    
-    
+
+
+
     getFrequencyHours(frequency) {
       const freqMap = {
         "Every hour": 1,
@@ -1391,52 +1398,59 @@ const app = Vue.createApp({
       };
       return freqMap[frequency] || 0;
     },
-    
+
 
     getDoseClass(medication) {
       const now = new Date();
       const nextDose = this.calculateNextDoseTime(medication);
-    
+
       if (!nextDose) return "";
-    
+
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
+
       if (diffMinutes < -30) return "";  // Missed (Over 30 mins late)
       if (diffMinutes < 0) return "warning-dose";  // Late (0 to -30 mins)
       if (diffMinutes <= 60) return "upcoming-dose"; // Upcoming (1 hour before)
-    
+
       return "";
     },
-    
-    
+
+
     getNextDoseCountdown(medication) {
-      const now = this.getCurrentTime(); // Simulated time
+      const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
-    
       if (!nextDose) return "Not set";
-    
-      const diffMs = nextDose - now;
-      const diffMinutes = Math.floor(diffMs / 60000);
-    
+
+      // diffMinutes is the number of minutes that have passed since the scheduled dose.
+      const diffMinutes = Math.floor((now - nextDose) / 60000);
+
       if (diffMinutes < 0) {
-        return "Time to take now"; // If past due
-      } else {
-        return `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m left`;
+        // Dose is still in the future – show a normal countdown.
+        const absDiff = Math.abs(diffMinutes);
+        return `${Math.floor(absDiff / 60)}h ${absDiff % 60}m left`;
       }
+
+      if (diffMinutes >= 0 && diffMinutes < 30) {
+        // Within the grace period: count down from 30 minutes to 1.
+        return `${30 - diffMinutes} minutes left to mark`;
+      }
+
+      return "Missed";
     },
-    
+
+
     showMarkAsTaken(medication) {
       const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
-    
+
       if (!nextDose) return false;
-    
+
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
+
       return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
     },
-    
-    
+
+
     async markAsTaken(medication) {
       try {
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
@@ -1447,12 +1461,12 @@ const app = Vue.createApp({
             medicationName: medication.name,
           }),
         });
-    
         const data = await response.json();
-        
         if (response.ok) {
           alert("Medication marked as taken!");
-          this.fetchMedicalRecords(); // Refresh records to update UI
+          // Clear the fixed next dose so the next dose time is recalculated.
+          delete medication.fixedNextDose;
+          this.fetchMedicalRecords(); // Refresh UI from the database.
         } else {
           console.error("Error marking medication as taken:", data.message);
         }
@@ -1460,14 +1474,15 @@ const app = Vue.createApp({
         console.error("Error marking medication as taken:", error);
       }
     },
-    
-    
+
+
+
     checkMissedMedications() {
       this.user.medications.forEach(medication => {
         const now = new Date();
         const nextDose = new Date(medication.nextDoseTime);
         const diffMinutes = Math.floor((nextDose - now) / 60000);
-    
+
         if (diffMinutes < -30 && !medication.logs.some(log => log.time === nextDose.toISOString())) {
           medication.logs.push({ time: nextDose.toISOString(), status: "Missed" });
           this.fetchMedicalRecords(); // Update UI
@@ -1476,22 +1491,78 @@ const app = Vue.createApp({
     },
 
     // Log medication as missed in the database
-    async markAsMissed(medication) {
-      try {
-        await fetch("http://localhost:3000/mark-medication-missed", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: this.user.email,
-            medicationName: medication.name,
-          }),
-        });
-
-        this.fetchMedicalRecords(); //  Refresh medication list
-      } catch (error) {
-        console.error("Error marking medication as missed:", error);
-      }
+    markAsTaken(medication) {
+      fetch("http://localhost:3000/mark-medication-taken", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: this.user.email,
+          medicationName: medication.name,
+        }),
+      })
+        .then(() => {
+          this.fetchMedicalRecords();
+        })
+        .catch((error) => console.error("Error marking medication as taken:", error));
     },
+
+
+    autoMarkMissedMedications() {
+      this.user.medications.forEach(async (medication) => {
+        const now = this.getCurrentTime();
+        const nextDose = this.calculateNextDoseTime(medication);
+
+        if (!nextDose) return;
+
+        const diffMinutes = Math.floor((now - nextDose) / 60000);
+
+        if (diffMinutes >= 30) {
+          try {
+            await fetch("http://localhost:3000/mark-medication-missed", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: this.user.email,
+                medicationName: medication.name,
+              }),
+            });
+
+            this.fetchMedicalRecords().then(() => {
+              this.user.medications.forEach((med) => {
+                if (med.nextDoseDisplay === "30 minutes left to mark") {
+                  med.gracePeriodActive = true;
+                }
+              });
+              this.updateMedicationUI();
+            });
+
+          } catch (error) {
+            console.error("Error marking medication as missed:", error);
+          }
+        }
+      });
+    },
+
+
+    getGracePeriodMessage(medication) {
+      const now = this.getCurrentTime();
+      const nextDose = this.calculateNextDoseTime(medication);
+
+      if (!nextDose) return ""; // No valid dose time
+
+      const diffMinutes = Math.floor((now - nextDose) / 60000); // Difference in minutes
+
+      if (diffMinutes >= 0 && diffMinutes < 30) {
+        return `${30 - diffMinutes} minutes left to mark`; // Show countdown
+      } else if (diffMinutes >= 30) {
+        return "Missed"; // Mark as missed after 30 minutes
+      }
+
+      return ""; // Otherwise, return nothing
+    },
+
+
+
 
     // Formats timestamps (ISO strings) into readable date & time
     formatTime(timestamp) {
@@ -1509,33 +1580,39 @@ const app = Vue.createApp({
       return new Date(Date.now() + this.timeOffset);
     },
 
+
+    shouldShowMarkAsTaken(medication) {
+      const now = this.getCurrentTime();
+      const nextDose = this.calculateNextDoseTime(medication);
+
+      if (!nextDose) return false;
+
+      const diffMinutes = Math.floor((now - nextDose) / 60000);
+
+      return diffMinutes >= -60 && diffMinutes <= 30;
+    },
+
     updateMedicationUI() {
       this.user.medications = this.user.medications.map((med) => {
+        const countdown = this.getNextDoseCountdown(med);
         return {
           ...med,
-          showMarkAsTaken: this.showMarkAsTaken(med), // Recalculate button visibility
+          showMarkAsTaken: this.shouldShowMarkAsTaken(med),
+          nextDoseDisplay: countdown, // This will update with the live countdown
+          gracePeriodActive: countdown.includes("minutes left to mark"),
         };
       });
-    },
-    
-  
-    shouldShowMarkAsTaken(medication) {
-      const now = new Date().getTime();
-      const nextDoseTime = new Date(medication.nextDoseTime).getTime();
-      const diffMinutes = Math.floor((nextDoseTime - now) / 60000);
-  
-      return diffMinutes <= 60 && diffMinutes >= -30;
     }
 
-
   },
+
 
 
 
   mounted() {
     // Load the theme preference from localStorage
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
+    if(savedTheme) {
       this.darkMode = savedTheme === "dark";
     } else {
       // Fallback to system preference
@@ -1557,20 +1634,22 @@ const app = Vue.createApp({
 
 
     setInterval(() => {
-      this.timeOffset += 60000; // Simulate time moving forward
-      this.updateMedicationUI(); // Refresh the medication UI
-    }, 1000);    
+  this.timeOffset += 60000; // ✅ Advances simulated time
+  this.updateMedicationUI(); // ✅ Updates button & countdown
+  this.autoMarkMissedMedications(); // ✅ Ensures "Missed" logic runs
+}, 1000);
+
   },
 
-  beforeUnmount() {
-    document.removeEventListener("keydown", this.handleEnterKey);
-    window.removeEventListener("popstate", this.handleRouteChange);
-    document.removeEventListener("touchstart", this.handleTouchStart);
-    document.removeEventListener("touchmove", this.handleTouchMove);
-    document.removeEventListener("touchend", this.handleTouchEnd);
+beforeUnmount() {
+  document.removeEventListener("keydown", this.handleEnterKey);
+  window.removeEventListener("popstate", this.handleRouteChange);
+  document.removeEventListener("touchstart", this.handleTouchStart);
+  document.removeEventListener("touchmove", this.handleTouchMove);
+  document.removeEventListener("touchend", this.handleTouchEnd);
 
-    document.removeEventListener("click", this.closeConfirmationPopup);
-  },
+  document.removeEventListener("click", this.closeConfirmationPopup);
+},
 });
 
 app.mount("#app");

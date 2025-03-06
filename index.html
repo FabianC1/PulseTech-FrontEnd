@@ -808,9 +808,9 @@
                                     <strong>Duration:</strong> {{ medication.duration }}
                                     <p>
                                         <strong>Next Dose:</strong>
-                                        <span>
-                                            {{ getNextDoseCountdown(medication) }}
-                                        </span>
+                                        <span v-if="getGracePeriodMessage(medication)">{{
+                                            getGracePeriodMessage(medication) }}</span>
+                                        <span v-else>{{ getNextDoseCountdown(medication) }}</span>
                                     </p>
                                     <p><strong>Diagnosis:</strong> {{ medication.diagnosis }}</p>
 
