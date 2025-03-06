@@ -1440,23 +1440,16 @@ const app = Vue.createApp({
       return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
     },
 
+
     async markAsTaken(medication) {
       if (medication.isMarking || medication.takenAt) {
         console.log(`Already marked as taken: ${medication.name}`);
         return; // Prevent spamming
       }
-    
+
       medication.isMarking = true;
       const now = this.getCurrentTime();
-      const nextDose = this.calculateNextDoseTime(medication);
-    
-      // Prevent duplicate clicks
-      if (medication.takenAt && new Date(medication.takenAt) >= nextDose) {
-        alert("You've already marked this dose as taken.");
-        medication.isMarking = false;
-        return;
-      }
-    
+
       try {
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
@@ -1466,16 +1459,21 @@ const app = Vue.createApp({
             medicationName: medication.name,
           }),
         });
-    
+
         const data = await response.json();
+
+        // 🔍 Debug: Log the response from the server
+        console.log(`🔍 Server Response:`, data);
+
         if (response.ok) {
-          console.log(`${medication.name} marked as taken`);
-          
-          // ✅ Only update the clicked medication, not all of them
-          medication.takenAt = now.toISOString();
+          console.log(`✅ ${medication.name} marked as taken at ${data.takenAt}`);
+
+          // ✅ Update the UI immediately with the new taken time
+          medication.takenAt = data.takenAt || now.toISOString(); // Fallback in case undefined
           delete medication.fixedNextDose; // Reset next cycle
-          
-          this.$forceUpdate(); // Force Vue to update UI
+
+          // ✅ Force Vue to update the UI
+          this.$forceUpdate();
         } else {
           console.error(`Error marking ${medication.name} as taken:`, data.message);
         }
@@ -1485,15 +1483,14 @@ const app = Vue.createApp({
         medication.isMarking = false;
       }
     },
-    
+
+
     shouldShowMarkAsTaken(medication) {
+      if (!medication) return false; // Avoid errors if medication is undefined
       if (medication.takenAt) return false; // Hide if already marked
       const diffMinutes = this.getTimeDiff(medication);
-      if (diffMinutes === null) return false;
-      return diffMinutes >= -30 && diffMinutes <= 60; // Only show in this window
+      return diffMinutes !== null && diffMinutes >= -30 && diffMinutes <= 60;
     },
-    
-
 
     checkMissedMedications() {
       this.user.medications.forEach(medication => {
