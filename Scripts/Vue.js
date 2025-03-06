@@ -118,6 +118,7 @@ const app = Vue.createApp({
       },
       currentMedicationInput: "", // Start with an empty input
       isAddingMedication: false, // Control whether the medication form is being added
+      timeOffset: 0,
     };
   },
 
@@ -1355,68 +1356,87 @@ const app = Vue.createApp({
     },
 
 
-    //  Calculate the next dose time based on frequency
     calculateNextDoseTime(medication) {
-      const now = new Date();
+      if (!medication.timeToTake || !medication.frequency) return null;
+    
+      const now = this.getCurrentTime(); // Use simulated time
       const [hour, period] = medication.timeToTake.split(" ");
       let targetHour = parseInt(hour);
-
+    
       if (period === "PM" && targetHour !== 12) targetHour += 12;
       if (period === "AM" && targetHour === 12) targetHour = 0;
-
+    
       let nextDose = new Date(now);
       nextDose.setHours(targetHour, 0, 0, 0);
-
+    
       while (nextDose <= now) {
         nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
       }
-
+    
       return nextDose;
     },
+    
+    
+    getFrequencyHours(frequency) {
+      const freqMap = {
+        "Every hour": 1,
+        "Every 2 hours": 2,
+        "Every 3 hours": 3,
+        "Every 4 hours": 4,
+        "Every 6 hours": 6,
+        "Every 8 hours": 8,
+        "Every 12 hours": 12,
+        "Once a day": 24,
+        "Once a week": 168,
+      };
+      return freqMap[frequency] || 0;
+    },
+    
 
-    //  Determines the class for the "Mark as Taken" button based on time
     getDoseClass(medication) {
-      if (!medication.nextDoseTime) return "";
-
       const now = new Date();
-      const nextDose = new Date(medication.nextDoseTime);
+      const nextDose = this.calculateNextDoseTime(medication);
+    
+      if (!nextDose) return "";
+    
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-
-      if (diffMinutes < -30) return ""; //  Missed dose, button should disappear
-      if (diffMinutes < 0) return "warning-dose"; //  Overdue (0 to -30 mins)
-      if (diffMinutes <= 60) return "upcoming-dose"; //  Show button 1 hour before
-
+    
+      if (diffMinutes < -30) return "";  // Missed (Over 30 mins late)
+      if (diffMinutes < 0) return "warning-dose";  // Late (0 to -30 mins)
+      if (diffMinutes <= 60) return "upcoming-dose"; // Upcoming (1 hour before)
+    
       return "";
     },
-
-    //  Calculates how much time is left until the next dose
+    
+    
     getNextDoseCountdown(medication) {
-      if (!medication.nextDoseTime) return "Not set";
-
-      const now = new Date();
-      const nextDose = new Date(medication.nextDoseTime);
+      const now = this.getCurrentTime(); // Simulated time
+      const nextDose = this.calculateNextDoseTime(medication);
+    
+      if (!nextDose) return "Not set";
+    
       const diffMs = nextDose - now;
       const diffMinutes = Math.floor(diffMs / 60000);
-
+    
       if (diffMinutes < 0) {
-        return "⏳ Time to take now";
+        return "Time to take now"; // If past due
       } else {
         return `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m left`;
       }
     },
-
-    //  Determine when the "Mark as Taken" button should be visible
+    
+    
     showMarkAsTaken(medication) {
-      if (!medication.nextDoseTime) return false;
-
       const now = new Date();
-      const nextDose = new Date(medication.nextDoseTime);
+      const nextDose = this.calculateNextDoseTime(medication);
+    
+      if (!nextDose) return false;
+    
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-
-      return diffMinutes <= 60 && diffMinutes >= -30; //  1 hour before → 30 minutes after
+    
+      return diffMinutes <= 60 && diffMinutes >= -30;
     },
-
-    //  Marks medication as taken and updates database
+    
     async markAsTaken(medication) {
       try {
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
@@ -1427,25 +1447,30 @@ const app = Vue.createApp({
             medicationName: medication.name,
           }),
         });
-
+    
+        const data = await response.json();
+        
         if (response.ok) {
           alert("Medication marked as taken!");
-          this.fetchMedicalRecords(); //  Refresh medication data
+          this.fetchMedicalRecords(); // Refresh records to update UI
+        } else {
+          console.error("Error marking medication as taken:", data.message);
         }
       } catch (error) {
         console.error("Error marking medication as taken:", error);
       }
     },
-
-    // Run every minute to check if any medications should be marked as "Missed"
+    
+    
     checkMissedMedications() {
-      this.user.medications.forEach(async (medication) => {
+      this.user.medications.forEach(medication => {
         const now = new Date();
         const nextDose = new Date(medication.nextDoseTime);
         const diffMinutes = Math.floor((nextDose - now) / 60000);
-
+    
         if (diffMinutes < -30 && !medication.logs.some(log => log.time === nextDose.toISOString())) {
-          await this.markAsMissed(medication);
+          medication.logs.push({ time: nextDose.toISOString(), status: "Missed" });
+          this.fetchMedicalRecords(); // Update UI
         }
       });
     },
@@ -1480,7 +1505,9 @@ const app = Vue.createApp({
       return log.status === "Taken" ? "log-taken" : "log-missed";
     },
 
-
+    getCurrentTime() {
+      return new Date(Date.now() + this.timeOffset);
+    },
 
     refreshMedicationUI() {
       this.user.medications = [...this.user.medications]; // Trigger Vue reactivity update
@@ -1514,8 +1541,9 @@ const app = Vue.createApp({
     document.addEventListener("touchend", this.handleTouchEnd);
     document.addEventListener("click", this.closeConfirmationPopup);
 
-    // Run every 60 seconds (1 minute) to check if medications are missed
-    setInterval(this.checkMissedMedications, 60000);
+    setInterval(() => {
+      this.timeOffset += 60000; // Simulate time moving forward 1 min every second
+    }, 1000);
   },
 
   beforeUnmount() {

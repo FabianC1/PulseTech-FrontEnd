@@ -785,6 +785,14 @@
                             getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
                             }}</strong>.</p>
 
+                    <!-- Time Control Buttons (For Testing) -->
+                    <div class="time-controls">
+                        <button @click="timeOffset += 3600000">Skip 1 Hour</button>
+                        <button @click="timeOffset += 600000">Skip 10 Minutes</button>
+                        <button @click="timeOffset = 0">Reset Time</button>
+                    </div>
+
+
 
                     <!-- Display Current Medications -->
                     <div v-if="user.medications && user.medications.length > 0" class="medications-container">
