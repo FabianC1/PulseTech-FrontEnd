@@ -2700,13 +2700,13 @@ a:hover {
 
 /* Medication Logs */
 .medication-logs {
-    margin-top: 2%;
+    margin-top: 1%;
     width: 50%;
     text-align: left;
     background: rgba(255, 255, 255, 0.1);
     padding: 10px;
     border-radius: 5px;
-    max-height: 300px; /* Set a fixed height */
+    max-height: 50%; /* Set a fixed height */
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Prevents the title from scrolling */
