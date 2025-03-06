@@ -1462,17 +1462,17 @@ const app = Vue.createApp({
 
         const data = await response.json();
 
-        // 🔍 Debug: Log the response from the server
-        console.log(`🔍 Server Response:`, data);
+        // Debug: Log the response from the server
+        console.log(` Server Response:`, data);
 
         if (response.ok) {
-          console.log(`✅ ${medication.name} marked as taken at ${data.takenAt}`);
+          console.log(` ${medication.name} marked as taken at ${data.takenAt}`);
 
-          // ✅ Update the UI immediately with the new taken time
+          //  Update the UI immediately with the new taken time
           medication.takenAt = data.takenAt || now.toISOString(); // Fallback in case undefined
           delete medication.fixedNextDose; // Reset next cycle
 
-          // ✅ Force Vue to update the UI
+          //  Force Vue to update the UI
           this.$forceUpdate();
         } else {
           console.error(`Error marking ${medication.name} as taken:`, data.message);
@@ -1667,9 +1667,9 @@ const app = Vue.createApp({
     document.addEventListener("click", this.closeConfirmationPopup);
 
     setInterval(() => {
-      this.timeOffset += 60000; // ✅ Advances simulated time
-      this.updateMedicationUI(); // ✅ Updates button & countdown
-      this.autoMarkMissedMedications(); // ✅ Auto-marks missed doses
+      this.timeOffset += 60000; //  Advances simulated time
+      this.updateMedicationUI(); //  Updates button & countdown
+      this.autoMarkMissedMedications(); //  Auto-marks missed doses
     }, 1000);
 
   },
