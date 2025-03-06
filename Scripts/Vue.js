@@ -1425,17 +1425,17 @@ const app = Vue.createApp({
       }
     },
     
-    
     showMarkAsTaken(medication) {
-      const now = new Date();
+      const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
     
       if (!nextDose) return false;
     
       const diffMinutes = Math.floor((nextDose - now) / 60000);
     
-      return diffMinutes <= 60 && diffMinutes >= -30;
+      return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
     },
+    
     
     async markAsTaken(medication) {
       try {
@@ -1509,9 +1509,23 @@ const app = Vue.createApp({
       return new Date(Date.now() + this.timeOffset);
     },
 
-    refreshMedicationUI() {
-      this.user.medications = [...this.user.medications]; // Trigger Vue reactivity update
+    updateMedicationUI() {
+      this.user.medications = this.user.medications.map((med) => {
+        return {
+          ...med,
+          showMarkAsTaken: this.showMarkAsTaken(med), // Recalculate button visibility
+        };
+      });
     },
+    
+  
+    shouldShowMarkAsTaken(medication) {
+      const now = new Date().getTime();
+      const nextDoseTime = new Date(medication.nextDoseTime).getTime();
+      const diffMinutes = Math.floor((nextDoseTime - now) / 60000);
+  
+      return diffMinutes <= 60 && diffMinutes >= -30;
+    }
 
 
   },
@@ -1541,9 +1555,11 @@ const app = Vue.createApp({
     document.addEventListener("touchend", this.handleTouchEnd);
     document.addEventListener("click", this.closeConfirmationPopup);
 
+
     setInterval(() => {
-      this.timeOffset += 60000; // Simulate time moving forward 1 min every second
-    }, 1000);
+      this.timeOffset += 60000; // Simulate time moving forward
+      this.updateMedicationUI(); // Refresh the medication UI
+    }, 1000);    
   },
 
   beforeUnmount() {

@@ -815,7 +815,7 @@
                                     <p><strong>Diagnosis:</strong> {{ medication.diagnosis }}</p>
 
                                     <!-- Mark as Taken Button -->
-                                    <button v-if="showMarkAsTaken(medication)" class="mark-as-taken"
+                                    <button v-if="medication.showMarkAsTaken" class="mark-as-taken"
                                         :class="getDoseClass(medication)" @click="markAsTaken(medication)"
                                         :disabled="medication.isMarking">
                                         Mark as Taken
