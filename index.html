@@ -676,7 +676,6 @@
                                             <label>Frequency:</label>
                                             <select v-model="selectedMedication.frequency" class="input-dropdown"
                                                 :class="{'input-error': !selectedMedication.frequency}">
-                                                <option value="Once a day">Once a day</option>
                                                 <option value="Twice a day">Twice a day</option>
                                                 <option value="Every hour">Every hour</option>
                                                 <option value="Every 4 hours">Every 4 hours</option>
@@ -815,11 +814,14 @@
                                     <p><strong>Diagnosis:</strong> {{ medication.diagnosis }}</p>
 
                                     <!-- Mark as Taken Button -->
-                                    <button v-if="medication.showMarkAsTaken" class="mark-as-taken"
-                                        :class="getDoseClass(medication)" @click="markAsTaken(medication)"
-                                        :disabled="medication.isMarking">
-                                        Mark as Taken
-                                    </button>
+                                    <button 
+                                    v-if="shouldShowMarkAsTaken(medication)" 
+                                    :class="getDoseClass(medication)" 
+                                    @click="markAsTaken(medication)"
+                                  >
+                                    Mark as Taken
+                                  </button>
+                                  
                                 </div>
 
                                 <!-- Right Side: Medication Logs -->

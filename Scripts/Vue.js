@@ -1401,35 +1401,30 @@ const app = Vue.createApp({
 
 
     getDoseClass(medication) {
-      const now = this.getCurrentTime();
-      const nextDose = this.calculateNextDoseTime(medication);
-      if (!nextDose) return "";
-    
-      const diffMinutes = Math.floor((now - nextDose) / 60000);
-    
-      if (diffMinutes < -30) return "";  // ✅ Missed (more than 30 mins late)
-      if (diffMinutes < 0) return "upcoming-dose";  // ✅ Upcoming (blue)
-      if (diffMinutes >= 0 && diffMinutes < 30) return "warning-dose";  // ✅ Grace period (yellow)
-    
+      const diffMinutes = this.getTimeDiff(medication);
+      if (diffMinutes === null) return "";
+      if (diffMinutes >= 0 && diffMinutes <= 60) {
+        return "upcoming-dose"; // upcoming period (blue)
+      } else if (diffMinutes < 0 && diffMinutes >= -30) {
+        return "warning-dose"; // grace period (yellow)
+      }
       return "";
     },
 
 
+    // Returns the live countdown text.
     getNextDoseCountdown(medication) {
-      const now = this.getCurrentTime();
-      const nextDose = this.calculateNextDoseTime(medication);
-      if (!nextDose) return "Not set";
-    
-      const diffMinutes = Math.floor((now - nextDose) / 60000);
-    
-      if (diffMinutes < 0) {
-        return `${Math.floor(Math.abs(diffMinutes) / 60)}h ${Math.abs(diffMinutes) % 60}m left`;
+      const diffMinutes = this.getTimeDiff(medication);
+      if (diffMinutes === null) return "Not set";
+      if (diffMinutes >= 0) {
+        // Before dose time: normal countdown
+        const hours = Math.floor(diffMinutes / 60);
+        const minutes = diffMinutes % 60;
+        return hours > 0 ? `${hours}h ${minutes}m left` : `${minutes}m left`;
+      } else if (diffMinutes < 0 && diffMinutes >= -30) {
+        // During grace period: countdown from 30 minutes to 0
+        return `${30 - Math.abs(diffMinutes)} minutes left to mark`;
       }
-    
-      if (diffMinutes >= 0 && diffMinutes < 30) {
-        return `${30 - diffMinutes} minutes left to mark`; // ✅ Show correct countdown
-      }
-    
       return "Missed";
     },
 
@@ -1445,8 +1440,23 @@ const app = Vue.createApp({
       return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
     },
 
-
     async markAsTaken(medication) {
+      if (medication.isMarking || medication.takenAt) {
+        console.log(`Already marked as taken: ${medication.name}`);
+        return; // Prevent spamming
+      }
+    
+      medication.isMarking = true;
+      const now = this.getCurrentTime();
+      const nextDose = this.calculateNextDoseTime(medication);
+    
+      // Prevent duplicate clicks
+      if (medication.takenAt && new Date(medication.takenAt) >= nextDose) {
+        alert("You've already marked this dose as taken.");
+        medication.isMarking = false;
+        return;
+      }
+    
       try {
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
@@ -1456,20 +1466,33 @@ const app = Vue.createApp({
             medicationName: medication.name,
           }),
         });
+    
         const data = await response.json();
         if (response.ok) {
-          alert("Medication marked as taken!");
-          // Clear the fixed next dose so the next dose time is recalculated.
-          delete medication.fixedNextDose;
-          this.fetchMedicalRecords(); // Refresh UI from the database.
+          console.log(`${medication.name} marked as taken`);
+          
+          // ✅ Only update the clicked medication, not all of them
+          medication.takenAt = now.toISOString();
+          delete medication.fixedNextDose; // Reset next cycle
+          
+          this.$forceUpdate(); // Force Vue to update UI
         } else {
-          console.error("Error marking medication as taken:", data.message);
+          console.error(`Error marking ${medication.name} as taken:`, data.message);
         }
       } catch (error) {
         console.error("Error marking medication as taken:", error);
+      } finally {
+        medication.isMarking = false;
       }
     },
-
+    
+    shouldShowMarkAsTaken(medication) {
+      if (medication.takenAt) return false; // Hide if already marked
+      const diffMinutes = this.getTimeDiff(medication);
+      if (diffMinutes === null) return false;
+      return diffMinutes >= -30 && diffMinutes <= 60; // Only show in this window
+    },
+    
 
 
     checkMissedMedications() {
@@ -1485,35 +1508,20 @@ const app = Vue.createApp({
       });
     },
 
-    // Log medication as missed in the database
-    markAsTaken(medication) {
-      fetch("http://localhost:3000/mark-medication-taken", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: this.user.email,
-          medicationName: medication.name,
-        }),
-      })
-        .then(() => {
-          this.fetchMedicalRecords();
-        })
-        .catch((error) => console.error("Error marking medication as taken:", error));
-    },
-
-
     autoMarkMissedMedications() {
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
-        if (!nextDose) return;
-    
-        const diffMinutes = Math.floor((now - nextDose) / 60000);
-    
-        // ✅ Mark as missed ONLY when full 30-minute grace period is over
-        if (diffMinutes >= 30) {
+
+        if (!nextDose) return; // If no dose is scheduled, exit.
+
+        const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes.
+
+        if (diffMinutes >= 30 && !medication.takenAt) {
+          console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${nextDose})`);
+
           try {
-            await fetch("http://localhost:3000/mark-medication-missed", {
+            const response = await fetch("http://localhost:3000/mark-medication-missed", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -1521,14 +1529,22 @@ const app = Vue.createApp({
                 medicationName: medication.name,
               }),
             });
-    
-            this.fetchMedicalRecords(); // ✅ Refresh UI after update
+
+            const data = await response.json();
+            if (response.ok) {
+              console.log(`${medication.name} marked as Missed`);
+              delete medication.fixedNextDose; // Reset for next cycle.
+              this.fetchMedicalRecords(); // Refresh the UI.
+            } else {
+              console.error(`Error marking ${medication.name} as Missed:`, data.message);
+            }
           } catch (error) {
-            console.error("Error marking medication as missed:", error);
+            console.error("Error in auto-marking missed medication:", error);
           }
         }
       });
     },
+
 
 
     getGracePeriodMessage(medication) {
@@ -1567,29 +1583,63 @@ const app = Vue.createApp({
       return new Date(Date.now() + this.timeOffset);
     },
 
+    // Calculate next dose time and lock it in for the current cycle.
+    calculateNextDoseTime(medication) {
+      if (!medication.timeToTake || !medication.frequency) return null;
 
-    shouldShowMarkAsTaken(medication) {
+      // If we've already locked in a next dose time, use it.
+      if (medication.fixedNextDose) {
+        return new Date(medication.fixedNextDose);
+      }
+
       const now = this.getCurrentTime();
-      const nextDose = this.calculateNextDoseTime(medication);
+      const [hour, period] = medication.timeToTake.split(" ");
+      let targetHour = parseInt(hour);
+      if (period === "PM" && targetHour !== 12) targetHour += 12;
+      if (period === "AM" && targetHour === 12) targetHour = 0;
 
-      if (!nextDose) return false;
+      let nextDose = new Date(now);
+      nextDose.setHours(targetHour, 0, 0, 0);
 
-      const diffMinutes = Math.floor((now - nextDose) / 60000);
+      // Increase until nextDose is in the future.
+      while (nextDose <= now) {
+        nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
+      }
 
-      return diffMinutes >= -60 && diffMinutes <= 30;
+      // Lock in this next dose time for the cycle.
+      medication.fixedNextDose = nextDose.toISOString();
+      return nextDose;
     },
 
+    getTimeDiff(medication) {
+      const now = this.getCurrentTime();
+      const nextDose = this.calculateNextDoseTime(medication);
+      if (!nextDose) return null;
+      // Calculate difference in minutes (nextDose - now)
+      return Math.floor((nextDose - now) / 60000);
+    },
+
+    // Update the UI for each medication.
     updateMedicationUI() {
+      const now = this.getCurrentTime();
       this.user.medications = this.user.medications.map((med) => {
+        // If we are past the fixed next dose time plus the full grace period,
+        // clear the flags so a new dose cycle can begin.
+        if (med.fixedNextDose && now >= new Date(med.fixedNextDose).getTime() + 30 * 60000) {
+          delete med.fixedNextDose;
+          med.alreadyClicked = false;
+          med.takenAt = null;
+        }
         const countdown = this.getNextDoseCountdown(med);
         return {
           ...med,
           showMarkAsTaken: this.shouldShowMarkAsTaken(med),
-          nextDoseDisplay: countdown, // This will update with the live countdown
+          nextDoseDisplay: countdown,
           gracePeriodActive: countdown.includes("minutes left to mark"),
         };
       });
-    }
+      this.$forceUpdate();
+    },
 
   },
 
@@ -1599,7 +1649,7 @@ const app = Vue.createApp({
   mounted() {
     // Load the theme preference from localStorage
     const savedTheme = localStorage.getItem("theme");
-    if(savedTheme) {
+    if (savedTheme) {
       this.darkMode = savedTheme === "dark";
     } else {
       // Fallback to system preference
@@ -1619,24 +1669,23 @@ const app = Vue.createApp({
     document.addEventListener("touchend", this.handleTouchEnd);
     document.addEventListener("click", this.closeConfirmationPopup);
 
-
     setInterval(() => {
-  this.timeOffset += 60000; // ✅ Advances simulated time
-  this.updateMedicationUI(); // ✅ Updates button & countdown
-  this.autoMarkMissedMedications(); // ✅ Ensures "Missed" logic runs
-}, 1000);
+      this.timeOffset += 60000; // ✅ Advances simulated time
+      this.updateMedicationUI(); // ✅ Updates button & countdown
+      this.autoMarkMissedMedications(); // ✅ Auto-marks missed doses
+    }, 1000);
 
   },
 
-beforeUnmount() {
-  document.removeEventListener("keydown", this.handleEnterKey);
-  window.removeEventListener("popstate", this.handleRouteChange);
-  document.removeEventListener("touchstart", this.handleTouchStart);
-  document.removeEventListener("touchmove", this.handleTouchMove);
-  document.removeEventListener("touchend", this.handleTouchEnd);
+  beforeUnmount() {
+    document.removeEventListener("keydown", this.handleEnterKey);
+    window.removeEventListener("popstate", this.handleRouteChange);
+    document.removeEventListener("touchstart", this.handleTouchStart);
+    document.removeEventListener("touchmove", this.handleTouchMove);
+    document.removeEventListener("touchend", this.handleTouchEnd);
 
-  document.removeEventListener("click", this.closeConfirmationPopup);
-},
+    document.removeEventListener("click", this.closeConfirmationPopup);
+  },
 });
 
 app.mount("#app");
