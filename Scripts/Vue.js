@@ -155,7 +155,7 @@ const app = Vue.createApp({
     
       // Filter out medications that don't have a valid nextDoseTime
       const validMedications = this.user.medications
-        .filter(med => med.nextDoseTime) // ❗ This might be returning an empty list now
+        .filter(med => med.nextDoseTime) // This might be returning an empty list now
         .map(med => ({
           ...med,
           // Calculate time difference to current time
@@ -1446,10 +1446,10 @@ const app = Vue.createApp({
         console.log(`Already marked as taken: ${medication.name}`);
         return; // Prevent spamming
       }
-
+    
       medication.isMarking = true;
       const now = this.getCurrentTime();
-
+    
       try {
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
@@ -1459,21 +1459,19 @@ const app = Vue.createApp({
             medicationName: medication.name,
           }),
         });
-
+    
         const data = await response.json();
-
-        // Debug: Log the response from the server
-        console.log(` Server Response:`, data);
-
+    
         if (response.ok) {
-          console.log(` ${medication.name} marked as taken at ${data.takenAt}`);
-
-          //  Update the UI immediately with the new taken time
-          medication.takenAt = data.takenAt || now.toISOString(); // Fallback in case undefined
-          delete medication.fixedNextDose; // Reset next cycle
-
-          //  Force Vue to update the UI
-          this.$forceUpdate();
+          console.log(`${medication.name} marked as taken at ${data.takenAt}`);
+    
+          // Update UI instantly
+          medication.takenAt = data.takenAt || now.toISOString(); // Fallback if undefined
+          delete medication.fixedNextDose; // Reset next dose cycle
+    
+          // 🚀 Force Vue to refresh the UI
+          this.updateMedicationUI();  
+          this.$forceUpdate(); // Ensure Vue re-renders components
         } else {
           console.error(`Error marking ${medication.name} as taken:`, data.message);
         }
@@ -1483,6 +1481,7 @@ const app = Vue.createApp({
         medication.isMarking = false;
       }
     },
+    
 
 
     shouldShowMarkAsTaken(medication) {
