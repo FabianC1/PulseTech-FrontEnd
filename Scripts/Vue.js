@@ -170,7 +170,6 @@ const app = Vue.createApp({
         ? sortedMedications[0] // Closest medication
         : { name: "None", timeToTake: "N/A", dosage: "N/A" };
     }
-    
   },
 
   watch: {
