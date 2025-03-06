@@ -1401,17 +1401,16 @@ const app = Vue.createApp({
 
 
     getDoseClass(medication) {
-      const now = new Date();
+      const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
-
       if (!nextDose) return "";
-
-      const diffMinutes = Math.floor((nextDose - now) / 60000);
-
-      if (diffMinutes < -30) return "";  // Missed (Over 30 mins late)
-      if (diffMinutes < 0) return "warning-dose";  // Late (0 to -30 mins)
-      if (diffMinutes <= 60) return "upcoming-dose"; // Upcoming (1 hour before)
-
+    
+      const diffMinutes = Math.floor((now - nextDose) / 60000);
+    
+      if (diffMinutes < -30) return "";  // ✅ Missed (more than 30 mins late)
+      if (diffMinutes < 0) return "upcoming-dose";  // ✅ Upcoming (blue)
+      if (diffMinutes >= 0 && diffMinutes < 30) return "warning-dose";  // ✅ Grace period (yellow)
+    
       return "";
     },
 
@@ -1420,21 +1419,17 @@ const app = Vue.createApp({
       const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
       if (!nextDose) return "Not set";
-
-      // diffMinutes is the number of minutes that have passed since the scheduled dose.
+    
       const diffMinutes = Math.floor((now - nextDose) / 60000);
-
+    
       if (diffMinutes < 0) {
-        // Dose is still in the future – show a normal countdown.
-        const absDiff = Math.abs(diffMinutes);
-        return `${Math.floor(absDiff / 60)}h ${absDiff % 60}m left`;
+        return `${Math.floor(Math.abs(diffMinutes) / 60)}h ${Math.abs(diffMinutes) % 60}m left`;
       }
-
+    
       if (diffMinutes >= 0 && diffMinutes < 30) {
-        // Within the grace period: count down from 30 minutes to 1.
-        return `${30 - diffMinutes} minutes left to mark`;
+        return `${30 - diffMinutes} minutes left to mark`; // ✅ Show correct countdown
       }
-
+    
       return "Missed";
     },
 
@@ -1511,11 +1506,11 @@ const app = Vue.createApp({
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
-
         if (!nextDose) return;
-
+    
         const diffMinutes = Math.floor((now - nextDose) / 60000);
-
+    
+        // ✅ Mark as missed ONLY when full 30-minute grace period is over
         if (diffMinutes >= 30) {
           try {
             await fetch("http://localhost:3000/mark-medication-missed", {
@@ -1526,16 +1521,8 @@ const app = Vue.createApp({
                 medicationName: medication.name,
               }),
             });
-
-            this.fetchMedicalRecords().then(() => {
-              this.user.medications.forEach((med) => {
-                if (med.nextDoseDisplay === "30 minutes left to mark") {
-                  med.gracePeriodActive = true;
-                }
-              });
-              this.updateMedicationUI();
-            });
-
+    
+            this.fetchMedicalRecords(); // ✅ Refresh UI after update
           } catch (error) {
             console.error("Error marking medication as missed:", error);
           }
