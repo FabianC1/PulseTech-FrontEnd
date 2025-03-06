@@ -152,24 +152,25 @@ const app = Vue.createApp({
       if (!this.user || !this.user.medications || this.user.medications.length === 0) {
         return { name: "None", timeToTake: "N/A", dosage: "N/A" };
       }
-
+    
       // Filter out medications that don't have a valid nextDoseTime
       const validMedications = this.user.medications
-        .filter(med => med.nextDoseTime)
+        .filter(med => med.nextDoseTime) // ❗ This might be returning an empty list now
         .map(med => ({
           ...med,
           // Calculate time difference to current time
           diffMinutes: Math.floor((new Date(med.nextDoseTime) - new Date()) / 60000)
         }));
-
+    
       // Sort medications by the closest upcoming dose (ascending order of time)
       const sortedMedications = validMedications.sort((a, b) => a.diffMinutes - b.diffMinutes);
-
+    
       // Return the medication closest to being taken, or a default if no valid medications are found
       return sortedMedications.length > 0
         ? sortedMedications[0] // Closest medication
         : { name: "None", timeToTake: "N/A", dosage: "N/A" };
     }
+    
   },
 
   watch: {
@@ -1505,17 +1506,19 @@ const app = Vue.createApp({
       });
     },
 
-    autoMarkMissedMedications() {
+
+    async autoMarkMissedMedications() {
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
 
-        if (!nextDose) return; // If no dose is scheduled, exit.
+        if (!nextDose) return; // No valid dose time, skip.
 
         const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes.
 
+        // ✅ If 30 minutes have passed after dose time, and it was NOT taken
         if (diffMinutes >= 30 && !medication.takenAt) {
-          console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${nextDose})`);
+          console.log(`🚨 Auto-marking ${medication.name} as Missed (Dose Time: ${nextDose})`);
 
           try {
             const response = await fetch("http://localhost:3000/mark-medication-missed", {
@@ -1529,9 +1532,18 @@ const app = Vue.createApp({
 
             const data = await response.json();
             if (response.ok) {
-              console.log(`${medication.name} marked as Missed`);
-              delete medication.fixedNextDose; // Reset for next cycle.
-              this.fetchMedicalRecords(); // Refresh the UI.
+              console.log(`❌ ${medication.name} marked as Missed in database`);
+
+              // ✅ Immediately update the UI
+              if (!medication.logs) medication.logs = [];
+              medication.logs.push({ time: now.toISOString(), status: "Missed" });
+
+              // ✅ Clear next dose time & reset cycle
+              delete medication.fixedNextDose;
+              medication.takenAt = null; // Reset for the next cycle
+
+              // 🚀 Force Vue to re-render
+              this.$forceUpdate();
             } else {
               console.error(`Error marking ${medication.name} as Missed:`, data.message);
             }
@@ -1541,6 +1553,7 @@ const app = Vue.createApp({
         }
       });
     },
+    
 
 
 
@@ -1620,13 +1633,6 @@ const app = Vue.createApp({
     updateMedicationUI() {
       const now = this.getCurrentTime();
       this.user.medications = this.user.medications.map((med) => {
-        // If we are past the fixed next dose time plus the full grace period,
-        // clear the flags so a new dose cycle can begin.
-        if (med.fixedNextDose && now >= new Date(med.fixedNextDose).getTime() + 30 * 60000) {
-          delete med.fixedNextDose;
-          med.alreadyClicked = false;
-          med.takenAt = null;
-        }
         const countdown = this.getNextDoseCountdown(med);
         return {
           ...med,
@@ -1637,6 +1643,7 @@ const app = Vue.createApp({
       });
       this.$forceUpdate();
     },
+    
 
   },
 
@@ -1667,11 +1674,11 @@ const app = Vue.createApp({
     document.addEventListener("click", this.closeConfirmationPopup);
 
     setInterval(() => {
-      this.timeOffset += 60000; //  Advances simulated time
-      this.updateMedicationUI(); //  Updates button & countdown
-      this.autoMarkMissedMedications(); //  Auto-marks missed doses
-    }, 1000);
-
+      this.timeOffset += 60000; // Simulated time increases by 1 minute
+      this.updateMedicationUI(); // Updates buttons & countdown
+      this.autoMarkMissedMedications(); // Auto-marks missed doses
+    }, 1000); // Runs every second
+    
   },
 
   beforeUnmount() {
