@@ -119,6 +119,7 @@ const app = Vue.createApp({
       currentMedicationInput: "", // Start with an empty input
       isAddingMedication: false, // Control whether the medication form is being added
       timeOffset: 0,
+      timeMultiplier: 1,
     };
   },
 
@@ -1642,7 +1643,15 @@ const app = Vue.createApp({
       this.$forceUpdate();
     },
     
-
+    // New method to toggle fast speed
+    toggleFastTime() {
+      // Toggle between normal (1) and fast (10x) speeds
+      this.timeMultiplier = this.timeMultiplier > 1 ? 1 : 60;
+    },
+    // New method to reset the timeOffset
+    resetTimeOffset() {
+      this.timeOffset = 0;
+    },
   },
 
 
@@ -1672,10 +1681,10 @@ const app = Vue.createApp({
     document.addEventListener("click", this.closeConfirmationPopup);
 
     setInterval(() => {
-      this.timeOffset += 60000; // Simulated time increases by 1 minute
-      this.updateMedicationUI(); // Updates buttons & countdown
-      this.autoMarkMissedMedications(); // Auto-marks missed doses
-    }, 1000); // Runs every second
+      this.timeOffset += 1000 * this.timeMultiplier;
+      this.updateMedicationUI();
+      this.autoMarkMissedMedications();
+    }, 1000);
     
   },
 

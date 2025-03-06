@@ -783,12 +783,14 @@
                     <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> in <strong>{{
                             getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
                             }}</strong>.</p>
-
-                    <!-- Time Control Buttons (For Testing) -->
+                    <!-- Time Control Buttons -->
                     <div class="time-controls">
                         <button @click="timeOffset += 3600000">Skip 1 Hour</button>
                         <button @click="timeOffset += 600000">Skip 10 Minutes</button>
-                        <button @click="timeOffset = 0">Reset Time</button>
+                        <button @click="resetTimeOffset">Reset Time</button>
+                        <button @click="toggleFastTime">
+                            {{ timeMultiplier > 1 ? 'Return to Normal Speed' : 'Enable Fast Speed' }}
+                        </button>
                     </div>
 
 
@@ -814,14 +816,11 @@
                                     <p><strong>Diagnosis:</strong> {{ medication.diagnosis }}</p>
 
                                     <!-- Mark as Taken Button -->
-                                    <button 
-                                    v-if="shouldShowMarkAsTaken(medication)" 
-                                    :class="getDoseClass(medication)" 
-                                    @click="markAsTaken(medication)"
-                                  >
-                                    Mark as Taken
-                                  </button>
-                                  
+                                    <button v-if="shouldShowMarkAsTaken(medication)" :class="getDoseClass(medication)"
+                                        @click="markAsTaken(medication)">
+                                        Mark as Taken
+                                    </button>
+
                                 </div>
 
                                 <!-- Right Side: Medication Logs -->

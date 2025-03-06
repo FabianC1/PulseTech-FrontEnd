@@ -2637,6 +2637,7 @@ a:hover {
   
 
   .medications-page-container {
+    position: relative;
     text-align: center;
     padding: 20px;
     margin: 5px auto;
@@ -2754,7 +2755,6 @@ a:hover {
 
 /* Mark as Taken Button */
 .mark-as-taken {
-    background-color: blue;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -2765,17 +2765,47 @@ a:hover {
   
   /* Colors for different states */
   .upcoming-dose {
-    background-color: blue;
+    background-color: #4a2cceda;
   } /* Normal state */
+
+  /* Colors for different states */
+  .upcoming-dose:hover {
+    background-color: #1c00977a;
+  } 
   
   .warning-dose {
     background-color: red; /* red for 30 mins before */
     color: white;
   }
 
+  .warning-dose:hover {
+    background-color: rgba(175, 0, 0, 0.788); /* red for 30 mins before */
+    color: white;
+  }
 
 
+  .time-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px; /* Space between buttons */
+}
 
+.time-controls button {
+    background: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px 10px; /* Smaller padding */
+    font-size: 12px; /* Smaller font */
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-colour 0.2s ease-in-out;
+}
+
+.time-controls button:hover {
+    background: #0056b3;
+}
 
   
   .messages-container{
@@ -2798,21 +2828,3 @@ a:hover {
     gap: 20px;
     justify-content: flex-start;
   }
-
-  .time-controls {
-    margin-top: 10px;
-}
-
-.time-controls button {
-    background: #007BFF;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.time-controls button:hover {
-    background: #0056b3;
-}
