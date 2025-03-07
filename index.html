@@ -205,9 +205,22 @@
 
             <!-- Health Dashboard Section -->
             <div v-if="currentView === 'healthDashboard'">
-                <h2>Health Dashboard</h2>
-                <p>Your health metrics will appear here.</p>
+                <div v-if="isLoggedIn" class="dashboard-container">
+                    <h2>Health Dashboard</h2>
+                    <p>Your health metrics will appear here.</p>
+                </div>
+
+                <!-- Show Login/Signup Prompt if Not Logged In -->
+                <div v-else class="auth-prompt">
+                    <h2>You need to log in or sign up</h2>
+                    <p>To access your health dashboard, please log in or create an account.</p>
+                    <div class="button-container">
+                        <button class="auth-button" @click="navigateTo('login')">Login</button>
+                        <button class="auth-button" @click="navigateTo('signup')">Sign Up</button>
+                    </div>
+                </div>
             </div>
+
 
             <!-- Medical Records Section -->
             <div v-if="currentView === 'medicalRecords'">
@@ -281,12 +294,6 @@
 
                             <p v-else>No medications recorded.</p>
                         </div>
-
-
-
-
-
-
 
                         <!-- Vaccination Records -->
                         <div class="record-section">
@@ -539,7 +546,7 @@
 
                     <div v-else>
                         <div class="appointments-header">
-                            <h3>Welcome, {{ user.username }}</h3>
+                            <h3 >Welcome, {{ user.username }}</h3>
                             <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
                             <button @click="appointmentsView = 'request'">Request Appointments</button>
                         </div>
