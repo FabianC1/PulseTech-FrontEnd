@@ -188,6 +188,24 @@ const app = Vue.createApp({
         this.fetchAppointmentsData();  // Trigger API calls only when the view is active
       }
     },
+
+
+    user: {
+      handler(newUser) {
+        if (newUser) {
+          this.contacts = [];  // Reset previous contacts
+          this.chatMessages = [];  // Reset previous messages
+          this.fetchContacts();  // Fetch new contacts for the new user
+  
+          if (this.selectedContact) {
+            this.fetchMessages();  // Fetch messages for the currently selected contact
+          }
+        }
+      },
+      immediate: true, // Fetch contacts immediately after the component is mounted or when user data changes
+    }
+
+
   },
 
   created() {
@@ -640,20 +658,27 @@ const app = Vue.createApp({
         .then((res) => res.json())
         .then((data) => {
           if (data.message === "Login successful") {
-            //  Remove password from user object before saving
+            // Remove password from user object before saving
             const userData = { ...data.user };
             delete userData.password;
-
-            //  Store user data in localStorage
+    
+            // Store user data in localStorage
             localStorage.setItem("user", JSON.stringify(userData));
             this.isLoggedIn = true;
             this.user = userData;
-            this.user.password = ""; //  Ensure password field is empty
+            this.user.password = ""; // Ensure password field is empty
             this.isDoctor = userData.role === "doctor";
-
-            //  Fetch medical records after login
-            this.fetchMedicalRecords();
-
+    
+            // Reset previous contacts and messages, then fetch new ones
+            this.contacts = [];
+            this.chatMessages = [];
+            
+            // Fetch the contacts and messages again for the new user
+            this.fetchContacts();
+            if (this.selectedContact) {
+              this.fetchMessages(); // Ensure messages for the selected contact are fetched
+            }
+    
             this.navigateTo("profile"); // Redirect to profile after successful login
           } else {
             alert("Invalid email or password.");
@@ -661,7 +686,7 @@ const app = Vue.createApp({
         })
         .catch((error) => console.error("Login error:", error));
     },
-
+    
 
     // Edit user details function
     editUserDetail(field) {
