@@ -2909,17 +2909,18 @@ a:hover {
     width: 75%;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Ensure it takes full height */
+    height: 100%;
     position: relative;
 }
 
 .chat-messages {
     flex-grow: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* Enable scrolling */
     padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Start messages from the top */
+    justify-content: flex-start;
+    max-height: 400px; /* Set a max height to prevent overflow */
 }
 
 .chat-input {
@@ -2956,6 +2957,8 @@ a:hover {
     padding: 8px;
     border-radius: 8px;
     margin: 5px;
+    max-width: 80%;
+    word-wrap: break-word;
 }
 
 .received-message {
@@ -2965,4 +2968,7 @@ a:hover {
     border-radius: 5px;
     margin: 5px;
     border: 1px solid #ccc;
+    max-width: 80%;
+    word-wrap: break-word;
 }
+
