@@ -127,6 +127,7 @@ const app = Vue.createApp({
       newMessage: "",
       showAttachmentOptions: false,
       selectedMedicalRecord: null,
+      isAttachmentActive: false,
       medicalRecords: [],// This will store the user's medical records
       isUserScrolling: false,
       chatOpened: false,
@@ -1803,9 +1804,9 @@ const app = Vue.createApp({
 
         this.chatMessages = await response.json();
 
-        console.log("📩 Messages received:", this.chatMessages);
+        console.log("Messages received:", this.chatMessages);
       } catch (error) {
-        console.error("❌ Error fetching messages:", error);
+        console.error("Error fetching messages:", error);
       }
     },
 
@@ -1814,23 +1815,20 @@ const app = Vue.createApp({
 
     async attachMedicalRecord() {
       if (!this.medicalRecords || this.medicalRecords.length === 0) {
-        console.warn(" Fetching medical records...");
-        await this.fetchMedicalRecords(); // Ensure medical records are loaded
-
-        if (!this.medicalRecords || this.medicalRecords.length === 0) {
-          console.error("No medical records found.");
-          alert("No medical records found to attach.");
-          return;
-        }
+        await this.fetchMedicalRecords();
       }
-
-      this.selectedMedicalRecord = this.medicalRecords[0]; // Attach first available record
-      console.log(" Attached Medical Record:", this.selectedMedicalRecord);
+      if (this.medicalRecords.length > 0) {
+        this.selectedMedicalRecord = this.medicalRecords[0]; // Keep record in memory
+        this.isAttachmentActive = true; // Enable for chat
+        this.showAttachmentOptions = true; // Show "View" & "Remove"
+      } else {
+        alert("No medical records found to attach.");
+      }
     },
 
-    removeAttachment() {
-      this.selectedMedicalRecord = null; // Clear the selected medical record
-      console.log("Removed Medical Record attachment.");
+    detachAttachment() {
+        this.isAttachmentActive = false; // Disable sending the attachment
+        this.showAttachmentOptions = false; // Hide options
     },
 
     async sendMessage() {
@@ -1897,12 +1895,9 @@ const app = Vue.createApp({
 
     // Toggle the attachment menu
     toggleAttachmentMenu() {
-      // If no record is attached, fetch & attach one first
       if (!this.selectedMedicalRecord) {
         this.attachMedicalRecord();
       }
-
-      // Toggle the attachment menu visibility
       this.showAttachmentOptions = !this.showAttachmentOptions;
     },
 
