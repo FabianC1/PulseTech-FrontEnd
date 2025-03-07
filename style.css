@@ -341,7 +341,6 @@ footer {
 
 .home-container::-webkit-scrollbar-track {
     background: transparent;
-
 }
 
 /* Menu Panel (Initially hidden off-screen) */
@@ -2806,6 +2805,45 @@ a:hover {
 .time-controls button:hover {
     background: #0056b3;
 }
+
+
+
+.dashboard-container {
+    text-align: center;
+    padding: 20px;
+    margin: 5px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 650px;
+    font-size: 1.3em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+
+/* Optional: Optional limits on the scroll position */
+.dashboard-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+}
+
+.dashboard-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 
   
   .messages-container{
