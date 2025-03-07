@@ -478,7 +478,7 @@
 
                     <div v-if="isDoctor">
                         <div class="appointments-header">
-                            <h3 style="margin-top: -2%;">Welcome, Dr. {{ user.username }}</h3>
+                            <h3 style="margin-top: -0.5%;">Welcome, Dr. {{ user.username }}</h3>
                             <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
                             <button @click="appointmentsView = 'give'">Give Appointments</button>
                         </div>
@@ -876,7 +876,7 @@
                             <ul>
                                 <li v-for="contact in contacts" :key="contact.email" @click="openChat(contact)"
                                     :class="{ unread: hasUnreadMessages(contact.email) }">
-                                    <img :src="contact.profilePicture || 'default-avatar.png'" class="contact-avatar" />
+                                    <img :src="contact.profilePicture || '/image/ProfileIcon.png'" class="contact-avatar" />
                                     <span>{{ contact.fullName }}</span>
                                 </li>
                             </ul>

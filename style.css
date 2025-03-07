@@ -2923,7 +2923,7 @@ a:hover {
     justify-content: flex-start;
     max-height: 400px; /* Set a max height to prevent overflow */
     scrollbar-width: thin; /* Firefox */
-    scrollbar-color: rgba(255, 255, 255, 0.5) transparent; /* Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.925) transparent; /* Firefox */
 }
 
 /* WebKit scrollbar styles */
@@ -2959,6 +2959,13 @@ a:hover {
     padding: 10px;
     border: 1px solid #ccc;
 }
+
+.chat-input input:focus {
+    box-shadow: 0 3px 0 0 rgba(0, 153, 255, 0.8), 0 -2px 0 0 rgba(98, 0, 255, 0.8);
+    outline: none; /* Remove default outline when focused */
+}
+
+
 
 .chat-input button {
     width: 60px;  /* Adjust width */
