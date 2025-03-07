@@ -2867,3 +2867,87 @@ a:hover {
     gap: 20px;
     justify-content: flex-start;
   }
+
+
+  .messages-layout {
+    display: flex;
+    height: 80vh;
+}
+
+.contacts-panel {
+    width: 25%;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+.contacts-panel ul {
+    list-style: none;
+    padding: 0;
+}
+
+.contacts-panel li {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.contacts-panel li.unread {
+    font-weight: bold;
+    background: #f4f4f4;
+}
+
+.contact-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.chat-panel {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.sent-message {
+    text-align: right;
+    background-color: #dcf8c6;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.received-message {
+    text-align: left;
+    background-color: #fff;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px;
+    border: 1px solid #ccc;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.chat-input button {
+    padding: 10px;
+    background: blue;
+    color: white;
+    border: none;
+}
