@@ -471,14 +471,14 @@
                 </div>
             </div>
 
-
+            <!-- Appointments Section -->
             <div v-if="currentView === 'appointments'">
                 <div v-if="isLoggedIn" class="appointments-container">
                     <h2 style="text-align: center; margin-top: -0.5%;">Appointments</h2>
 
                     <div v-if="isDoctor">
                         <div class="appointments-header">
-                            <h3>Welcome, Dr. {{ user.username }}</h3>
+                            <h3 style="margin-top: -2%;">Welcome, Dr. {{ user.username }}</h3>
                             <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
                             <button @click="appointmentsView = 'give'">Give Appointments</button>
                         </div>
@@ -546,7 +546,7 @@
 
                     <div v-else>
                         <div class="appointments-header">
-                            <h3 >Welcome, {{ user.username }}</h3>
+                            <h3>Welcome, {{ user.username }}</h3>
                             <button @click="appointmentsView = 'upcoming'">View Upcoming Appointments</button>
                             <button @click="appointmentsView = 'request'">Request Appointments</button>
                         </div>
@@ -782,10 +782,10 @@
 
 
             <!-- Medication Section -->
-            <div v-if="currentView === 'medication'" class="medications-page-container">
+            <div v-if="currentView === 'medication'">
 
                 <!-- Show Current Medications if Logged In -->
-                <div v-if="isLoggedIn">
+                <div v-if="isLoggedIn" class="medications-page-container">
                     <h2 style="text-align: center; margin-top: -0.5%;">Here are your meds, {{ user.username }}</h2>
                     <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> in <strong>{{
                             getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
@@ -864,9 +864,9 @@
 
 
 
-            <div v-if="currentView === 'messages'" class="messages-container">
+            <div v-if="currentView === 'messages'">
                 <!-- Show messages if Logged In -->
-                <div v-if="isLoggedIn">
+                <div v-if="isLoggedIn" class="messages-container">
                     <h2>Messages</h2>
                     <p>Your messages and communication with healthcare providers will appear here.</p>
                 </div>
