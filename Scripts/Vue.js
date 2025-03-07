@@ -156,12 +156,12 @@ const app = Vue.createApp({
       if (!this.user || !this.user.medications || this.user.medications.length === 0) {
         return { name: "None", timeToTake: "N/A", dosage: "N/A" };
       }
-  
+
       // Find the closest upcoming medication
       const now = this.getCurrentTime();
       let closestMed = null;
       let minDiff = Infinity;
-  
+
       this.user.medications.forEach(med => {
         const nextDose = this.calculateNextDoseTime(med);
         if (nextDose) {
@@ -172,7 +172,7 @@ const app = Vue.createApp({
           }
         }
       });
-  
+
       return closestMed || { name: "None", timeToTake: "N/A", dosage: "N/A" };
     }
   },
@@ -308,6 +308,18 @@ const app = Vue.createApp({
     if (this.currentView === "messages") {
       this.fetchContacts();
     }
+
+
+
+
+    this.fetchContacts(); // Fetch contacts on load
+
+    // Start polling for new messages
+    setInterval(() => {
+      if (this.selectedContact) {
+        this.fetchMessages();
+      }
+    }, 2000);
   },
 
   methods: {
@@ -1440,7 +1452,7 @@ const app = Vue.createApp({
       }
       return "Missed";
     },
-    
+
 
 
     showMarkAsTaken(medication) {
@@ -1460,11 +1472,11 @@ const app = Vue.createApp({
         console.log(`Already marked as taken: ${medication.name}`);
         return;
       }
-    
+
       medication.isMarking = true;
       const now = this.getCurrentTime();
       const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
-    
+
       try {
         const response = await fetch("http://localhost:3000/mark-medication-taken", {
           method: "POST",
@@ -1475,15 +1487,15 @@ const app = Vue.createApp({
             doseTime: nextDoseTime,
           }),
         });
-    
+
         const data = await response.json();
-    
+
         if (response.ok) {
           console.log(`${medication.name} marked as taken at ${data.takenAt}`);
-    
+
           if (!medication.logs) medication.logs = [];
           medication.logs.push({ time: nextDoseTime, status: "Taken" });
-    
+
           this.updateMedicationUI();
           this.$forceUpdate();
         } else {
@@ -1500,17 +1512,17 @@ const app = Vue.createApp({
       const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
       return medication.logs && medication.logs.some(log => log.time === nextDoseTime && log.status === "Taken");
     },
-    
+
     shouldShowMarkAsTaken(medication) {
       if (!medication) return false;
       if (this.hasTakenDose(medication)) return false; // If taken, don't show button
-    
+
       const diffMinutes = this.getTimeDiff(medication);
       if (diffMinutes === null) return false;
-    
+
       return diffMinutes >= -30 && diffMinutes <= 60; // Show only in valid time range
     },
-    
+
 
     checkMissedMedications() {
       this.user.medications.forEach(medication => {
@@ -1572,7 +1584,7 @@ const app = Vue.createApp({
         }
       });
     },
-    
+
 
 
 
@@ -1653,7 +1665,7 @@ const app = Vue.createApp({
       this.user.medications = this.user.medications.map((med) => {
         const countdown = this.getNextDoseCountdown(med);
         const alreadyTaken = this.hasTakenDose(med);
-    
+
         return {
           ...med,
           showMarkAsTaken: !alreadyTaken && this.shouldShowMarkAsTaken(med),
@@ -1663,7 +1675,7 @@ const app = Vue.createApp({
       });
       this.$forceUpdate();
     },
-    
+
     // New method to toggle fast speed
     toggleFastTime() {
       // Toggle between normal (1) and fast (10x) speeds
@@ -1681,11 +1693,11 @@ const app = Vue.createApp({
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-    
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    
+
         const data = await response.json();
         console.log("Contacts received:", data);
         this.contacts = data; // Store contacts
@@ -1693,10 +1705,70 @@ const app = Vue.createApp({
         console.error("Error fetching contacts:", error);
       }
     },
-    
+
     hasUnreadMessages(email) {
       return this.chatMessages.some(msg => msg.sender === email && !msg.read);
-    }
+    },
+
+    async fetchMessages() {
+      if (!this.selectedContact) return;
+
+      try {
+        const response = await fetch(`http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Messages received:", data);
+        this.chatMessages = data; // Store chat messages
+        this.$forceUpdate(); // Force re-render
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    },
+
+
+    async sendMessage() {
+      if (!this.newMessage.trim() || !this.selectedContact) return;
+
+      try {
+        const response = await fetch("http://localhost:3000/send-message", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sender: this.user.email,
+            recipient: this.selectedContact.email,
+            message: this.newMessage,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Message sent:", data.newMessage);
+
+        // Add the new message to chatMessages instantly
+        this.chatMessages.push(data.newMessage);
+        this.newMessage = ""; // Clear input field
+        this.$forceUpdate(); // Force UI to update
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+    },
+    
+    openChat(contact) {
+      this.selectedContact = contact;  // Set the selected contact
+      this.chatMessages = [];  // Clear previous messages
+      this.fetchMessages();  // Fetch chat history with the selected contact
+    },
+
 
   },
 
@@ -1731,7 +1803,7 @@ const app = Vue.createApp({
       this.updateMedicationUI();
       this.autoMarkMissedMedications();
     }, 1000);
-    
+
   },
 
   beforeUnmount() {
