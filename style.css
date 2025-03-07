@@ -2282,6 +2282,7 @@ a:hover {
 
 
 .appointments-header {
+    margin-top: -1%;
     text-align: center;
     padding: 1px;
 }
