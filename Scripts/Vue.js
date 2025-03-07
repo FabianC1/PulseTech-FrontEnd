@@ -489,22 +489,38 @@ const app = Vue.createApp({
           console.error("Error fetching medical records:", data.message);
           return;
         }
-  
     
-        // Keep attachments working
+        console.log("Fetched medical records:", data);
+    
+        // 🔹 Ensure `medicalRecords` is updated for messages/attachments
         this.medicalRecords = data;
         this.selectedMedicalRecord = data;
     
-        // Ensure medications show properly
-        this.user.medications = [...(data.medications || [])];
+        // 🔹 Ensure `user` is updated for displaying data
+        this.user = { ...this.user, ...data };
     
-        // Update the UI immediately
-        this.$forceUpdate(); 
+        // 🔹 Ensure `medications`, `medicalHistory`, etc., update properly
+        this.user.medications = data.medications || [];
+        this.user.medicalHistory = data.medicalHistory || "No records found";
+        this.user.vaccinations = data.vaccinations || "No records found";
+        this.user.healthLogs = data.healthLogs || "No symptoms recorded";
+        this.user.labResults = data.labResults || "No reports available";
+        this.user.doctorVisits = data.doctorVisits || "No records found";
+        this.user.heartRate = data.heartRate || "Not available";
+        this.user.stepCount = data.stepCount || "Not available";
+        this.user.sleepTracking = data.sleepTracking || "Not available";
+        this.user.bloodOxygen = data.bloodOxygen || "Not available";
+        this.user.organDonorStatus = data.organDonorStatus || "Not specified";
+        this.user.medicalDirectives = data.medicalDirectives || "Not specified";
+    
+        // 🔹 Force Vue to re-render immediately
+        this.$forceUpdate();
     
       } catch (error) {
         console.error("Error fetching medical records:", error);
       }
     },
+    
     
 
     // Fetch and show medical history in popup
