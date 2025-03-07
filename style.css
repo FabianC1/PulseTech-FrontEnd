@@ -2961,16 +2961,15 @@ a:hover {
 }
 
 .chat-input button {
-    padding: 10px;
-    background: rgba(44, 44, 44, 0.856);
-    color: white;
-    border: none;
+    width: 60px;  /* Adjust width */
+    height: 60px; /* Adjust height */
+    padding: 5px; /* Reduce padding if needed */
+    background-color: transparent;
 }
 
 .chat-input button:hover {
-    padding: 10px;
-    background: rgb(82, 0, 175);
-    color: white;
+    padding: 5px;
+    background: rgba(44, 44, 44, 0.856);
     border: none;
 }
 

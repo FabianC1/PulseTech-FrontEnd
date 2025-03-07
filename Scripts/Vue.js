@@ -124,6 +124,10 @@ const app = Vue.createApp({
       selectedContact: null, // Stores the currently opened chat
       chatMessages: [], // Stores messages for the selected chat
       newMessage: "",  // Input field for new messages
+      newMessage: "",
+      showAttachmentMenu: false,
+      selectedMedicalRecord: null,
+      medicalRecords: [] // This will store the user's medical records
     };
   },
 
@@ -1712,63 +1716,107 @@ const app = Vue.createApp({
 
     async fetchMessages() {
       if (!this.selectedContact) return;
-
+    
       try {
-        const response = await fetch(`http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-
+        const response = await fetch(
+          `http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+    
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
+    
         const data = await response.json();
-        console.log("Messages received:", data);
-        this.chatMessages = data; // Store chat messages
-        this.$forceUpdate(); // Force re-render
+        console.log("Fetched Messages:", data);
+    
+        // Ensure UI updates properly
+        this.chatMessages = [...data]; // Replace the entire array
+        this.$forceUpdate();
+    
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     },
+    
 
 
     async sendMessage() {
-      if (!this.newMessage.trim() || !this.selectedContact) return;
-
       try {
+        if (!this.newMessage.trim() && !this.selectedAttachment) {
+          return; // Don't send empty messages
+        }
+    
+        const messageData = {
+          sender: this.user.email,
+          receiver: this.selectedContact.email,
+          message: this.newMessage || null,
+          attachment: this.selectedAttachment || null,
+          timestamp: new Date().toISOString(),
+        };
+    
+        // Instantly add message to UI to prevent flickering
+        this.chatMessages.push({ ...messageData });
+        this.$forceUpdate(); // Force UI update
+    
+        // Send the message to the backend
         const response = await fetch("http://localhost:3000/send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sender: this.user.email,
-            recipient: this.selectedContact.email,
-            message: this.newMessage,
-          }),
+          body: JSON.stringify(messageData),
         });
-
+    
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
-        const data = await response.json();
-        console.log("Message sent:", data.newMessage);
-
-        // Add the new message to chatMessages instantly
-        this.chatMessages.push(data.newMessage);
-        this.newMessage = ""; // Clear input field
-        this.$forceUpdate(); // Force UI to update
+    
+        // Wait briefly, then refetch messages
+        setTimeout(() => {
+          this.fetchMessages();
+        }, 500); // Small delay to ensure database updates
+    
+        // Clear input & attachment
+        this.newMessage = "";
+        this.selectedAttachment = null;
+    
       } catch (error) {
         console.error("Error sending message:", error);
       }
     },
     
+    
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const chatContainer = document.querySelector(".chat-messages");
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      });
+    },
+    
+    
+
     openChat(contact) {
       this.selectedContact = contact;  // Set the selected contact
       this.chatMessages = [];  // Clear previous messages
       this.fetchMessages();  // Fetch chat history with the selected contact
     },
 
+    // Toggle the attachment menu
+    toggleAttachmentMenu() {
+      this.showAttachmentMenu = !this.showAttachmentMenu;
+      if (this.showAttachmentMenu) {
+        this.fetchMedicalRecords();
+      }
+    },
+
+    viewMedicalRecord(record) {
+      alert(`Viewing Medical Record: ${record.type}\nDate: ${record.date}`);
+      // You can open a modal or new page here to show details
+    },
 
   },
 

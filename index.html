@@ -867,22 +867,21 @@
             <div v-if="currentView === 'messages'">
                 <!-- Show messages if Logged In -->
                 <div v-if="isLoggedIn" class="messages-container">
-            
+
                     <!-- Two-panel Layout -->
                     <div class="messages-layout">
                         <!-- Left Panel: Contact List -->
                         <div class="contacts-panel">
                             <h3>Contacts</h3>
                             <ul>
-                                <li v-for="contact in contacts" :key="contact.email" 
-                                    @click="openChat(contact)"
+                                <li v-for="contact in contacts" :key="contact.email" @click="openChat(contact)"
                                     :class="{ unread: hasUnreadMessages(contact.email) }">
                                     <img :src="contact.profilePicture || 'default-avatar.png'" class="contact-avatar" />
                                     <span>{{ contact.fullName }}</span>
                                 </li>
                             </ul>
-                        </div>                        
-            
+                        </div>
+
                         <!-- Right Panel: Chat Interface -->
                         <div class="chat-panel">
                             <div v-if="selectedContact">
@@ -890,14 +889,47 @@
                                 <div class="chat-messages">
                                     <div v-for="msg in chatMessages" :key="msg._id"
                                         :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
-                                        <span>{{ msg.message }}</span>
+
+                                        <!-- Display text message -->
+                                        <span v-if="msg.message">{{ msg.message }}</span>
+
+                                        <!-- Display attached medical record -->
+                                        <div v-if="msg.attachment" class="medical-record">
+                                            📄 <strong>Attached Record:</strong> {{ msg.attachment.type }} - {{
+                                            msg.attachment.date }}
+                                            <button @click="viewMedicalRecord(msg.attachment)">View</button>
+                                        </div>
                                     </div>
+
                                 </div>
                                 <!-- Chat Input -->
                                 <div class="chat-input">
-                                    <input type="text" v-model="newMessage" placeholder="Chat message..." @keyup.enter="sendMessage" />
-                                    <button @click="sendMessage">Send</button>
+                                    <!-- Paperclip Icon Button for Attaching Medical Records -->
+                                    <button class="attach-btn" @click="toggleAttachmentMenu">
+                                        <img src="/image/attach.png" alt="Attach" class="icon" />
+                                    </button>
+
+                                    <!-- Dropdown for Selecting Medical Records -->
+                                    <div v-if="showAttachmentMenu" class="attachment-dropdown">
+                                        <label>Select Medical Record:</label>
+                                        <select v-model="selectedMedicalRecord">
+                                            <option v-for="record in medicalRecords" :key="record._id" :value="record">
+                                                {{ record.type }} - {{ record.date }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Message Input Field -->
+                                    <input type="text" v-model="newMessage" placeholder="Chat message..."
+                                        @keyup.enter="sendMessage" />
+
+                                    <!-- Send Button with Custom Paper Plane Icon -->
+                                    <button @click="sendMessage" class="send-btn">
+                                        <img src="/image/send.png" alt="Send" class="icon" />
+                                    </button>
                                 </div>
+
+
                             </div>
                             <div v-else>
                                 <p>Select a contact to start a conversation.</p>
@@ -905,7 +937,7 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- Show Login/Signup Prompt if Not Logged In -->
                 <div v-else class="auth-prompt">
                     <h2>You need to log in or sign up</h2>
@@ -916,7 +948,7 @@
                     </div>
                 </div>
             </div>
-            
+
 
 
 
