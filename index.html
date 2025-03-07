@@ -895,7 +895,7 @@
 
                                         <!-- Display Attached Medical Record Message -->
                                         <div v-if="msg.attachment" class="medical-record-message">
-                                            <p><strong>Attached Medical Record:</strong> View</p>
+                                            <p><strong>Attached Medical Record:</strong></p>
                                             <button @click="viewAttachedRecord(msg.attachment)"
                                                 class="view-record-btn">View</button>
                                         </div>
@@ -904,12 +904,13 @@
                                 <!-- Chat Input -->
                                 <div class="chat-input">
                                     <!-- Attach Medical Record Button -->
-                                    <button class="attach-btn" @click="attachMedicalRecord">
+                                    <button class="attach-btn" @click="toggleAttachmentMenu">
                                         <img src="/image/attach.png" alt="Attach" class="icon" />
                                     </button>
 
-                                    <!-- Attachment Display -->
-                                    <div v-if="selectedMedicalRecord" class="attachment-container">
+                                    <!-- Show "View" & "Remove" buttons only when toggled -->
+                                    <div v-if="showAttachmentOptions && selectedMedicalRecord"
+                                        class="attachment-container">
                                         <button class="view-attachment"
                                             @click="viewAttachedRecord(selectedMedicalRecord)">View</button>
                                         <button class="remove-attachment" @click="removeAttachment">Remove</button>

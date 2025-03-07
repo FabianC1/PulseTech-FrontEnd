@@ -125,7 +125,7 @@ const app = Vue.createApp({
       chatMessages: [], // Stores messages for the selected chat
       newMessage: "",  // Input field for new messages
       newMessage: "",
-      showAttachmentMenu: false,
+      showAttachmentOptions: false,
       selectedMedicalRecord: null,
       medicalRecords: [],// This will store the user's medical records
       isUserScrolling: false,
@@ -1828,9 +1828,8 @@ const app = Vue.createApp({
       console.log(" Attached Medical Record:", this.selectedMedicalRecord);
     },
 
-
     removeAttachment() {
-      this.selectedMedicalRecord = null; // Clear attachment
+      this.selectedMedicalRecord = null; // Clear the selected medical record
       console.log("Removed Medical Record attachment.");
     },
 
@@ -1847,30 +1846,30 @@ const app = Vue.createApp({
           attachment: this.selectedMedicalRecord ? { ...this.selectedMedicalRecord } : null,
           timestamp: new Date().toISOString(),
         };
-    
+
         console.log("Sending message:", messageData);
-    
+
         const response = await fetch("http://localhost:3000/send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(messageData),
         });
-    
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    
+
         console.log("Message sent successfully!");
-    
+
         this.newMessage = ""; // Clear input
         this.selectedMedicalRecord = null; // Reset attachment
-    
+
         await this.fetchMessages(); // Refresh messages in UI
       } catch (error) {
         console.error("Error sending message:", error);
       }
     },
-    
+
 
 
     openChat(contact) {
@@ -1898,20 +1897,29 @@ const app = Vue.createApp({
 
     // Toggle the attachment menu
     toggleAttachmentMenu() {
-      this.showAttachmentMenu = !this.showAttachmentMenu;
-      if (this.showAttachmentMenu) {
-        this.fetchMedicalRecords();
+      // If no record is attached, fetch & attach one first
+      if (!this.selectedMedicalRecord) {
+        this.attachMedicalRecord();
       }
+
+      // Toggle the attachment menu visibility
+      this.showAttachmentOptions = !this.showAttachmentOptions;
     },
+
 
     // New method: viewAttachedRecord
     viewAttachedRecord(record) {
-      console.log("Viewing attached medical record:", record);
-      // Use the record from the message (the sender’s record) for the popup
-      this.selectedMessageMedicalRecord = record;
-      this.showMessageMedicalHistoryPopup = true;
+      console.log("Toggling attached medical record:", record);
+
+      // If the same record is clicked again, toggle visibility
+      if (this.selectedMessageMedicalRecord === record && this.showMessageMedicalHistoryPopup) {
+        this.showMessageMedicalHistoryPopup = false; // Close popup
+      } else {
+        this.selectedMessageMedicalRecord = record; // Set selected record
+        this.showMessageMedicalHistoryPopup = true; // Open popup
+      }
     },
-    
+
     closeMessageMedicalHistoryPopup() {
       this.showMessageMedicalHistoryPopup = false;
     },
