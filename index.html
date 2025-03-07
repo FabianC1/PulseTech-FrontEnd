@@ -876,7 +876,8 @@
                             <ul>
                                 <li v-for="contact in contacts" :key="contact.email" @click="openChat(contact)"
                                     :class="{ unread: hasUnreadMessages(contact.email) }">
-                                    <img :src="contact.profilePicture || '/image/ProfileIcon.png'" class="contact-avatar" />
+                                    <img :src="contact.profilePicture || '/image/ProfileIcon.png'"
+                                        class="contact-avatar" />
                                     <span>{{ contact.fullName }}</span>
                                 </li>
                             </ul>
@@ -886,22 +887,21 @@
                         <div class="chat-panel">
                             <div v-if="selectedContact">
                                 <h3>Chat with {{ selectedContact.fullName }}</h3>
-                                <div class="chat-messages">
+                                <div class="chat-messages" ref="chatMessages">
                                     <div v-for="msg in chatMessages" :key="msg._id"
                                         :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
-
+                                        
                                         <!-- Display text message -->
                                         <span v-if="msg.message">{{ msg.message }}</span>
-
+                                
                                         <!-- Display attached medical record -->
                                         <div v-if="msg.attachment" class="medical-record">
-                                            <strong>Attached Record:</strong> {{ msg.attachment.type }} - {{
-                                            msg.attachment.date }}
+                                            <strong>Attached Record:</strong> 
+                                            {{ msg.attachment.type }} - {{ msg.attachment.date }}
                                             <button @click="viewMedicalRecord(msg.attachment)">View</button>
-                                        </div>
+                                        </div>                                      
                                     </div>
-
-                                </div>
+                                </div>                                
                                 <!-- Chat Input -->
                                 <div class="chat-input">
                                     <!-- Paperclip Icon Button for Attaching Medical Records -->

@@ -1714,9 +1714,21 @@ const app = Vue.createApp({
       return this.chatMessages.some(msg => msg.sender === email && !msg.read);
     },
 
+    scrollToBottom() {
+      // Wait for the next DOM update cycle to ensure the new messages are rendered
+      this.$nextTick(() => {
+        const chatContainer = this.$refs.chatMessages; // Use Vue's ref to directly access the DOM element
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to the bottom
+        }
+      });
+    },
+
+
+    // Watch for changes in chatMessages to ensure the chat always scrolls to the bottom when new messages arrive
     async fetchMessages() {
       if (!this.selectedContact) return;
-    
+
       try {
         const response = await fetch(
           `http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`,
@@ -1725,31 +1737,35 @@ const app = Vue.createApp({
             headers: { "Content-Type": "application/json" },
           }
         );
-    
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    
-        const data = await response.json();
-        console.log("Fetched Messages:", data);
-    
-        // Ensure UI updates properly
-        this.chatMessages = [...data]; // Replace the entire array
-        this.$forceUpdate();
-    
+
+        this.chatMessages = await response.json(); // Store chat messages
+        this.scrollToBottom(); // Scroll to bottom after updating messages
+
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     },
-    
+
+    // This method will be used to trigger the scroll to bottom when messages change
+    watchMessages() {
+      this.$watch('chatMessages', () => {
+        this.scrollToBottom(); // Scroll to bottom whenever messages are updated
+      });
+    },
 
 
+
+    // Whenever a new message is sent or fetched, this method will be called to scroll
     async sendMessage() {
       try {
         if (!this.newMessage.trim() && !this.selectedAttachment) {
           return; // Don't send empty messages
         }
-    
+
         const messageData = {
           sender: this.user.email,
           receiver: this.selectedContact.email,
@@ -1757,47 +1773,30 @@ const app = Vue.createApp({
           attachment: this.selectedAttachment || null,
           timestamp: new Date().toISOString(),
         };
-    
-        // Instantly add message to UI to prevent flickering
-        this.chatMessages.push({ ...messageData });
-        this.$forceUpdate(); // Force UI update
-    
-        // Send the message to the backend
+
         const response = await fetch("http://localhost:3000/send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(messageData),
         });
-    
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    
-        // Wait briefly, then refetch messages
-        setTimeout(() => {
-          this.fetchMessages();
-        }, 500); // Small delay to ensure database updates
-    
-        // Clear input & attachment
-        this.newMessage = "";
-        this.selectedAttachment = null;
-    
+
+        this.newMessage = ""; // Clear input
+        this.selectedAttachment = null; // Clear attachment
+
+        // Re-fetch messages immediately after sending
+        await this.fetchMessages();
+        this.scrollToBottom(); // Ensure we scroll to the bottom
+
       } catch (error) {
         console.error("Error sending message:", error);
       }
     },
-    
-    
-    scrollToBottom() {
-      this.$nextTick(() => {
-        const chatContainer = document.querySelector(".chat-messages");
-        if (chatContainer) {
-          chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-      });
-    },
-    
-    
+
+
 
     openChat(contact) {
       this.selectedContact = contact;  // Set the selected contact
@@ -1851,6 +1850,14 @@ const app = Vue.createApp({
       this.updateMedicationUI();
       this.autoMarkMissedMedications();
     }, 1000);
+
+
+    this.watchMessages();
+    setInterval(() => {
+      if (this.selectedContact) {
+        this.fetchMessages(); // Fetch messages every 2 seconds
+      }
+    }, 2000);
 
   },
 
