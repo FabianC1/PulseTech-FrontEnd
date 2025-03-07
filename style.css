@@ -2962,7 +2962,14 @@ a:hover {
 
 .chat-input button {
     padding: 10px;
-    background: blue;
+    background: rgba(44, 44, 44, 0.856);
+    color: white;
+    border: none;
+}
+
+.chat-input button:hover {
+    padding: 10px;
+    background: rgb(82, 0, 175);
     color: white;
     border: none;
 }
