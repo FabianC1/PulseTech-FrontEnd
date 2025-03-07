@@ -890,18 +890,22 @@
                                 <h3>Chat with {{ selectedContact.fullName }}</h3>
                                 <div class="chat-messages" ref="chatMessages">
                                     <div v-for="msg in chatMessages" :key="msg._id"
-                                        :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
-
-                                        <!-- Display text message -->
-                                        <span v-if="msg.message">{{ msg.message }}</span>
-
-                                        <!-- Display attached medical record -->
-                                        <div v-if="msg.attachment" class="medical-record">
-                                            <strong>Attached Record:</strong>
-                                            {{ msg.attachment.type }} - {{ msg.attachment.date }}
-                                            <button @click="viewMedicalRecord(msg.attachment)">View</button>
-                                        </div>
+                                    :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
+                                  
+                                    <!-- 📝 Display text message -->
+                                    <span v-if="msg.message">{{ msg.message }}</span>
+                                  
+                                    <!-- 📎 Display attached medical record -->
+                                    <div v-if="msg.attachment" class="medical-record">
+                                      <strong>📄 Attached Record:</strong>
+                                      {{ msg.attachment.type || 'No Type Found' }} - 
+                                      {{ msg.attachment.date || 'No Date Found' }}
+                                  
+                                      <button @click="viewMedicalRecord(msg.attachment)">View</button>
                                     </div>
+                                  
+                                  </div>
+                                                                   
                                 </div>
                                 <!-- Chat Input -->
                                 <div class="chat-input">
