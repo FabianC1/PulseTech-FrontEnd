@@ -895,7 +895,7 @@
 
                                         <!-- Display attached medical record -->
                                         <div v-if="msg.attachment" class="medical-record">
-                                            📄 <strong>Attached Record:</strong> {{ msg.attachment.type }} - {{
+                                            <strong>Attached Record:</strong> {{ msg.attachment.type }} - {{
                                             msg.attachment.date }}
                                             <button @click="viewMedicalRecord(msg.attachment)">View</button>
                                         </div>
