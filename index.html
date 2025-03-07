@@ -782,10 +782,10 @@
 
 
             <!-- Medication Section -->
-            <div v-if="currentView === 'medication'">
+            <div v-if="currentView === 'medication'" class="medications-page-container">
 
                 <!-- Show Current Medications if Logged In -->
-                <div v-if="isLoggedIn" class="medications-page-container">
+                <div v-if="isLoggedIn">
                     <h2 style="text-align: center; margin-top: -0.5%;">Here are your meds, {{ user.username }}</h2>
                     <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> in <strong>{{
                             getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
