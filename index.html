@@ -875,7 +875,8 @@
                             <h3>Contacts</h3>
                             <ul>
                                 <li v-for="contact in contacts" :key="contact.email" @click="openChat(contact)"
-                                    :class="{ unread: hasUnreadMessages(contact.email) }">
+                                    :class="{ unread: hasUnreadMessages(contact.email), selected: selectedContact && selectedContact.email === contact.email }">
+
                                     <img :src="contact.profilePicture || '/image/ProfileIcon.png'"
                                         class="contact-avatar" />
                                     <span>{{ contact.fullName }}</span>
@@ -890,18 +891,18 @@
                                 <div class="chat-messages" ref="chatMessages">
                                     <div v-for="msg in chatMessages" :key="msg._id"
                                         :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
-                                        
+
                                         <!-- Display text message -->
                                         <span v-if="msg.message">{{ msg.message }}</span>
-                                
+
                                         <!-- Display attached medical record -->
                                         <div v-if="msg.attachment" class="medical-record">
-                                            <strong>Attached Record:</strong> 
+                                            <strong>Attached Record:</strong>
                                             {{ msg.attachment.type }} - {{ msg.attachment.date }}
                                             <button @click="viewMedicalRecord(msg.attachment)">View</button>
-                                        </div>                                      
+                                        </div>
                                     </div>
-                                </div>                                
+                                </div>
                                 <!-- Chat Input -->
                                 <div class="chat-input">
                                     <!-- Paperclip Icon Button for Attaching Medical Records -->

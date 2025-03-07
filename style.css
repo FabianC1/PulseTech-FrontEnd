@@ -2893,10 +2893,13 @@ a:hover {
     border-radius: 8px;
 }
 
-.contacts-panel li.unread {
+.contacts-panel li.selected {
+    background: rgba(255, 255, 255, 0.2); /* Light transparent effect */
+    border-left: 5px solid #00c3ff; /* White border indicator */
     font-weight: bold;
-    background: #d4d4d49a;
+    transition: background 0.2s ease-in-out;
 }
+
 
 .contact-avatar {
     width: 40px;
