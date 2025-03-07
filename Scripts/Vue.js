@@ -120,6 +120,10 @@ const app = Vue.createApp({
       isAddingMedication: false, // Control whether the medication form is being added
       timeOffset: 0,
       timeMultiplier: 1,
+      contacts: [],  // Stores all doctors if patient, all patients if doctor
+      selectedContact: null, // Stores the currently opened chat
+      chatMessages: [], // Stores messages for the selected chat
+      newMessage: "",  // Input field for new messages
     };
   },
 
@@ -298,6 +302,11 @@ const app = Vue.createApp({
       // If no saved theme, use system preference
       const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
       document.body.setAttribute("data-theme", prefersDarkMode ? "dark" : "light");
+    }
+
+
+    if (this.currentView === "messages") {
+      this.fetchContacts();
     }
   },
 
@@ -1664,6 +1673,31 @@ const app = Vue.createApp({
     resetTimeOffset() {
       this.timeOffset = 0;
     },
+
+
+    async fetchContacts() {
+      try {
+        const response = await fetch(`http://localhost:3000/get-contacts?email=${encodeURIComponent(this.user.email)}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        const data = await response.json();
+        console.log("Contacts received:", data);
+        this.contacts = data; // Store contacts
+      } catch (error) {
+        console.error("Error fetching contacts:", error);
+      }
+    },
+    
+    hasUnreadMessages(email) {
+      return this.chatMessages.some(msg => msg.sender === email && !msg.read);
+    }
+
   },
 
 

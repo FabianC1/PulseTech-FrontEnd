@@ -2876,7 +2876,7 @@ a:hover {
 
 .contacts-panel {
     width: 25%;
-    border-right: 1px solid #ccc;
+    border-right: 3px solid #ccc;
     overflow-y: auto;
 }
 
