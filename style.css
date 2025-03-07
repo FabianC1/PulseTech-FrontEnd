@@ -2897,7 +2897,7 @@ a:hover {
     background: rgba(255, 255, 255, 0.2); /* Light transparent effect */
     border-left: 5px solid #00c3ff; /* White border indicator */
     font-weight: bold;
-    transition: background 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out;
 }
 
 
@@ -3031,6 +3031,42 @@ a:hover {
     background-color: #45a049;
 }
 
-.remove-attachment{
-    font-size: 0.9em;
+/* Container for attachment buttons */
+.attachment-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between buttons */
+    margin-top: 5px;
+}
+
+/* Base styling for both buttons */
+.view-attachment,
+.remove-attachment {
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* View button styling */
+.view-attachment {
+    background-color: #4A90E2; /* Blue */
+    color: white;
+}
+
+.view-attachment:hover {
+    background-color: #357ABD; /* Darker blue */
+}
+
+/* Remove button styling */
+.remove-attachment {
+    background-color: #D9534F; /* Red */
+    color: white;
+}
+
+.remove-attachment:hover {
+    background-color: #B52B27; /* Darker red */
 }
