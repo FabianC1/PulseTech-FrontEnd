@@ -127,7 +127,9 @@ const app = Vue.createApp({
       newMessage: "",
       showAttachmentMenu: false,
       selectedMedicalRecord: null,
-      medicalRecords: [] // This will store the user's medical records
+      medicalRecords: [],// This will store the user's medical records
+      isUserScrolling: false,
+      chatOpened: false,
     };
   },
 
@@ -196,7 +198,7 @@ const app = Vue.createApp({
           this.contacts = [];  // Reset previous contacts
           this.chatMessages = [];  // Reset previous messages
           this.fetchContacts();  // Fetch new contacts for the new user
-  
+
           if (this.selectedContact) {
             this.fetchMessages();  // Fetch messages for the currently selected contact
           }
@@ -661,24 +663,24 @@ const app = Vue.createApp({
             // Remove password from user object before saving
             const userData = { ...data.user };
             delete userData.password;
-    
+
             // Store user data in localStorage
             localStorage.setItem("user", JSON.stringify(userData));
             this.isLoggedIn = true;
             this.user = userData;
             this.user.password = ""; // Ensure password field is empty
             this.isDoctor = userData.role === "doctor";
-    
+
             // Reset previous contacts and messages, then fetch new ones
             this.contacts = [];
             this.chatMessages = [];
-            
+
             // Fetch the contacts and messages again for the new user
             this.fetchContacts();
             if (this.selectedContact) {
               this.fetchMessages(); // Ensure messages for the selected contact are fetched
             }
-    
+
             this.navigateTo("profile"); // Redirect to profile after successful login
           } else {
             alert("Invalid email or password.");
@@ -686,7 +688,7 @@ const app = Vue.createApp({
         })
         .catch((error) => console.error("Login error:", error));
     },
-    
+
 
     // Edit user details function
     editUserDetail(field) {
@@ -1573,19 +1575,19 @@ const app = Vue.createApp({
         this.user.medications = [];  // Initialize medications as an empty array if undefined
         return; // Exit the function if medications is undefined or not an array
       }
-    
+
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
-    
+
         if (!nextDose) return; // No valid dose time, skip.
-    
+
         const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes.
-    
+
         // If 30 minutes have passed after dose time, and it was NOT taken
         if (diffMinutes >= 30 && !medication.takenAt) {
           console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${nextDose})`);
-    
+
           try {
             const response = await fetch("http://localhost:3000/mark-medication-missed", {
               method: "POST",
@@ -1595,19 +1597,19 @@ const app = Vue.createApp({
                 medicationName: medication.name,
               }),
             });
-    
+
             const data = await response.json();
             if (response.ok) {
               console.log(` ${medication.name} marked as Missed in database`);
-    
+
               // Immediately update the UI
               if (!medication.logs) medication.logs = [];
               medication.logs.push({ time: now.toISOString(), status: "Missed" });
-    
+
               // Clear next dose time & reset cycle
               delete medication.fixedNextDose;
               medication.takenAt = null; // Reset for the next cycle
-    
+
               //  Force Vue to re-render
               this.$forceUpdate();
             } else {
@@ -1701,12 +1703,12 @@ const app = Vue.createApp({
         this.user.medications = [];  // Initialize medications as an empty array if undefined
         return; // Exit the function if medications is undefined or not an array
       }
-    
+
       const now = this.getCurrentTime();
       this.user.medications = this.user.medications.map((med) => {
         const countdown = this.getNextDoseCountdown(med);
         const alreadyTaken = this.hasTakenDose(med);
-    
+
         return {
           ...med,
           showMarkAsTaken: !alreadyTaken && this.shouldShowMarkAsTaken(med),
@@ -1716,7 +1718,7 @@ const app = Vue.createApp({
       });
       this.$forceUpdate(); // Force a re-render
     },
-    
+
     // New method to toggle fast speed
     toggleFastTime() {
       // Toggle between normal (1) and fast (10x) speeds
@@ -1751,18 +1753,30 @@ const app = Vue.createApp({
       return this.chatMessages.some(msg => msg.sender === email && !msg.read);
     },
 
+    handleUserScroll() {
+      const chatContainer = this.$refs.chatMessages;
+
+      if (!chatContainer) return;
+
+      // Check if the user has manually scrolled up
+      const isAtBottom = chatContainer.scrollHeight - chatContainer.scrollTop === chatContainer.clientHeight;
+      this.isUserScrolling = !isAtBottom; // Set flag to true if user scrolls up
+    },
+
     scrollToBottom() {
-      // Wait for the next DOM update cycle to ensure the new messages are rendered
-      this.$nextTick(() => {
-        const chatContainer = this.$refs.chatMessages; // Use Vue's ref to directly access the DOM element
-        if (chatContainer) {
+      const chatContainer = this.$refs.chatMessages;
+      if (!chatContainer) return;
+
+      // Scroll only if the chat is opened or if a new message is received while at the bottom
+      if (this.chatOpened || !this.isUserScrolling) {
+        this.$nextTick(() => {
           chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to the bottom
-        }
-      });
+        });
+      }
     },
 
 
-    // Watch for changes in chatMessages to ensure the chat always scrolls to the bottom when new messages arrive
+    // Triggered when a new message is received
     async fetchMessages() {
       if (!this.selectedContact) return;
 
@@ -1780,23 +1794,21 @@ const app = Vue.createApp({
         }
 
         this.chatMessages = await response.json(); // Store chat messages
-        this.scrollToBottom(); // Scroll to bottom after updating messages
+        this.scrollToBottom(); // Scroll to the bottom if necessary
 
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     },
 
-    // This method will be used to trigger the scroll to bottom when messages change
+    // Method to start listening to messages and scroll when necessary
     watchMessages() {
       this.$watch('chatMessages', () => {
         this.scrollToBottom(); // Scroll to bottom whenever messages are updated
       });
     },
 
-
-
-    // Whenever a new message is sent or fetched, this method will be called to scroll
+    // When a new message is sent, fetch messages and scroll if needed
     async sendMessage() {
       try {
         if (!this.newMessage.trim() && !this.selectedAttachment) {
@@ -1824,9 +1836,8 @@ const app = Vue.createApp({
         this.newMessage = ""; // Clear input
         this.selectedAttachment = null; // Clear attachment
 
-        // Re-fetch messages immediately after sending
+        // Re-fetch messages and scroll if necessary
         await this.fetchMessages();
-        this.scrollToBottom(); // Ensure we scroll to the bottom
 
       } catch (error) {
         console.error("Error sending message:", error);
@@ -1834,12 +1845,21 @@ const app = Vue.createApp({
     },
 
 
-
+    // Called when the user selects a contact to start chatting
     openChat(contact) {
       this.selectedContact = contact;  // Set the selected contact
       this.chatMessages = [];  // Clear previous messages
+      this.chatOpened = true;  // Set the chat as opened
       this.fetchMessages();  // Fetch chat history with the selected contact
     },
+
+    // When the user switches to another view, reset the chatOpened flag
+    closeChat() {
+      this.chatOpened = false;
+      this.selectedContact = null;
+      this.chatMessages = [];
+    },
+
 
     // Toggle the attachment menu
     toggleAttachmentMenu() {
@@ -1888,17 +1908,29 @@ const app = Vue.createApp({
       this.autoMarkMissedMedications();
     }, 1000);
 
+    this.$nextTick(() => {
+      const chatContainer = this.$refs.chatMessages;
 
-    this.watchMessages();
+      if (chatContainer) {
+        chatContainer.addEventListener('scroll', this.handleUserScroll); // Attach scroll event listener
+      }
+    });
+
+    // Set up periodic message fetching every 2 seconds
     setInterval(() => {
       if (this.selectedContact) {
-        this.fetchMessages(); // Fetch messages every 2 seconds
+        this.fetchMessages();
       }
     }, 2000);
-
   },
 
   beforeUnmount() {
+    const chatContainer = this.$refs.chatMessages;
+
+    if (chatContainer) {
+      chatContainer.removeEventListener('scroll', this.handleUserScroll); // Clean up scroll event listener
+    }
+
     document.removeEventListener("keydown", this.handleEnterKey);
     window.removeEventListener("popstate", this.handleRouteChange);
     document.removeEventListener("touchstart", this.handleTouchStart);

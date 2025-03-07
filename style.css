@@ -2895,7 +2895,7 @@ a:hover {
 
 .contacts-panel li.unread {
     font-weight: bold;
-    background: #f4f4f4;
+    background: #d4d4d49a;
 }
 
 .contact-avatar {
