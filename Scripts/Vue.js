@@ -1812,36 +1812,37 @@ const app = Vue.createApp({
 
 
 
-
     async attachMedicalRecord() {
       if (!this.medicalRecords || this.medicalRecords.length === 0) {
         await this.fetchMedicalRecords();
       }
       if (this.medicalRecords.length > 0) {
-        this.selectedMedicalRecord = this.medicalRecords[0]; // Keep record in memory
-        this.isAttachmentActive = true; // Enable for chat
-        this.showAttachmentOptions = true; // Show "View" & "Remove"
+        this.selectedMedicalRecord = this.medicalRecords[0]; // Store the record
+        this.isAttachmentActive = true; // Mark as active for sending
+        this.showAttachmentOptions = true; // Show options
       } else {
         alert("No medical records found to attach.");
       }
     },
 
     detachAttachment() {
-        this.isAttachmentActive = false; // Disable sending the attachment
-        this.showAttachmentOptions = false; // Hide options
+      this.isAttachmentActive = false; // Prevent it from being sent
+      this.showAttachmentOptions = false; // Hide "View & Remove"
     },
+
 
     async sendMessage() {
       try {
-        if (!this.newMessage.trim() && !this.selectedMedicalRecord) {
+        if (!this.newMessage.trim() && (!this.isAttachmentActive || !this.selectedMedicalRecord)) {
           console.warn("Cannot send an empty message or attachment!");
           return;
         }
+
         const messageData = {
-          sender: this.user.email,  // Sender’s email (the patient in this case)
+          sender: this.user.email,
           receiver: this.selectedContact.email,
           message: this.newMessage || null,
-          attachment: this.selectedMedicalRecord ? { ...this.selectedMedicalRecord } : null,
+          attachment: (this.isAttachmentActive && this.selectedMedicalRecord) ? { ...this.selectedMedicalRecord } : null,
           timestamp: new Date().toISOString(),
         };
 
@@ -1860,13 +1861,15 @@ const app = Vue.createApp({
         console.log("Message sent successfully!");
 
         this.newMessage = ""; // Clear input
-        this.selectedMedicalRecord = null; // Reset attachment
+        this.isAttachmentActive = false; // Reset attachment state after sending
+        this.showAttachmentOptions = false; // Hide buttons after sending
 
         await this.fetchMessages(); // Refresh messages in UI
       } catch (error) {
         console.error("Error sending message:", error);
       }
     },
+
 
 
 
@@ -1899,8 +1902,8 @@ const app = Vue.createApp({
         this.attachMedicalRecord();
       }
       this.showAttachmentOptions = !this.showAttachmentOptions;
+      this.isAttachmentActive = this.showAttachmentOptions; // Sync with visibility
     },
-
 
     // New method: viewAttachedRecord
     viewAttachedRecord(record) {
