@@ -2890,6 +2890,7 @@ a:hover {
     display: flex;
     align-items: center;
     cursor: pointer;
+    border-radius: 8px;
 }
 
 .contacts-panel li.unread {
