@@ -1542,19 +1542,25 @@ const app = Vue.createApp({
     },
 
 
-    async autoMarkMissedMedications() {
+    autoMarkMissedMedications() {
+      if (!this.user.medications || !Array.isArray(this.user.medications)) {
+        console.error("Medications is not an array or is undefined.");
+        this.user.medications = [];  // Initialize medications as an empty array if undefined
+        return; // Exit the function if medications is undefined or not an array
+      }
+    
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
-
+    
         if (!nextDose) return; // No valid dose time, skip.
-
+    
         const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes.
-
+    
         // If 30 minutes have passed after dose time, and it was NOT taken
         if (diffMinutes >= 30 && !medication.takenAt) {
           console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${nextDose})`);
-
+    
           try {
             const response = await fetch("http://localhost:3000/mark-medication-missed", {
               method: "POST",
@@ -1564,19 +1570,19 @@ const app = Vue.createApp({
                 medicationName: medication.name,
               }),
             });
-
+    
             const data = await response.json();
             if (response.ok) {
               console.log(` ${medication.name} marked as Missed in database`);
-
+    
               // Immediately update the UI
               if (!medication.logs) medication.logs = [];
               medication.logs.push({ time: now.toISOString(), status: "Missed" });
-
+    
               // Clear next dose time & reset cycle
               delete medication.fixedNextDose;
               medication.takenAt = null; // Reset for the next cycle
-
+    
               //  Force Vue to re-render
               this.$forceUpdate();
             } else {
@@ -1588,7 +1594,6 @@ const app = Vue.createApp({
         }
       });
     },
-
 
 
 
@@ -1665,21 +1670,28 @@ const app = Vue.createApp({
     },
 
     updateMedicationUI() {
+      // Check if medications is an array before calling map on it
+      if (!this.user.medications || !Array.isArray(this.user.medications)) {
+        console.error("Medications is not an array or is undefined.");
+        this.user.medications = [];  // Initialize medications as an empty array if undefined
+        return; // Exit the function if medications is undefined or not an array
+      }
+    
       const now = this.getCurrentTime();
       this.user.medications = this.user.medications.map((med) => {
         const countdown = this.getNextDoseCountdown(med);
         const alreadyTaken = this.hasTakenDose(med);
-
+    
         return {
           ...med,
           showMarkAsTaken: !alreadyTaken && this.shouldShowMarkAsTaken(med),
           nextDoseDisplay: alreadyTaken ? "Taken" : countdown,
-          gracePeriodActive: countdown.includes("minutes left to mark")
+          gracePeriodActive: countdown.includes("minutes left to mark"),
         };
       });
-      this.$forceUpdate();
+      this.$forceUpdate(); // Force a re-render
     },
-
+    
     // New method to toggle fast speed
     toggleFastTime() {
       // Toggle between normal (1) and fast (10x) speeds
