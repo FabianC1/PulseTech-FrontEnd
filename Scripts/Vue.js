@@ -1505,6 +1505,47 @@ const app = Vue.createApp({
       return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
     },
 
+    async markAsTaken(medication) {
+      if (medication.isMarking || this.hasTakenDose(medication)) {
+        console.log(`Already marked as taken: ${medication.name}`);
+        return;
+      }
+
+      medication.isMarking = true;
+      const now = this.getCurrentTime();
+      const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
+
+      try {
+        const response = await fetch("http://localhost:3000/mark-medication-taken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: this.user.email,
+            medicationName: medication.name,
+            doseTime: nextDoseTime,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log(`${medication.name} marked as taken at ${data.takenAt}`);
+
+          if (!medication.logs) medication.logs = [];
+          medication.logs.push({ time: nextDoseTime, status: "Taken" });
+
+          this.updateMedicationUI();
+          this.$forceUpdate();
+        } else {
+          console.error(`Error marking ${medication.name} as taken:`, data.message);
+        }
+      } catch (error) {
+        console.error("Error marking medication as taken:", error);
+      } finally {
+        medication.isMarking = false;
+      }
+    },
+
 
     async saveMedicalRecords() {
       const medicalRecords = {
@@ -1515,7 +1556,7 @@ const app = Vue.createApp({
         bloodType: this.user.bloodType,
         emergencyContact: this.user.emergencyContact,
         medicalHistory: this.user.medicalHistory,
-        medications: [...this.user.medications], // ✅ Ensure medications are included
+        medications: [...this.user.medications], 
         vaccinations: this.user.vaccinations,
         smokingStatus: this.user.smokingStatus,
         alcoholConsumption: this.user.alcoholConsumption,
@@ -1807,7 +1848,6 @@ const app = Vue.createApp({
       if (!this.selectedContact) return;
 
       try {
-        console.log("🔄 Fetching messages for:", this.selectedContact.email);
 
         const response = await fetch(
           `http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`
@@ -1819,7 +1859,6 @@ const app = Vue.createApp({
 
         this.chatMessages = await response.json();
 
-        console.log("Messages received:", this.chatMessages);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
