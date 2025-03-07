@@ -474,38 +474,44 @@ const app = Vue.createApp({
 
     async fetchMedicalRecords() {
       try {
-        console.log("Fetching medical records for:", this.user?.email); // Using optional chaining
-
+        console.log("Fetching medical records for:", this.user?.email); // Debugging
+    
         if (!this.user || !this.user.email) {
           console.error("User object or email is missing. Cannot fetch medical records.");
           return;
         }
-
+    
         const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-
+    
         const data = await response.json();
-
-        if (response.ok) {
-          console.log("Medical records fetched successfully:", data);
-
-          // 🔹 Ensure `this.user` exists before updating it
-          this.user = this.user || {};
-
-          // 🔹 Set medications safely
-          this.user.medications = data.medications && Array.isArray(data.medications) ? [...data.medications] : [];
-
-          console.log("Final medications state:", this.user.medications);
-        } else {
+    
+        if (!response.ok) {
           console.error("Error fetching medical records:", data.message);
+          return;
         }
+    
+        console.log("Medical records fetched successfully:", data);
+    
+        // Ensure `data.medications` is an array before assigning it
+        this.medicalRecords = Array.isArray(data.medications) ? [...data.medications] : [];
+    
+        // Also check if other medical record fields exist
+        this.user = this.user || {};
+        this.user.medications = [...this.medicalRecords];
+    
+        // If there are medical records, set the first one as the default attachment
+        this.selectedMedicalRecord = this.medicalRecords.length > 0 ? this.medicalRecords[0] : null;
+    
+        console.log("Final medications state:", this.user.medications);
+        console.log("Selected medical record for attachment:", this.selectedMedicalRecord);
       } catch (error) {
         console.error("Error fetching medical records:", error);
       }
     },
-
+    
 
 
     // Fetch and show medical history in popup
@@ -1795,7 +1801,7 @@ const app = Vue.createApp({
       if (!this.selectedContact) return;
 
       try {
-        console.log("Fetching messages for:", this.selectedContact.email);
+        console.log("🔄 Fetching messages for:", this.selectedContact.email);
 
         const response = await fetch(
           `http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`
@@ -1807,12 +1813,12 @@ const app = Vue.createApp({
 
         this.chatMessages = await response.json();
 
-        console.log("Messages received:", this.chatMessages);
-        this.$forceUpdate(); // Ensure UI updates instantly
+        console.log("📩 Messages received:", this.chatMessages);
       } catch (error) {
-        console.error("Error fetching messages:", error);
+        console.error("❌ Error fetching messages:", error);
       }
     },
+
 
 
 
