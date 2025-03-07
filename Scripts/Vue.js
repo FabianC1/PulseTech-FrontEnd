@@ -474,10 +474,10 @@ const app = Vue.createApp({
 
     async fetchMedicalRecords() {
       try {
-        console.log("Fetching medical records for:", this.user.email);
+        console.log("Fetching medical records for:", this.user?.email); // Using optional chaining
 
-        if (!this.user.email) {
-          console.error("User email is missing. Cannot fetch medical records.");
+        if (!this.user || !this.user.email) {
+          console.error("User object or email is missing. Cannot fetch medical records.");
           return;
         }
 
@@ -491,8 +491,13 @@ const app = Vue.createApp({
         if (response.ok) {
           console.log("Medical records fetched successfully:", data);
 
-          // Ensure Vue updates the UI properly by replacing the medications array
-          this.user = { ...this.user, medications: [...data.medications] };
+          // 🔹 Ensure `this.user` exists before updating it
+          this.user = this.user || {};
+
+          // 🔹 Set medications safely
+          this.user.medications = data.medications && Array.isArray(data.medications) ? [...data.medications] : [];
+
+          console.log("Final medications state:", this.user.medications);
         } else {
           console.error("Error fetching medical records:", data.message);
         }
@@ -500,6 +505,8 @@ const app = Vue.createApp({
         console.error("Error fetching medical records:", error);
       }
     },
+
+
 
     // Fetch and show medical history in popup
     async viewMedicalHistory(email) {
@@ -1786,88 +1793,88 @@ const app = Vue.createApp({
 
     async fetchMessages() {
       if (!this.selectedContact) return;
-    
+
       try {
-        console.log("🔄 Fetching messages for:", this.selectedContact.email);
-    
+        console.log("Fetching messages for:", this.selectedContact.email);
+
         const response = await fetch(
           `http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`
         );
-    
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    
+
         this.chatMessages = await response.json();
-    
-        console.log("📩 Messages received:", this.chatMessages);
-    
-        // 🔍 Check if messages contain attachments
-        this.chatMessages.forEach((msg, index) => {
-          console.log(`Message ${index}:`, msg);
-          if (msg.attachment) {
-            console.log(`📎 Found attachment in Message ${index}:`, msg.attachment);
-          } else {
-            console.warn(`🚫 No attachment found in Message ${index}`);
-          }
-        });
-    
-        this.scrollToBottomIfNewMessage();
+
+        console.log("Messages received:", this.chatMessages);
+        this.$forceUpdate(); // Ensure UI updates instantly
       } catch (error) {
-        console.error("❌ Error fetching messages:", error);
+        console.error("Error fetching messages:", error);
       }
     },
-    
 
 
-    // Method to start listening to messages and scroll when necessary
-    watchMessages() {
-      this.$watch('chatMessages', () => {
-        this.scrollToBottom(); // Scroll to bottom whenever messages are updated
-      });
+
+    async attachMedicalRecord() {
+      if (!this.medicalRecords || this.medicalRecords.length === 0) {
+        console.warn(" Fetching medical records...");
+        await this.fetchMedicalRecords(); // Ensure medical records are loaded
+
+        if (!this.medicalRecords || this.medicalRecords.length === 0) {
+          console.error("No medical records found.");
+          alert("No medical records found to attach.");
+          return;
+        }
+      }
+
+      this.selectedMedicalRecord = this.medicalRecords[0]; // Attach first available record
+      console.log(" Attached Medical Record:", this.selectedMedicalRecord);
+    },
+
+
+    removeAttachment() {
+      this.selectedMedicalRecord = null; // Clear attachment
+      console.log("Removed Medical Record attachment.");
     },
 
     async sendMessage() {
       try {
         if (!this.newMessage.trim() && !this.selectedMedicalRecord) {
-          console.warn("⚠️ Cannot send an empty message or attachment!");
+          console.warn("Cannot send an empty message or attachment!");
           return;
         }
-    
-        // 🔍 Confirm selectedMedicalRecord before sending
-        console.log("📎 Attaching Medical Record:", this.selectedMedicalRecord);
-    
+
         const messageData = {
           sender: this.user.email,
           receiver: this.selectedContact.email,
           message: this.newMessage || null,
-          attachment: this.selectedMedicalRecord || null,  // ✅ Attach the selected medical record
+          attachment: this.selectedMedicalRecord || null,  // Attach the selected medical record
           timestamp: new Date().toISOString(),
         };
-    
-        console.log("📤 Sending message:", messageData);
-    
+
+        console.log("Sending message:", messageData);
+
         const response = await fetch("http://localhost:3000/send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(messageData),
         });
-    
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    
-        console.log("✅ Message sent successfully!");
-    
-        this.newMessage = ""; // Clear message input
-        this.selectedMedicalRecord = null; // Reset attachment after sending
-    
+
+        console.log("Message sent successfully!");
+
+        this.newMessage = ""; // Clear input
+        this.selectedMedicalRecord = null; // Reset attachment
+
         await this.fetchMessages(); // Refresh messages in UI
       } catch (error) {
-        console.error("❌ Error sending message:", error);
+        console.error("Error sending message:", error);
       }
     },
-
 
     openChat(contact) {
       this.selectedContact = contact; // Set the selected contact
@@ -1906,9 +1913,9 @@ const app = Vue.createApp({
         alert("⚠️ This record is missing details!");
         return;
       }
-    
+
       alert(`📄 Viewing Medical Record: ${record.type}\n📅 Date: ${record.date}`);
-    }    
+    }
   },
 
 

@@ -890,51 +890,48 @@
                                 <h3>Chat with {{ selectedContact.fullName }}</h3>
                                 <div class="chat-messages" ref="chatMessages">
                                     <div v-for="msg in chatMessages" :key="msg._id"
-                                    :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
-                                  
-                                    <!-- 📝 Display text message -->
-                                    <span v-if="msg.message">{{ msg.message }}</span>
-                                  
-                                    <!-- 📎 Display attached medical record -->
-                                    <div v-if="msg.attachment" class="medical-record">
-                                      <strong>📄 Attached Record:</strong>
-                                      {{ msg.attachment.type || 'No Type Found' }} - 
-                                      {{ msg.attachment.date || 'No Date Found' }}
-                                  
-                                      <button @click="viewMedicalRecord(msg.attachment)">View</button>
+                                        :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
+                                        <!-- Display Text Message -->
+                                        <span v-if="msg.message">{{ msg.message }}</span>
+
+                                        <!-- 📎 Display Attached Medical Record -->
+                                        <div v-if="msg.attachment" class="medical-record">
+                                            <strong>📄 Attached Medical Record:</strong>
+                                            <p><strong>Name:</strong> {{ msg.attachment.name }}</p>
+                                            <p><strong>Dosage:</strong> {{ msg.attachment.dosage }}</p>
+                                            <p><strong>Frequency:</strong> {{ msg.attachment.frequency }}</p>
+                                            <p><strong>Diagnosis:</strong> {{ msg.attachment.diagnosis }}</p>
+                                            <p><strong>Time to Take:</strong> {{ msg.attachment.timeToTake }}</p>
+                                            <p><strong>Duration:</strong> {{ msg.attachment.duration }}</p>
+
+                                            <button @click="viewMedicalRecord(msg.attachment)">View</button>
+                                        </div>
+
                                     </div>
-                                  
-                                  </div>
-                                                                   
                                 </div>
                                 <!-- Chat Input -->
                                 <div class="chat-input">
-                                    <!-- Paperclip Icon Button for Attaching Medical Records -->
-                                    <button class="attach-btn" @click="toggleAttachmentMenu">
+                                    <!-- Attach Medical Record Button -->
+                                    <button class="attach-btn" @click="attachMedicalRecord">
                                         <img src="/image/attach.png" alt="Attach" class="icon" />
                                     </button>
 
-                                    <!-- Dropdown for Selecting Medical Records -->
-                                    <div v-if="showAttachmentMenu" class="attachment-dropdown">
-                                        <label>Select Medical Record:</label>
-                                        <select v-model="selectedMedicalRecord">
-                                            <option v-for="record in medicalRecords" :key="record._id" :value="record">
-                                                {{ record.type }} - {{ record.date }}
-                                            </option>
-                                        </select>
+                                    <!-- Show Attached Medical Record (if selected) -->
+                                    <div v-if="selectedMedicalRecord" class="attached-record">
+                                        <strong>📄 Attached:</strong> {{ selectedMedicalRecord.type }} - {{
+                                        selectedMedicalRecord.date }}
+                                        <button @click="removeAttachment" class="remove-btn">Remove</button>
                                     </div>
 
                                     <!-- Message Input Field -->
                                     <input type="text" v-model="newMessage" placeholder="Chat message..."
                                         @keyup.enter="sendMessage" />
 
-                                    <!-- Send Button with Custom Paper Plane Icon -->
+                                    <!-- Send Button -->
                                     <button @click="sendMessage" class="send-btn">
                                         <img src="/image/send.png" alt="Send" class="icon" />
                                     </button>
                                 </div>
-
-
                             </div>
                             <div v-else>
                                 <p>Select a contact to start a conversation.</p>
