@@ -149,27 +149,27 @@ const app = Vue.createApp({
     },
 
     nextMedication() {
-      // Check if the user or medications array is defined
       if (!this.user || !this.user.medications || this.user.medications.length === 0) {
         return { name: "None", timeToTake: "N/A", dosage: "N/A" };
       }
-    
-      // Filter out medications that don't have a valid nextDoseTime
-      const validMedications = this.user.medications
-        .filter(med => med.nextDoseTime) // This might be returning an empty list now
-        .map(med => ({
-          ...med,
-          // Calculate time difference to current time
-          diffMinutes: Math.floor((new Date(med.nextDoseTime) - new Date()) / 60000)
-        }));
-    
-      // Sort medications by the closest upcoming dose (ascending order of time)
-      const sortedMedications = validMedications.sort((a, b) => a.diffMinutes - b.diffMinutes);
-    
-      // Return the medication closest to being taken, or a default if no valid medications are found
-      return sortedMedications.length > 0
-        ? sortedMedications[0] // Closest medication
-        : { name: "None", timeToTake: "N/A", dosage: "N/A" };
+  
+      // Find the closest upcoming medication
+      const now = this.getCurrentTime();
+      let closestMed = null;
+      let minDiff = Infinity;
+  
+      this.user.medications.forEach(med => {
+        const nextDose = this.calculateNextDoseTime(med);
+        if (nextDose) {
+          const diffMinutes = Math.floor((nextDose - now) / 60000);
+          if (diffMinutes >= 0 && diffMinutes < minDiff) {
+            minDiff = diffMinutes;
+            closestMed = med;
+          }
+        }
+      });
+  
+      return closestMed || { name: "None", timeToTake: "N/A", dosage: "N/A" };
     }
   },
 
