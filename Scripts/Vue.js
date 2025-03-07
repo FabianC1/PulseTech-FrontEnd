@@ -131,7 +131,8 @@ const app = Vue.createApp({
       isUserScrolling: false,
       chatOpened: false,
       lastMessageCount: 0,
-
+      showMessageMedicalHistoryPopup: false,
+      selectedMessageMedicalRecord: {},
     };
   },
 
@@ -474,44 +475,33 @@ const app = Vue.createApp({
 
     async fetchMedicalRecords() {
       try {
-        console.log("Fetching medical records for:", this.user?.email); // Debugging
-    
+        console.log("Fetching medical records for:", this.user?.email);
         if (!this.user || !this.user.email) {
           console.error("User object or email is missing. Cannot fetch medical records.");
           return;
         }
-    
         const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-    
         const data = await response.json();
-    
         if (!response.ok) {
           console.error("Error fetching medical records:", data.message);
           return;
         }
-    
         console.log("Medical records fetched successfully:", data);
-    
-        // Ensure `data.medications` is an array before assigning it
-        this.medicalRecords = Array.isArray(data.medications) ? [...data.medications] : [];
-    
-        // Also check if other medical record fields exist
-        this.user = this.user || {};
-        this.user.medications = [...this.medicalRecords];
-    
-        // If there are medical records, set the first one as the default attachment
-        this.selectedMedicalRecord = this.medicalRecords.length > 0 ? this.medicalRecords[0] : null;
-    
-        console.log("Final medications state:", this.user.medications);
+
+        // Store the full record
+        this.medicalRecords = data;
+        // Set the default attachment to be the full record
+        this.selectedMedicalRecord = data;
         console.log("Selected medical record for attachment:", this.selectedMedicalRecord);
       } catch (error) {
         console.error("Error fetching medical records:", error);
       }
     },
-    
+
+
 
 
     // Fetch and show medical history in popup
@@ -1850,37 +1840,38 @@ const app = Vue.createApp({
           console.warn("Cannot send an empty message or attachment!");
           return;
         }
-
         const messageData = {
-          sender: this.user.email,
+          sender: this.user.email,  // Sender’s email (the patient in this case)
           receiver: this.selectedContact.email,
           message: this.newMessage || null,
-          attachment: this.selectedMedicalRecord || null,  // Attach the selected medical record
+          attachment: this.selectedMedicalRecord ? { ...this.selectedMedicalRecord } : null,
           timestamp: new Date().toISOString(),
         };
-
+    
         console.log("Sending message:", messageData);
-
+    
         const response = await fetch("http://localhost:3000/send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(messageData),
         });
-
+    
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
+    
         console.log("Message sent successfully!");
-
+    
         this.newMessage = ""; // Clear input
         this.selectedMedicalRecord = null; // Reset attachment
-
+    
         await this.fetchMessages(); // Refresh messages in UI
       } catch (error) {
         console.error("Error sending message:", error);
       }
     },
+    
+
 
     openChat(contact) {
       this.selectedContact = contact; // Set the selected contact
@@ -1913,15 +1904,18 @@ const app = Vue.createApp({
       }
     },
 
-    viewMedicalRecord(record) {
-      console.log("📂 Viewing Medical Record:", record);
-      if (!record || !record.type || !record.date) {
-        alert("⚠️ This record is missing details!");
-        return;
-      }
+    // New method: viewAttachedRecord
+    viewAttachedRecord(record) {
+      console.log("Viewing attached medical record:", record);
+      // Use the record from the message (the sender’s record) for the popup
+      this.selectedMessageMedicalRecord = record;
+      this.showMessageMedicalHistoryPopup = true;
+    },
+    
+    closeMessageMedicalHistoryPopup() {
+      this.showMessageMedicalHistoryPopup = false;
+    },
 
-      alert(`📄 Viewing Medical Record: ${record.type}\n📅 Date: ${record.date}`);
-    }
   },
 
 

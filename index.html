@@ -867,7 +867,6 @@
             <div v-if="currentView === 'messages'">
                 <!-- Show messages if Logged In -->
                 <div v-if="isLoggedIn" class="messages-container">
-
                     <!-- Two-panel Layout -->
                     <div class="messages-layout">
                         <!-- Left Panel: Contact List -->
@@ -876,7 +875,6 @@
                             <ul>
                                 <li v-for="contact in contacts" :key="contact.email" @click="openChat(contact)"
                                     :class="{ unread: hasUnreadMessages(contact.email), selected: selectedContact && selectedContact.email === contact.email }">
-
                                     <img :src="contact.profilePicture || '/image/ProfileIcon.png'"
                                         class="contact-avatar" />
                                     <span>{{ contact.fullName }}</span>
@@ -889,24 +887,18 @@
                             <div v-if="selectedContact">
                                 <h3>Chat with {{ selectedContact.fullName }}</h3>
                                 <div class="chat-messages" ref="chatMessages">
+                                    <!-- Inside your Chat Interface (Right Panel) -->
                                     <div v-for="msg in chatMessages" :key="msg._id"
                                         :class="{ 'sent-message': msg.sender === user.email, 'received-message': msg.sender !== user.email }">
                                         <!-- Display Text Message -->
                                         <span v-if="msg.message">{{ msg.message }}</span>
 
-                                        <!-- 📎 Display Attached Medical Record -->
-                                        <div v-if="msg.attachment" class="medical-record">
-                                            <strong>📄 Attached Medical Record:</strong>
-                                            <p><strong>Name:</strong> {{ msg.attachment.name }}</p>
-                                            <p><strong>Dosage:</strong> {{ msg.attachment.dosage }}</p>
-                                            <p><strong>Frequency:</strong> {{ msg.attachment.frequency }}</p>
-                                            <p><strong>Diagnosis:</strong> {{ msg.attachment.diagnosis }}</p>
-                                            <p><strong>Time to Take:</strong> {{ msg.attachment.timeToTake }}</p>
-                                            <p><strong>Duration:</strong> {{ msg.attachment.duration }}</p>
-
-                                            <button @click="viewMedicalRecord(msg.attachment)">View</button>
+                                        <!-- Display Attached Medical Record Message -->
+                                        <div v-if="msg.attachment" class="medical-record-message">
+                                            <p><strong>Attached Medical Record:</strong> View</p>
+                                            <button @click="viewAttachedRecord(msg.attachment)"
+                                                class="view-record-btn">View</button>
                                         </div>
-
                                     </div>
                                 </div>
                                 <!-- Chat Input -->
@@ -916,11 +908,11 @@
                                         <img src="/image/attach.png" alt="Attach" class="icon" />
                                     </button>
 
-                                    <!-- Show Attached Medical Record (if selected) -->
-                                    <div v-if="selectedMedicalRecord" class="attached-record">
-                                        <strong>📄 Attached:</strong> {{ selectedMedicalRecord.type }} - {{
-                                        selectedMedicalRecord.date }}
-                                        <button @click="removeAttachment" class="remove-btn">Remove</button>
+                                    <!-- Attachment Display -->
+                                    <div v-if="selectedMedicalRecord" class="attachment-container">
+                                        <button class="view-attachment"
+                                            @click="viewAttachedRecord(selectedMedicalRecord)">View</button>
+                                        <button class="remove-attachment" @click="removeAttachment">Remove</button>
                                     </div>
 
                                     <!-- Message Input Field -->
@@ -950,6 +942,84 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Read-Only Medical History Popup for Attached Records -->
+            <div v-if="showMessageMedicalHistoryPopup" class="popup-overlay">
+                <div class="popup-content">
+                    <h3>Medical History for {{ selectedMessageMedicalRecord.fullName }}</h3>
+                    <div class="popup-scroll-container">
+                        <div class="record-section">
+                            <h4>Personal Information</h4>
+                            <p>
+                                <strong>Name:</strong> {{ selectedMessageMedicalRecord.fullName }} |
+                                <strong>DOB:</strong> {{ selectedMessageMedicalRecord.dateOfBirth }} |
+                                <strong>Gender:</strong> {{ selectedMessageMedicalRecord.gender }} |
+                                <strong>Blood Type:</strong> {{ selectedMessageMedicalRecord.bloodType || "N/A" }} |
+                                <strong>Emergency Contact:</strong> {{ selectedMessageMedicalRecord.emergencyContact ||
+                                "N/A" }}
+                            </p>
+                        </div>
+                        <div class="record-section">
+                            <h4>Medical History</h4>
+                            <p>{{ selectedMessageMedicalRecord.medicalHistory || "No medical history available." }}</p>
+                        </div>
+                        <div class="record-section">
+                            <h4>Current Medications</h4>
+                            <div
+                                v-if="selectedMessageMedicalRecord.medications && selectedMessageMedicalRecord.medications.length > 0">
+                                <div v-for="(medication, index) in selectedMessageMedicalRecord.medications"
+                                    :key="index" class="medication-item">
+                                    <p>
+                                        <strong>Medication {{ index + 1 }}:</strong> {{ medication.name }} |
+                                        <strong>Dosage:</strong> {{ medication.dosage }} |
+                                        <strong>Frequency:</strong> {{ medication.frequency }} |
+                                        <strong>Time to Take:</strong> {{ medication.timeToTake }} |
+                                        <strong>Duration:</strong> {{ medication.duration }} |
+                                        <strong>Diagnosis:</strong> {{ medication.diagnosis }}
+                                    </p>
+                                </div>
+                            </div>
+                            <p v-else>No current medications recorded.</p>
+                        </div>
+                        <div class="record-section">
+                            <h4>Vaccination Records</h4>
+                            <p>{{ selectedMessageMedicalRecord.vaccinations || "No vaccination records available." }}
+                            </p>
+                        </div>
+                        <div class="record-section">
+                            <h4>Lifestyle Information</h4>
+                            <p>
+                                <strong>Smoking Status:</strong> {{ selectedMessageMedicalRecord.smokingStatus || "N/A"
+                                }} |
+                                <strong>Alcohol Consumption:</strong> {{ selectedMessageMedicalRecord.alcoholConsumption
+                                || "N/A" }} |
+                                <strong>Exercise Routine:</strong> {{ selectedMessageMedicalRecord.exerciseRoutine ||
+                                "N/A" }} |
+                                <strong>Sleep Patterns:</strong> {{ selectedMessageMedicalRecord.sleepPatterns || "N/A"
+                                }}
+                            </p>
+                        </div>
+                        <div class="record-section">
+                            <h4>Symptoms & Health Logs</h4>
+                            <p>{{ selectedMessageMedicalRecord.healthLogs || "No health logs available." }}</p>
+                        </div>
+                        <div class="record-section">
+                            <h4>Smartwatch & Wearable Data</h4>
+                            <p>
+                                <strong>Heart Rate:</strong> {{ selectedMessageMedicalRecord.heartRate || "N/A" }} |
+                                <strong>Step Count:</strong> {{ selectedMessageMedicalRecord.stepCount || "N/A" }} |
+                                <strong>Sleep Tracking:</strong> {{ selectedMessageMedicalRecord.sleepTracking || "N/A"
+                                }} |
+                                <strong>Blood Oxygen:</strong> {{ selectedMessageMedicalRecord.bloodOxygen || "N/A" }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <button class="cancelAppointment" @click="closeMessageMedicalHistoryPopup">Close</button>
+                    </div>
+                </div>
+            </div>
+
 
 
 
