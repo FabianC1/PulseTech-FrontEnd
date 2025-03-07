@@ -426,84 +426,86 @@ const app = Vue.createApp({
       this.startDiagnosis(); // Start the diagnosis again
     },
 
-    async saveMedicalRecords() {
-      const medicalRecords = {
-        email: this.user.email,
-        fullName: this.user.fullName,
-        dateOfBirth: this.user.dateOfBirth,
-        gender: this.user.gender,
-        bloodType: this.user.bloodType,
-        emergencyContact: this.user.emergencyContact,
-        medicalHistory: this.user.medicalHistory,
-        medications: this.user.medications,
-        vaccinations: this.user.vaccinations,
-        smokingStatus: this.user.smokingStatus,
-        alcoholConsumption: this.user.alcoholConsumption,
-        exerciseRoutine: this.user.exerciseRoutine,
-        sleepPatterns: this.user.sleepPatterns,
-        healthLogs: this.user.healthLogs,
-        labResults: this.user.labResults,
-        doctorVisits: this.user.doctorVisits,
-        heartRate: this.user.heartRate,
-        stepCount: this.user.stepCount,
-        sleepTracking: this.user.sleepTracking,
-        bloodOxygen: this.user.bloodOxygen,
-        organDonorStatus: this.user.organDonorStatus,
-        medicalDirectives: this.user.medicalDirectives,
+    saveMedication() {
+      if (!this.user || !this.user.email) {
+        console.error("User email is missing. Cannot save medication.");
+        return;
+      }
+
+      if (!this.selectedMedication.name || !this.selectedMedication.dosage || !this.selectedMedication.frequency) {
+        alert("Please fill in all medication details before saving.");
+        return;
+      }
+
+      const medicationData = {
+        email: this.user.email, // 💡 Fix: Always use logged-in user
+        medication: {
+          name: this.selectedMedication.name,
+          dosage: this.selectedMedication.dosage,
+          frequency: this.selectedMedication.frequency,
+          diagnosis: this.selectedMedication.diagnosis,
+          timeToTake: this.selectedMedication.timeToTake,
+          duration: this.selectedMedication.duration
+        }
       };
 
-      try {
-        const response = await fetch("http://localhost:3000/save-medical-records", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(medicalRecords),
-        });
+      fetch("http://localhost:3000/save-medication", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(medicationData)
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === "Medication saved successfully!") {
+            alert("Medication saved successfully!");
 
-        const data = await response.json();
-        if (response.ok) {
-          console.log("Medical records saved successfully");
-          // Set the editing flag for all fields back to false
-          Object.keys(this.isEditing).forEach((key) => {
-            this.isEditing[key] = false;
-          });
-        } else {
-          console.error("Error saving medical records:", data.message);
-        }
-      } catch (error) {
-        console.error("Error saving medical records:", error);
-      }
+            this.fetchMedicalRecords(); // 💡 Fix: Refresh medications after saving
+            this.selectedMedication = { name: "", dosage: "", frequency: "", timeToTake: "", duration: "", diagnosis: "" };
+            this.currentMedicationInput = "";
+          } else {
+            console.error("Error saving medication:", data.message);
+          }
+        })
+        .catch(error => {
+          console.error("Error saving medication:", error);
+        });
     },
+
 
     async fetchMedicalRecords() {
       try {
-        console.log("Fetching medical records for:", this.user?.email);
         if (!this.user || !this.user.email) {
           console.error("User object or email is missing. Cannot fetch medical records.");
           return;
         }
+    
         const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
+    
         const data = await response.json();
         if (!response.ok) {
           console.error("Error fetching medical records:", data.message);
           return;
         }
-        console.log("Medical records fetched successfully:", data);
-
-        // Store the full record
+  
+    
+        // Keep attachments working
         this.medicalRecords = data;
-        // Set the default attachment to be the full record
         this.selectedMedicalRecord = data;
-        console.log("Selected medical record for attachment:", this.selectedMedicalRecord);
+    
+        // Ensure medications show properly
+        this.user.medications = [...(data.medications || [])];
+    
+        // Update the UI immediately
+        this.$forceUpdate(); 
+    
       } catch (error) {
         console.error("Error fetching medical records:", error);
       }
     },
-
-
-
+    
 
     // Fetch and show medical history in popup
     async viewMedicalHistory(email) {
@@ -1504,46 +1506,59 @@ const app = Vue.createApp({
     },
 
 
-    async markAsTaken(medication) {
-      if (medication.isMarking || this.hasTakenDose(medication)) {
-        console.log(`Already marked as taken: ${medication.name}`);
-        return;
-      }
-
-      medication.isMarking = true;
-      const now = this.getCurrentTime();
-      const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
+    async saveMedicalRecords() {
+      const medicalRecords = {
+        email: this.user.email,
+        fullName: this.user.fullName,
+        dateOfBirth: this.user.dateOfBirth,
+        gender: this.user.gender,
+        bloodType: this.user.bloodType,
+        emergencyContact: this.user.emergencyContact,
+        medicalHistory: this.user.medicalHistory,
+        medications: [...this.user.medications], // ✅ Ensure medications are included
+        vaccinations: this.user.vaccinations,
+        smokingStatus: this.user.smokingStatus,
+        alcoholConsumption: this.user.alcoholConsumption,
+        exerciseRoutine: this.user.exerciseRoutine,
+        sleepPatterns: this.user.sleepPatterns,
+        healthLogs: this.user.healthLogs,
+        labResults: this.user.labResults,
+        doctorVisits: this.user.doctorVisits,
+        heartRate: this.user.heartRate,
+        stepCount: this.user.stepCount,
+        sleepTracking: this.user.sleepTracking,
+        bloodOxygen: this.user.bloodOxygen,
+        organDonorStatus: this.user.organDonorStatus,
+        medicalDirectives: this.user.medicalDirectives,
+      };
 
       try {
-        const response = await fetch("http://localhost:3000/mark-medication-taken", {
+        const response = await fetch("http://localhost:3000/save-medical-records", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: this.user.email,
-            medicationName: medication.name,
-            doseTime: nextDoseTime,
-          }),
+          body: JSON.stringify(medicalRecords),
         });
 
         const data = await response.json();
-
         if (response.ok) {
-          console.log(`${medication.name} marked as taken at ${data.takenAt}`);
+          console.log("Medical records saved successfully");
 
-          if (!medication.logs) medication.logs = [];
-          medication.logs.push({ time: nextDoseTime, status: "Taken" });
+          // ✅ Ensure the UI updates with new medical records
+          await this.fetchMedicalRecords();
 
-          this.updateMedicationUI();
-          this.$forceUpdate();
+          // ✅ Reset edit mode
+          Object.keys(this.isEditing).forEach((key) => {
+            this.isEditing[key] = false;
+          });
+
         } else {
-          console.error(`Error marking ${medication.name} as taken:`, data.message);
+          console.error("Error saving medical records:", data.message);
         }
       } catch (error) {
-        console.error("Error marking medication as taken:", error);
-      } finally {
-        medication.isMarking = false;
+        console.error("Error saving medical records:", error);
       }
     },
+
 
     hasTakenDose(medication) {
       const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
