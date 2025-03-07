@@ -130,6 +130,8 @@ const app = Vue.createApp({
       medicalRecords: [],// This will store the user's medical records
       isUserScrolling: false,
       chatOpened: false,
+      lastMessageCount: 0,
+
     };
   },
 
@@ -1763,23 +1765,27 @@ const app = Vue.createApp({
       this.isUserScrolling = !isAtBottom; // Set flag to true if user scrolls up
     },
 
-    scrollToBottom() {
+    scrollToBottomIfNewMessage() {
       const chatContainer = this.$refs.chatMessages;
       if (!chatContainer) return;
 
-      // Scroll only if the chat is opened or if a new message is received while at the bottom
-      if (this.chatOpened || !this.isUserScrolling) {
+      // Determine if user is near the bottom (within 50 pixels)
+      const nearBottom =
+        chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - 50;
+
+      // Only auto-scroll if new messages arrived and user is near the bottom
+      if (this.chatMessages.length > this.lastMessageCount && nearBottom) {
         this.$nextTick(() => {
-          chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to the bottom
+          chatContainer.scrollTop = chatContainer.scrollHeight;
         });
       }
+      // Update the last message count after processing
+      this.lastMessageCount = this.chatMessages.length;
     },
 
 
-    // Triggered when a new message is received
     async fetchMessages() {
       if (!this.selectedContact) return;
-
       try {
         const response = await fetch(
           `http://localhost:3000/get-messages?sender=${encodeURIComponent(this.user.email)}&recipient=${encodeURIComponent(this.selectedContact.email)}`,
@@ -1788,18 +1794,16 @@ const app = Vue.createApp({
             headers: { "Content-Type": "application/json" },
           }
         );
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
-        this.chatMessages = await response.json(); // Store chat messages
-        this.scrollToBottom(); // Scroll to the bottom if necessary
-
+        this.chatMessages = await response.json(); // Update messages
+        this.scrollToBottomIfNewMessage(); // Auto-scroll if conditions are met
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     },
+
 
     // Method to start listening to messages and scroll when necessary
     watchMessages() {
@@ -1808,13 +1812,11 @@ const app = Vue.createApp({
       });
     },
 
-    // When a new message is sent, fetch messages and scroll if needed
     async sendMessage() {
       try {
         if (!this.newMessage.trim() && !this.selectedAttachment) {
           return; // Don't send empty messages
         }
-
         const messageData = {
           sender: this.user.email,
           receiver: this.selectedContact.email,
@@ -1822,40 +1824,40 @@ const app = Vue.createApp({
           attachment: this.selectedAttachment || null,
           timestamp: new Date().toISOString(),
         };
-
         const response = await fetch("http://localhost:3000/send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(messageData),
         });
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         this.newMessage = ""; // Clear input
         this.selectedAttachment = null; // Clear attachment
-
-        // Re-fetch messages and scroll if necessary
-        await this.fetchMessages();
-
+        await this.fetchMessages(); // Fetch messages (this will call scrollToBottomIfNewMessage internally)
       } catch (error) {
         console.error("Error sending message:", error);
       }
     },
 
-
-    // Called when the user selects a contact to start chatting
     openChat(contact) {
-      this.selectedContact = contact;  // Set the selected contact
-      this.chatMessages = [];  // Clear previous messages
-      this.chatOpened = true;  // Set the chat as opened
-      this.fetchMessages();  // Fetch chat history with the selected contact
+      this.selectedContact = contact; // Set the selected contact
+      this.chatMessages = []; // Clear previous messages
+      // When the chat is first opened, we always scroll to bottom
+      this.$nextTick(() => {
+        const chatContainer = this.$refs.chatMessages;
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      });
+      this.lastMessageCount = 0; // Reset count so new messages will trigger scroll
+      this.fetchMessages(); // Fetch chat history
     },
 
-    // When the user switches to another view, reset the chatOpened flag
+    // Reset the flag when the user closes the chat or navigates
     closeChat() {
       this.chatOpened = false;
+      this.isNewMessage = false; // Reset new message flag
       this.selectedContact = null;
       this.chatMessages = [];
     },
