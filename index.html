@@ -862,7 +862,8 @@
                                 <div class="input-group">
                                     <input v-model="currentMedicationInput" @input="fetchMedications"
                                         placeholder="Start typing medication name..." type="text"
-                                        class="medication-field" />
+                                        class="medication-field medication-autocomplete" />
+
 
                                     <!-- Medication Suggestions -->
                                     <ul v-if="medicationSuggestions.length > 0" class="medication-suggestions">

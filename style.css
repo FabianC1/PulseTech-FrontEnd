@@ -2915,10 +2915,11 @@ a:hover {
 .medication-suggestions {
     list-style: none;
     position: absolute;
-    background: white;
+    background: rgba(255, 255, 255, 0.075);
     max-height: 150px;
     overflow-y: auto;
     border-radius: 5px;
+    border: white 2px solid;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 10;
     width: 200px;
@@ -2927,14 +2928,23 @@ a:hover {
 .medication-suggestions li {
     padding: 5px 10px;
     cursor: pointer;
+    background: #3d3d3d36;
 }
 
 .medication-suggestions li:hover {
-    background: #00aaff;
+    background: #9797976b;
     color: white;
 }
 
 
+/* Medication Name Input - Align with Others */
+.medication-field.medication-autocomplete {
+    margin-top: 5%;
+    width: 180px;  /* Ensure same width as dropdowns */
+    height: 38px;      /* Match dropdown height */
+    font-size: 1em;
+    text-align: center;
+}
 
 
 
