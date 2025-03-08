@@ -851,11 +851,13 @@
 
                     <div class="doctor-patients-list">
                         <div v-for="(patient, index) in patientsList" :key="index" class="doctor-medication-card">
-                            <!-- Patient Name -->
+
+                            <!-- Patient Name (Left) -->
                             <span class="doctor-patient-name">{{ patient.fullName }}</span>
 
-                            <!-- Medication Form -->
+                            <!-- Medication Form (Center) -->
                             <div v-if="isEditing.medication[patient.email]" class="doctor-medication-inputs">
+
                                 <!-- Medication Name with Autofill -->
                                 <div class="input-group">
                                     <input v-model="currentMedicationInput" @input="fetchMedications"
@@ -876,35 +878,51 @@
                                     <option value="1 pill">1 pill</option>
                                     <option value="2 pills">2 pills</option>
                                     <option value="5ml syrup">5ml syrup</option>
+                                    <option value="10ml syrup">10ml syrup</option>
+                                    <option value="1 tablet">1 tablet</option>
+                                    <option value="2 tablets">2 tablets</option>
+                                    <option value="1 tsp">1 teaspoon</option>
+                                    <option value="2 tsp">2 teaspoons</option>
                                 </select>
 
                                 <!-- Frequency -->
                                 <select v-model="medicationData[patient.email].frequency" class="medication-field">
                                     <option value="Twice a day">Twice a day</option>
+                                    <option value="Every hour">Every hour</option>
+                                    <option value="Every 4 hours">Every 4 hours</option>
                                     <option value="Every 6 hours">Every 6 hours</option>
+                                    <option value="Every 8 hours">Every 8 hours</option>
+                                    <option value="Every 12 hours">Every 12 hours</option>
+                                    <option value="Once a week">Once a week</option>
                                 </select>
 
                                 <!-- Time to Take -->
                                 <select v-model="medicationData[patient.email].time" class="medication-field">
+                                    <option value="7 AM">7 AM</option>
                                     <option value="8 AM">8 AM</option>
                                     <option value="12 PM">12 PM</option>
+                                    <option value="1 PM">1 PM</option>
+                                    <option value="4 PM">4 PM</option>
                                     <option value="8 PM">8 PM</option>
+                                    <option value="10 PM">10 PM</option>
                                 </select>
 
                                 <!-- Duration -->
                                 <select v-model="medicationData[patient.email].duration" class="medication-field">
                                     <option value="3 days">3 days</option>
+                                    <option value="5 days">5 days</option>
                                     <option value="1 week">1 week</option>
                                     <option value="2 weeks">2 weeks</option>
+                                    <option value="1 month">1 month</option>
+                                    <option value="Until further notice">Until further notice</option>
                                 </select>
 
                                 <!-- Diagnosis -->
                                 <input v-model="medicationData[patient.email].diagnosis" placeholder="Diagnosis"
                                     type="text" class="medication-field" />
-
                             </div>
 
-                            <!-- Buttons -->
+                            <!-- Buttons (Right) -->
                             <div class="doctor-medication-actions">
                                 <button v-if="isEditing.medication[patient.email]" class="primary-btn"
                                     @click="submitMedication(patient.email)">Prescribe</button>
@@ -916,6 +934,7 @@
                         </div>
                     </div>
                 </div>
+
 
 
                 <!-- Show Login/Signup Prompt if Not Logged In -->
