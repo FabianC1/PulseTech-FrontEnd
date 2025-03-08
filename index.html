@@ -860,18 +860,21 @@
 
                                 <!-- Medication Name with Autofill -->
                                 <div class="input-group">
-                                    <input v-model="currentMedicationInput" @input="fetchMedications"
+                                    <!-- Medication Name Input with Autofill -->
+                                    <input v-model="medicationInputs[patient.email]"
+                                        @input="fetchMedications(patient.email)"
                                         placeholder="Start typing medication name..." type="text"
                                         class="medication-field medication-autocomplete" />
 
-
                                     <!-- Medication Suggestions -->
-                                    <ul v-if="medicationSuggestions.length > 0" class="medication-suggestions">
-                                        <li v-for="(medication, index) in medicationSuggestions" :key="index"
-                                            @click="selectMedication(medication, patient.email)">
+                                    <ul v-if="medicationSuggestions[patient.email] && medicationSuggestions[patient.email].length > 0"
+                                        class="medication-suggestions">
+                                        <li v-for="(medication, index) in medicationSuggestions[patient.email]"
+                                            :key="index" @click="selectMedication(medication, patient.email)">
                                             {{ medication }}
                                         </li>
                                     </ul>
+
                                 </div>
 
                                 <!-- Dosage -->

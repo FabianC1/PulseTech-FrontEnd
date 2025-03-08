@@ -135,6 +135,8 @@ const app = Vue.createApp({
       lastMessageCount: 0,
       showMessageMedicalHistoryPopup: false,
       selectedMessageMedicalRecord: {},
+      medicationInputs: {}, // Store medication name per patient
+      medicationData: {},   // Store all medication details per patient
     };
   },
 
@@ -1313,47 +1315,64 @@ const app = Vue.createApp({
       }
     },
 
-    // Fetch medications based on the input query
-    async fetchMedications() {
-      // Check if the input has at least 3 characters to start searching
-      if (this.currentMedicationInput.length < 3) {
-        this.medicationSuggestions = [];  // Don't search if less than 3 chars
+    // Fetch medications based on the input query for a specific patient
+    async fetchMedications(patientEmail) {
+      // Ensure input exists for the selected patient
+      if (!this.medicationInputs[patientEmail]) {
+        this.medicationInputs[patientEmail] = "";
+      }
+
+      // Get the current input for this patient
+      const input = this.medicationInputs[patientEmail];
+
+      // Only start searching if at least 3 characters are entered
+      if (input.length < 3) {
+        this.medicationSuggestions[patientEmail] = []; // Clear suggestions
         return;
       }
 
       try {
-        // Make the fetch request to the backend to get the medications list
-        const response = await fetch(`/collections/Medications?name=${this.currentMedicationInput}`);
+        // Make the fetch request to the backend
+        const response = await fetch(`/collections/Medications?name=${input}`);
         const data = await response.json();
 
-        // Check if the response contains valid medication data
+        // Ensure the response contains valid medication data
         if (data && data[0] && Array.isArray(data[0].medications)) {
           // Filter medications that match the search input (case-insensitive)
-          this.medicationSuggestions = data[0].medications.filter((medication) =>
-            medication.toLowerCase().includes(this.currentMedicationInput.toLowerCase())
+          this.medicationSuggestions[patientEmail] = data[0].medications.filter((medication) =>
+            medication.toLowerCase().includes(input.toLowerCase())
           );
         } else {
-          // Clear the suggestions list if no data is found
-          this.medicationSuggestions = [];
+          // Clear suggestions if no data found
+          this.medicationSuggestions[patientEmail] = [];
         }
       } catch (error) {
         console.error("Error fetching medications:", error);
-        this.medicationSuggestions = [];  // Reset on error
+        this.medicationSuggestions[patientEmail] = []; // Reset on error
       }
     },
 
-    // Select medication from the suggestions list
-    selectMedication(medication) {
-      this.selectedMedication = {
-        name: medication,  // Set the selected medication name
-        dosage: "",        // Add a default empty value for dosage
-        frequency: "",     // Add a default empty value for frequency
-        diagnosis: "",     // Add a default empty value for diagnosis
-        timeToTake: "",    // Add the time to take field
-        duration: ""       // Add the duration field
+    // Select a medication from the suggestions list for a specific patient
+    selectMedication(medication, patientEmail) {
+      this.medicationInputs[patientEmail] = medication; // Update only this patient's input
+
+      // Initialize medicationData if not set
+      if (!this.medicationData[patientEmail]) {
+        this.medicationData[patientEmail] = {};
+      }
+
+      // Assign selected medication with empty values for the other fields
+      this.medicationData[patientEmail] = {
+        name: medication,
+        dosage: "",
+        frequency: "",
+        diagnosis: "",
+        timeToTake: "",
+        duration: ""
       };
-      this.currentMedicationInput = medication;  // Update the input field with selected medication
-      this.medicationSuggestions = [];  // Clear suggestions after selection
+
+      // Clear suggestions for this patient
+      this.medicationSuggestions[patientEmail] = [];
     },
 
 
@@ -2034,11 +2053,11 @@ const app = Vue.createApp({
 
 
     submitMedication(patientEmail) {
-      if (!this.medicationData[patientEmail]) return;
+      const medication = this.medicationData[patientEmail]; // Get only this patient's medication
 
-      const medication = this.medicationData[patientEmail];
-
-      if (!medication.name || !medication.dosage || !medication.frequency || !medication.time || !medication.duration || !medication.diagnosis) {
+      // Check if all fields are filled
+      if (!medication || !medication.name || !medication.dosage || !medication.frequency ||
+        !medication.time || !medication.duration || !medication.diagnosis) {
         alert("Please fill in all medication details before prescribing.");
         return;
       }
@@ -2047,26 +2066,14 @@ const app = Vue.createApp({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: patientEmail, // Correct key for the backend
-          medication: {
-            name: medication.name,
-            dosage: medication.dosage,
-            frequency: medication.frequency,
-            timeToTake: medication.time, // Matches backend field
-            duration: medication.duration,
-            diagnosis: medication.diagnosis
-          }
+          email: patientEmail,
+          medication: medication,
         }),
       })
         .then(response => response.json())
         .then(data => {
-          if (data.message === "Medication saved successfully!") {
-            alert("Medication prescribed successfully!");
-            this.isEditing.medication[patientEmail] = false; // Close the edit form
-            this.fetchMedicalRecords(); // Refresh the data
-          } else {
-            alert("Failed to save medication: " + data.message);
-          }
+          alert("Medication prescribed successfully!");
+          this.isEditing.medication[patientEmail] = false; // Close only this patient's form
         })
         .catch(error => {
           console.error("Error prescribing medication:", error);
