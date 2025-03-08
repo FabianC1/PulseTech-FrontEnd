@@ -1642,20 +1642,47 @@ const app = Vue.createApp({
 
 
     hasTakenDose(medication) {
-      const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
-      return medication.logs && medication.logs.some(log => log.time === nextDoseTime && log.status === "Taken");
+      if (!medication || !medication.logs || medication.logs.length === 0) {
+        return false; // No logs mean the medication hasn't been taken yet
+      }
+    
+      const lastLog = medication.logs[medication.logs.length - 1]; // Get the latest log entry
+    
+      if (!lastLog || !lastLog.time) {
+        return false; // Prevents null errors
+      }
+    
+      const logTime = new Date(lastLog.time);
+      
+      if (isNaN(logTime)) {
+        return false; // Invalid date
+      }
+    
+      return logTime.toISOString(); // Convert to ISO string safely
     },
+    
 
     shouldShowMarkAsTaken(medication) {
-      if (!medication) return false;
-      if (this.hasTakenDose(medication)) return false; // If taken, don't show button
-
-      const diffMinutes = this.getTimeDiff(medication);
-      if (diffMinutes === null) return false;
-
-      return diffMinutes >= -30 && diffMinutes <= 60; // Show only in valid time range
+      if (!medication || !medication.logs || medication.logs.length === 0) {
+        return false; // No logs mean no dose was taken
+      }
+    
+      const lastLog = medication.logs[medication.logs.length - 1];
+    
+      if (!lastLog || !lastLog.time) {
+        return false; // No valid log entry
+      }
+    
+      const logTime = new Date(lastLog.time);
+      
+      if (isNaN(logTime)) {
+        return false;
+      }
+    
+      const now = new Date();
+      return logTime.toISOString() === now.toISOString(); // Checks if last taken dose matches current time
     },
-
+    
 
     checkMissedMedications() {
       this.user.medications.forEach(medication => {
@@ -2053,33 +2080,41 @@ const app = Vue.createApp({
 
 
     submitMedication(patientEmail) {
-      const medication = this.medicationData[patientEmail]; // Get only this patient's medication
-
-      // Check if all fields are filled
-      if (!medication || !medication.name || !medication.dosage || !medication.frequency ||
-        !medication.time || !medication.duration || !medication.diagnosis) {
+      const medication = { ...this.medicationData[patientEmail] }; // Copy data to prevent mutation issues
+    
+      // Ensure all fields are filled for this patient
+      if (!medication.name || !medication.dosage || !medication.frequency ||
+          !medication.time || !medication.duration || !medication.diagnosis) {
         alert("Please fill in all medication details before prescribing.");
         return;
       }
-
+    
+      // Assign `timeToTake` explicitly
+      medication.timeToTake = medication.time;
+    
       fetch("http://localhost:3000/save-medication", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: patientEmail,
-          medication: medication,
+          medication: medication, // Ensure timeToTake is included
         }),
       })
         .then(response => response.json())
         .then(data => {
-          alert("Medication prescribed successfully!");
-          this.isEditing.medication[patientEmail] = false; // Close only this patient's form
+          if (data.message === "Medication saved successfully!") {
+            alert("Medication prescribed successfully!");
+            this.$set(this.isEditing.medication, patientEmail, false); // Close only this patient's form
+          } else {
+            alert("Failed to save medication. Try again.");
+          }
         })
         .catch(error => {
           console.error("Error prescribing medication:", error);
           alert("An error occurred while prescribing the medication.");
         });
     }
+    
 
   },
 
