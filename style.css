@@ -2,7 +2,7 @@
 :root {
     /* Light Mode */
     --primary-bg-light: linear-gradient(to left, #758FFF, #ffffff);
-    --section-bg-light: linear-gradient(to right, #6246c5ab, #e9e9e9a1); /* Light mode section background */
+    --section-bg-light: linear-gradient(to right, #493396ab, #758FFF); /* Light mode section background */
     --primary-text-light: #000000; 
 
     /* Dark Mode */
