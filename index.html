@@ -784,12 +784,13 @@
             <!-- Medication Section -->
             <div v-if="currentView === 'medication'" class="medications-page-container">
 
-                <!-- Show Current Medications if Logged In -->
-                <div v-if="isLoggedIn">
+                <!-- Show Medications for Patients -->
+                <div v-if="isLoggedIn && !isDoctor">
                     <h2 style="text-align: center; margin-top: -0.5%;">Here are your meds, {{ user.username }}</h2>
                     <p>Your next medicine intake is <strong>{{ nextMedication.name }}</strong> in <strong>{{
                             getNextDoseCountdown(nextMedication) }}</strong>, <strong>{{ nextMedication.dosage
                             }}</strong>.</p>
+
                     <!-- Time Control Buttons -->
                     <div class="time-controls">
                         <button @click="timeOffset += 3600000">Skip 1 Hour</button>
@@ -800,14 +801,12 @@
                         </button>
                     </div>
 
-
-
-                    <!-- Display Current Medications -->
-                    <div v-if="user.medications && user.medications.length > 0" class="medications-container">
+                    <!-- Display Medications -->
+                    <div v-if="user.medications.length > 0" class="medications-container">
                         <div v-for="(medication, index) in user.medications" :key="index" class="medication-card">
 
                             <div class="medication-card-content">
-                                <!-- Left Side: Medication Details -->
+                                <!-- Left: Medication Details -->
                                 <div class="medication-details">
                                     <h4 style="text-decoration: underline;">{{ medication.name }}</h4>
                                     <p><strong>Dosage:</strong> {{ medication.dosage }}</p>
@@ -827,10 +826,9 @@
                                         @click="markAsTaken(medication)">
                                         Mark as Taken
                                     </button>
-
                                 </div>
 
-                                <!-- Right Side: Medication Logs -->
+                                <!-- Right: Medication Logs -->
                                 <div class="medication-logs">
                                     <h5 style="text-decoration: underline;">Medication Logs</h5>
                                     <ul class="medication-log-list">
@@ -847,16 +845,97 @@
                     <p v-else>No medications found.</p>
                 </div>
 
+                <!-- If Doctor is Logged In -->
+                <div v-else-if="isLoggedIn && isDoctor">
+                    <h2 style="text-align: center; margin-top: -0.5%;">Prescribe Medications</h2>
+
+                    <h4>Patients List</h4>
+                    <div class="medications-scroll-container">
+                        <div v-for="(patient, index) in patientsList" :key="index" class="medication-card">
+                            <div class="medication-card-content">
+                                <strong>{{ patient.fullName }}</strong>
+                                <div v-if="!isEditing.medication[patient.email]" class="button-group1">
+                                    <button @click="toggleMedicationEdit(patient.email)">Prescribe Medication</button>
+                                </div>
+                                <div v-else class="appointment-inputs">
+
+                                    <!-- Medication Name -->
+                                    <input v-model="medicationData[patient.email].name" placeholder="Medication Name"
+                                        type="text" />
+
+                                    <!-- Dosage -->
+                                    <select v-model="medicationData[patient.email].dosage">
+                                        <option value="1 pill">1 pill</option>
+                                        <option value="2 pills">2 pills</option>
+                                        <option value="5ml syrup">5ml syrup</option>
+                                        <option value="10ml syrup">10ml syrup</option>
+                                        <option value="1 tablet">1 tablet</option>
+                                        <option value="2 tablets">2 tablets</option>
+                                        <option value="1 tsp">1 teaspoon</option>
+                                        <option value="2 tsp">2 teaspoons</option>
+                                    </select>
+
+                                    <!-- Frequency -->
+                                    <select v-model="medicationData[patient.email].frequency">
+                                        <option value="Twice a day">Twice a day</option>
+                                        <option value="Every hour">Every hour</option>
+                                        <option value="Every 4 hours">Every 4 hours</option>
+                                        <option value="Every 6 hours">Every 6 hours</option>
+                                        <option value="Every 8 hours">Every 8 hours</option>
+                                        <option value="Every 12 hours">Every 12 hours</option>
+                                        <option value="Once a week">Once a week</option>
+                                    </select>
+
+                                    <!-- Time to Take -->
+                                    <select v-model="medicationData[patient.email].time">
+                                        <option value="7 AM">7 AM</option>
+                                        <option value="8 AM">8 AM</option>
+                                        <option value="12 PM">12 PM</option>
+                                        <option value="1 PM">1 PM</option>
+                                        <option value="4 PM">4 PM</option>
+                                        <option value="8 PM">8 PM</option>
+                                        <option value="10 PM">10 PM</option>
+                                    </select>
+
+                                    <!-- Duration -->
+                                    <select v-model="medicationData[patient.email].duration">
+                                        <option value="3 days">3 days</option>
+                                        <option value="5 days">5 days</option>
+                                        <option value="1 week">1 week</option>
+                                        <option value="2 weeks">2 weeks</option>
+                                        <option value="1 month">1 month</option>
+                                        <option value="Until further notice">Until further notice</option>
+                                    </select>
+
+                                    <!-- Diagnosis -->
+                                    <input v-model="medicationData[patient.email].diagnosis" placeholder="Diagnosis"
+                                        type="text" />
+
+                                    <!-- Save/Cancel Buttons -->
+                                    <div class="button-container">
+                                        <button class="saveMedicine"
+                                            @click="submitMedication(patient.email)">Prescribe</button>
+                                        <button class="cancelAppointment"
+                                            @click="cancelMedicationEdit(patient.email)">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <!-- Show Login/Signup Prompt if Not Logged In -->
                 <div v-else class="auth-prompt">
                     <h2>You need to log in or sign up</h2>
-                    <p>To access your medications, please log in or create an account.</p>
+                    <p>To access medications, please log in or create an account.</p>
                     <div class="button-container">
                         <button class="auth-button" @click="navigateTo('login')">Login</button>
                         <button class="auth-button" @click="navigateTo('signup')">Sign Up</button>
                     </div>
                 </div>
             </div>
+
 
 
 

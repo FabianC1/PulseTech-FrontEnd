@@ -68,6 +68,7 @@ const app = Vue.createApp({
         wearableData: false,
         emergencyDetails: false,
         appointment: {},
+        medication: {} // Track which patient is being edited
       },
       diagnosisStarted: false,
       question: "",
@@ -1996,6 +1997,82 @@ const app = Vue.createApp({
     closeMessageMedicalHistoryPopup() {
       this.showMessageMedicalHistoryPopup = false;
     },
+
+
+
+    toggleMedicationEdit(patientEmail) {
+      // Ensure medicationData exists for the given email
+      if (!this.medicationData) {
+        this.medicationData = {};
+      }
+
+      if (!this.medicationData[patientEmail]) {
+        this.medicationData[patientEmail] = {
+          name: '',
+          dosage: '',
+          frequency: '',
+          time: '',
+          duration: '',
+          diagnosis: ''
+        };
+      }
+
+      // Ensure isEditing.medication exists
+      if (!this.isEditing.medication) {
+        this.isEditing.medication = {};
+      }
+
+      // Toggle the edit state
+      this.isEditing.medication[patientEmail] = !this.isEditing.medication[patientEmail];
+    },
+
+
+    cancelMedicationEdit(patientEmail) {
+      this.isEditing.medication[patientEmail] = false;
+      this.medicationData[patientEmail] = { name: "", dosage: "", frequency: "", time: "", duration: "", diagnosis: "" };
+    },
+
+
+    submitMedication(patientEmail) {
+      if (!this.medicationData[patientEmail]) return;
+
+      const medication = this.medicationData[patientEmail];
+
+      if (!medication.name || !medication.dosage || !medication.frequency || !medication.time || !medication.duration || !medication.diagnosis) {
+        alert("Please fill in all medication details before prescribing.");
+        return;
+      }
+
+      fetch("http://localhost:3000/save-medication", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: patientEmail, // Correct key for the backend
+          medication: {
+            name: medication.name,
+            dosage: medication.dosage,
+            frequency: medication.frequency,
+            timeToTake: medication.time, // Matches backend field
+            duration: medication.duration,
+            diagnosis: medication.diagnosis
+          }
+        }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === "Medication saved successfully!") {
+            alert("Medication prescribed successfully!");
+            this.isEditing.medication[patientEmail] = false; // Close the edit form
+            this.fetchMedicalRecords(); // Refresh the data
+          } else {
+            alert("Failed to save medication: " + data.message);
+          }
+        })
+        .catch(error => {
+          console.error("Error prescribing medication:", error);
+          alert("An error occurred while prescribing the medication.");
+        });
+    }
 
   },
 
