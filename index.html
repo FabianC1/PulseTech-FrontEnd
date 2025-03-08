@@ -205,12 +205,82 @@
 
             <!-- Health Dashboard Section -->
             <div v-if="currentView === 'healthDashboard'">
-                <div v-if="isLoggedIn" class="dashboard-container">
-                    <h2 style="text-align: center; margin-top: -0.5%;">Health Dashboard</h2>
-                    <p style="text-align: center; margin-top: -1%;">Your health metrics will appear here.</p>
+
+                <!-- If User is Logged In -->
+                <div v-if="isLoggedIn" class="health-dashboard">
+
+                    <!-- Profile & Quick Actions -->
+                    <div class="profile-section">
+                        <img :src="user.profilePicture" class="profile-pic" />
+                        <h2>{{ user.fullName }}</h2>
+
+                        <!-- Quick Actions Grid -->
+                        <div class="quick-actions">
+                            <button @click="navigateTo('medicalRecords')">Log Symptom</button>
+                            <button @click="navigateTo('appointments')">Request Appointment</button>
+                            <button @click="navigateTo('medicalRecords')">View Medical Records</button>
+                            <button @click="navigateTo('symptomChecker')">Get Self-Diagnosis</button>
+                            <button @click="navigateTo('medication')">Check Medication Schedule</button>
+                            <button @click="navigateTo('messages')">Message Doctor</button>
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Health Alerts -->
+                    <div class="alerts-section">
+                        <h3>Health Alerts</h3>
+                        <p v-if="missedMeds > 0">You missed {{ missedMeds }} medication(s) this week!</p>
+                        <p v-if="lowSteps">Low step count detected today!</p>
+                    </div>
+
+                    <!-- Medical History -->
+                    <div class="medical-history">
+                        <h3>Recent Appointments</h3>
+                        <ul>
+                            <li v-for="appointment in recentAppointments" :key="appointment.id">
+                                {{ appointment.date }} - {{ appointment.doctor }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Medication Adherence Chart -->
+                    <div class="medication-chart">
+                        <h3>Visual Data</h3>
+                        <canvas id="medicationChart"></canvas>
+                    </div>
+
+                    <!-- Wearable Data Overview -->
+                    <div class="wearable-data">
+                        <h3>Heart Rate</h3>
+                        <canvas id="heartRateChart"></canvas>
+                    </div>
+
+                    <!-- Step Count -->
+                    <div class="step-count">
+                        <h3>Steps Today</h3>
+                        <canvas id="stepChart"></canvas>
+                    </div>
+
+                    <!-- Sleep & Stress Analysis -->
+                    <div class="sleep-stress">
+                        <h3>Sleep & Stress</h3>
+                        <canvas id="sleepChart"></canvas>
+                    </div>
+
+                    <!-- Upcoming Events -->
+                    <div class="upcoming-events">
+                        <h3>Upcoming Appointments</h3>
+                        <ul>
+                            <li v-for="event in upcomingAppointments" :key="event.id">
+                                {{ event.date }} - {{ event.doctor }}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <!-- Show Login/Signup Prompt if Not Logged In -->
+                <!-- If User is Not Logged In -->
                 <div v-else class="auth-prompt">
                     <h2>You need to log in or sign up</h2>
                     <p>To access your health dashboard, please log in or create an account.</p>
@@ -219,7 +289,9 @@
                         <button class="auth-button" @click="navigateTo('signup')">Sign Up</button>
                     </div>
                 </div>
+
             </div>
+
 
 
             <!-- Medical Records Section -->

@@ -3122,7 +3122,7 @@ a:hover {
 }
 
 .view-record-btn {
-    background-color: #4CAF50;
+    background-color: #0084ff;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -3131,7 +3131,7 @@ a:hover {
 }
 
 .view-record-btn:hover {
-    background-color: #45a049;
+    background-color: #004d96;
 }
 
 /* Container for attachment buttons */
@@ -3176,26 +3176,161 @@ a:hover {
 
 
 
-
-
-.dashboard-container {
-    text-align: center;
-    padding: 20px;
-    margin: 5px auto;
-    max-width: 98%;
-    background: linear-gradient(45deg, #63005a93, #14668696);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 650px;
-    font-size: 1.3em;
-    line-height: 1.6;
-    border-radius: 10px;
-    padding-right: 15px;
-    box-sizing: border-box;
-    border: black solid;
-    flex-direction: column;
-    display: flex;
-    flex-wrap: wrap;
+.health-dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
     gap: 20px;
-    justify-content: flex-start;
+    padding: 20px;
+    
+    /* Make it scrollable */
+    max-height: 70vh; /* Adjust height based on your layout */
+    overflow-y: auto;
 }
 
+/* WebKit scrollbar styles for Health Dashboard */
+.health-dashboard::-webkit-scrollbar {
+    width: 8px;
+}
+
+.health-dashboard::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.623);
+    border-radius: 15px;
+}
+
+.health-dashboard::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Underline styles for Health Dashboard h3 elements */
+.health-dashboard h3 {
+    display: inline-block; /* Ensures the underline is only as wide as needed */
+    padding-bottom: 3px;
+    border-bottom: 3px solid;
+    padding-right: 10px; /* Extends the underline slightly */
+    padding-left: 10px;  /* Extends the underline slightly */
+}
+
+/* Unique underline colors */
+.alerts-section h3 {
+    border-color: red; /* Health Alerts */
+}
+
+.medical-history h3 {
+    border-color: #007BFF; /* Recent Appointments */
+}
+
+.medication-chart h3 {
+    border-color: #00b894; /* Medication Adherence */
+}
+
+.wearable-data h3 {
+    border-color: #ff9f43; /* Heart Rate */
+}
+
+.step-count h3 {
+    border-color: #f368e0; /* Steps Today */
+}
+
+.sleep-stress h3 {
+    border-color: #6c5ce7; /* Sleep & Stress */
+}
+
+.upcoming-events h3 {
+    border-color: #e84118; /* Upcoming Appointments */
+}
+
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two buttons per row */
+    gap: 10px; /* Space between buttons */
+    margin-top: 10px;
+    width: 80%; /* Ensure it spans the full width */
+}
+
+.quick-actions button {
+    background: linear-gradient(45deg, #007BFF, #00c6ff);
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+/* Hover Effect: Make border glow */
+.quick-actions button:hover::after {
+    height: 6px;
+    filter: brightness(1.3);
+    transition: all 0.1s ease-in-out; /* Faster response time */
+}
+
+/* Hover Effect: Button color changes, scales up, and adds a glow */
+.quick-actions button:hover {
+    background: linear-gradient(45deg, #0056b3, #0086d4);
+    transition: background 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
+
+
+
+
+
+.profile-section {
+    grid-column: span 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #222;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.alerts-section, .medical-history, .medication-chart, 
+.wearable-data, .step-count, .sleep-stress, .upcoming-events {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+}
+
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.auth-prompt {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.auth-button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+}
+.auth-button:hover {
+    background-color: #0056b3;
+}
