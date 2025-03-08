@@ -184,6 +184,10 @@ const app = Vue.createApp({
       });
 
       return closestMed || { name: "None", timeToTake: "N/A", dosage: "N/A" };
+    },
+
+    isDoctor() {
+      return this.user && this.user.role === "doctor";
     }
   },
 
@@ -478,27 +482,27 @@ const app = Vue.createApp({
           console.error("User object or email is missing. Cannot fetch medical records.");
           return;
         }
-    
+
         const response = await fetch(`http://localhost:3000/get-medical-records?email=${encodeURIComponent(this.user.email)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-    
+
         const data = await response.json();
         if (!response.ok) {
           console.error("Error fetching medical records:", data.message);
           return;
         }
-    
+
         console.log("Fetched medical records:", data);
-    
+
         // 🔹 Ensure `medicalRecords` is updated for messages/attachments
         this.medicalRecords = data;
         this.selectedMedicalRecord = data;
-    
+
         // 🔹 Ensure `user` is updated for displaying data
         this.user = { ...this.user, ...data };
-    
+
         // 🔹 Ensure `medications`, `medicalHistory`, etc., update properly
         this.user.medications = data.medications || [];
         this.user.medicalHistory = data.medicalHistory || "No records found";
@@ -512,16 +516,16 @@ const app = Vue.createApp({
         this.user.bloodOxygen = data.bloodOxygen || "Not available";
         this.user.organDonorStatus = data.organDonorStatus || "Not specified";
         this.user.medicalDirectives = data.medicalDirectives || "Not specified";
-    
+
         // 🔹 Force Vue to re-render immediately
         this.$forceUpdate();
-    
+
       } catch (error) {
         console.error("Error fetching medical records:", error);
       }
     },
-    
-    
+
+
 
     // Fetch and show medical history in popup
     async viewMedicalHistory(email) {
@@ -1572,7 +1576,7 @@ const app = Vue.createApp({
         bloodType: this.user.bloodType,
         emergencyContact: this.user.emergencyContact,
         medicalHistory: this.user.medicalHistory,
-        medications: [...this.user.medications], 
+        medications: [...this.user.medications],
         vaccinations: this.user.vaccinations,
         smokingStatus: this.user.smokingStatus,
         alcoholConsumption: this.user.alcoholConsumption,
@@ -1903,7 +1907,7 @@ const app = Vue.createApp({
 
     async sendMessage() {
       try {
-        if (!this.newMessage.trim() && (!this.isAttachmentActive || !this.selectedMedicalRecord)) {
+        if (!this.newMessage.trim() && (!this.isAttachmentActive || !this.selectedMedicalRecord || this.isDoctor)) {
           console.warn("Cannot send an empty message or attachment!");
           return;
         }
@@ -1912,7 +1916,9 @@ const app = Vue.createApp({
           sender: this.user.email,
           receiver: this.selectedContact.email,
           message: this.newMessage || null,
-          attachment: (this.isAttachmentActive && this.selectedMedicalRecord) ? { ...this.selectedMedicalRecord } : null,
+          attachment: (this.isAttachmentActive && this.selectedMedicalRecord && !this.isDoctor)
+            ? { ...this.selectedMedicalRecord }
+            : null,
           timestamp: new Date().toISOString(),
         };
 
@@ -1939,7 +1945,6 @@ const app = Vue.createApp({
         console.error("Error sending message:", error);
       }
     },
-
 
 
 

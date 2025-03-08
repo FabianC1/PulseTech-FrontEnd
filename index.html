@@ -903,18 +903,17 @@
                                 </div>
                                 <!-- Chat Input -->
                                 <div class="chat-input">
-                                    <!-- Attach Medical Record Button -->
-                                    <button class="attach-btn" @click="toggleAttachmentMenu">
+                                    <!-- Attach Medical Record Button (Hidden for Doctors) -->
+                                    <button v-if="!isDoctor" class="attach-btn" @click="toggleAttachmentMenu">
                                         <img src="/image/attach.png" alt="Attach" class="icon" />
                                     </button>
 
-                                    <!-- Show "View" & "Remove" buttons only when toggled -->
-                                    <div v-if="showAttachmentOptions" class="attachment-container">
+                                    <!-- Show "View" & "Remove" buttons only when toggled (Hidden for Doctors) -->
+                                    <div v-if="showAttachmentOptions && !isDoctor" class="attachment-container">
                                         <button class="view-attachment"
                                             @click="viewAttachedRecord(selectedMedicalRecord)">View</button>
                                         <button class="remove-attachment" @click="detachAttachment">Remove</button>
                                     </div>
-
 
                                     <!-- Message Input Field -->
                                     <input type="text" v-model="newMessage" placeholder="Chat message..."
