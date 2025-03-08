@@ -2808,29 +2808,6 @@ a:hover {
 }
 
 
-
-.dashboard-container {
-    text-align: center;
-    padding: 20px;
-    margin: 5px auto;
-    max-width: 98%;
-    background: linear-gradient(45deg, #63005a93, #14668696);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 650px;
-    font-size: 1.3em;
-    line-height: 1.6;
-    border-radius: 10px;
-    padding-right: 15px;
-    box-sizing: border-box;
-    border: black solid;
-    flex-direction: column;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-}
-
-
 /* Optional: Optional limits on the scroll position */
 .dashboard-container::-webkit-scrollbar {
     width: 8px;
@@ -2844,6 +2821,140 @@ a:hover {
 .dashboard-container::-webkit-scrollbar-track {
     background: transparent;
 }
+
+
+
+
+/* Main container for prescribing medications */
+.doctor-medications-container {
+    max-width: 95%;
+    margin: 20px auto;
+    padding: 20px;
+    background: linear-gradient(45deg, #5a005a, #007b7b);
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Page header */
+.doctor-medications-header {
+    text-align: center;
+    color: #fff;
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+
+/* Patients list */
+.doctor-patients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Individual patient medication card */
+.doctor-medication-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid #00aaff;
+    transition: 0.3s ease-in-out;
+}
+
+/* Hover effect */
+.doctor-medication-card:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Patient name */
+.doctor-patient-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    flex: 1;
+}
+
+/* Medication input container */
+.doctor-medication-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 3;
+}
+
+/* Input fields and dropdowns */
+.medication-field {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background: white;
+    min-width: 120px;
+    font-size: 1em;
+}
+
+/* Medication suggestions dropdown */
+.medication-suggestions {
+    list-style: none;
+    position: absolute;
+    background: white;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    width: 200px;
+}
+
+.medication-suggestions li {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.medication-suggestions li:hover {
+    background: #00aaff;
+    color: white;
+}
+
+/* Buttons */
+.doctor-medication-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.primary-btn {
+    background: #00aaff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.primary-btn:hover {
+    background: #0080ff;
+}
+
+.secondary-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.secondary-btn:hover {
+    background: #cc0000;
+}
+
+
+
+
 
 
   
@@ -3069,5 +3180,30 @@ a:hover {
 
 .remove-attachment:hover {
     background-color: #B52B27; /* Darker red */
+}
+
+
+
+
+
+.dashboard-container {
+    text-align: center;
+    padding: 20px;
+    margin: 5px auto;
+    max-width: 98%;
+    background: linear-gradient(45deg, #63005a93, #14668696);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 650px;
+    font-size: 1.3em;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    border: black solid;
+    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
 }
 
