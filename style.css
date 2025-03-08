@@ -2,12 +2,12 @@
 :root {
     /* Light Mode */
     --primary-bg-light: linear-gradient(to left, #758FFF, #ffffff);
-    --section-bg-light: linear-gradient(to right, #493396ab, #758FFF); /* Light mode section background */
+    --section-bg-light: #586dca; /* Light mode section background */
     --primary-text-light: #000000; 
 
     /* Dark Mode */
     --primary-bg-dark: linear-gradient(to right, #1f1f1f, #013a85bd);
-    --section-bg-dark: linear-gradient(to right, #1f1f1f8e, #3400797e); /* Dark mode section background */
+    --section-bg-dark: rgba(255, 255, 255, 0.13);/* Dark mode section background */
     --primary-text-dark: #ffffff;
 
     /* Default Mode */
@@ -3315,7 +3315,6 @@ a:hover {
     border-radius: 10px;
     color: var(--primary-text); /* Adjust text color based on theme */
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-    border: rgba(255, 255, 255, 0.74) solid 2px;
 }
 
 
