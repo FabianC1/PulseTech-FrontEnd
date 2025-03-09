@@ -2046,31 +2046,33 @@ const app = Vue.createApp({
 
 
     submitMedication(patientEmail) {
-      const medication = { ...this.medicationData[patientEmail] }; // Copy data to prevent mutation issues
-
-      // Ensure all fields are filled for this patient
+      const medication = { ...this.medicationData[patientEmail] };
+    
       if (!medication.name || !medication.dosage || !medication.frequency ||
-        !medication.time || !medication.duration || !medication.diagnosis) {
+          !medication.time || !medication.duration || !medication.diagnosis) {
         alert("Please fill in all medication details before prescribing.");
         return;
       }
-
-      // Assign `timeToTake` explicitly
-      medication.timeToTake = medication.time;
-
+    
+      medication.timeToTake = medication.time; // Ensure correct field is used
+    
       fetch("http://localhost:3000/save-medication", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: patientEmail,
-          medication: medication, // Ensure timeToTake is included
+          medication: medication,
         }),
       })
         .then(response => response.json())
         .then(data => {
           if (data.message === "Medication saved successfully!") {
             alert("Medication prescribed successfully!");
-            this.$set(this.isEditing.medication, patientEmail, false); // Close only this patient's form
+    
+            if (!this.isEditing.medication) {
+              this.isEditing.medication = {}; // Ensure object exists
+            }
+            this.isEditing.medication[patientEmail] = false; // Close form
           } else {
             alert("Failed to save medication. Try again.");
           }
@@ -2079,7 +2081,7 @@ const app = Vue.createApp({
           console.error("Error prescribing medication:", error);
           alert("An error occurred while prescribing the medication.");
         });
-    }
+    }    
 
 
   },
