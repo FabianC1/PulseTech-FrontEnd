@@ -187,10 +187,6 @@ const app = Vue.createApp({
       });
 
       return closestMed || { name: "None", timeToTake: "N/A", dosage: "N/A" };
-    },
-
-    isDoctor() {
-      return this.user && this.user.role === "doctor";
     }
   },
 
