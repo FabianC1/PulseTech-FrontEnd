@@ -1539,7 +1539,7 @@ const app = Vue.createApp({
       return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
     },
 
-    async markAsTaken(medication) {
+         async markAsTaken(medication) {
       if (medication.isMarking || this.hasTakenDose(medication)) {
         console.log(`Already marked as taken: ${medication.name}`);
         return;
@@ -1618,10 +1618,10 @@ const app = Vue.createApp({
         if (response.ok) {
           console.log("Medical records saved successfully");
 
-          // ✅ Ensure the UI updates with new medical records
+          // Ensure the UI updates with new medical records
           await this.fetchMedicalRecords();
 
-          // ✅ Reset edit mode
+          // Reset edit mode
           Object.keys(this.isEditing).forEach((key) => {
             this.isEditing[key] = false;
           });
@@ -1636,45 +1636,18 @@ const app = Vue.createApp({
 
 
     hasTakenDose(medication) {
-      if (!medication || !medication.logs || medication.logs.length === 0) {
-        return false; // No logs mean the medication hasn't been taken yet
-      }
-
-      const lastLog = medication.logs[medication.logs.length - 1]; // Get the latest log entry
-
-      if (!lastLog || !lastLog.time) {
-        return false; // Prevents null errors
-      }
-
-      const logTime = new Date(lastLog.time);
-
-      if (isNaN(logTime)) {
-        return false; // Invalid date
-      }
-
-      return logTime.toISOString(); // Convert to ISO string safely
+      const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
+      return medication.logs && medication.logs.some(log => log.time === nextDoseTime && log.status === "Taken");
     },
 
-
     shouldShowMarkAsTaken(medication) {
-      if (!medication || !medication.logs || medication.logs.length === 0) {
-        return false; // No logs mean no dose was taken
-      }
+      if (!medication) return false;
+      if (this.hasTakenDose(medication)) return false; // If taken, don't show button
 
-      const lastLog = medication.logs[medication.logs.length - 1];
+      const diffMinutes = this.getTimeDiff(medication);
+      if (diffMinutes === null) return false;
 
-      if (!lastLog || !lastLog.time) {
-        return false; // No valid log entry
-      }
-
-      const logTime = new Date(lastLog.time);
-
-      if (isNaN(logTime)) {
-        return false;
-      }
-
-      const now = new Date();
-      return logTime.toISOString() === now.toISOString(); // Checks if last taken dose matches current time
+      return diffMinutes >= -30 && diffMinutes <= 60; // Show only in valid time range
     },
 
 
