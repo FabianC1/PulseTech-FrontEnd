@@ -226,20 +226,18 @@
 
                     </div>
 
-
-
                     <!-- Health Alerts -->
                     <div class="alerts-section">
                         <h3>Health Alerts</h3>
-                        <p v-if="missedMeds > 0">You missed {{ missedMeds }} medication(s) this week!</p>
-                        <p v-if="lowSteps">Low step count detected today!</p>
+                        <p v-if="healthDashboardData.missedMeds > 0">You missed {{ healthDashboardData.missedMeds }}
+                            medication(s) this week!</p>
                     </div>
 
                     <!-- Medical History -->
                     <div class="medical-history">
                         <h3>Recent Appointments</h3>
                         <ul>
-                            <li v-for="appointment in recentAppointments" :key="appointment.id">
+                            <li v-for="appointment in healthDashboardData.recentAppointments" :key="appointment.id">
                                 {{ appointment.date }} - {{ appointment.doctor }}
                             </li>
                         </ul>
@@ -247,8 +245,18 @@
 
                     <!-- Medication Adherence Chart -->
                     <div class="medication-chart">
-                        <h3>Visual Data</h3>
+                        <h3>Medication Adherence</h3>
                         <canvas id="medicationChart"></canvas>
+                    </div>
+
+                    <!-- Upcoming Events -->
+                    <div class="upcoming-events">
+                        <h3>Upcoming Appointments</h3>
+                        <ul>
+                            <li v-for="event in healthDashboardData.upcomingAppointments" :key="event.id">
+                                {{ event.date }} - {{ event.doctor }}
+                            </li>
+                        </ul>
                     </div>
 
                     <!-- Wearable Data Overview -->
@@ -269,15 +277,6 @@
                         <canvas id="sleepChart"></canvas>
                     </div>
 
-                    <!-- Upcoming Events -->
-                    <div class="upcoming-events">
-                        <h3>Upcoming Appointments</h3>
-                        <ul>
-                            <li v-for="event in upcomingAppointments" :key="event.id">
-                                {{ event.date }} - {{ event.doctor }}
-                            </li>
-                        </ul>
-                    </div>
                 </div>
 
                 <!-- If User is Not Logged In -->

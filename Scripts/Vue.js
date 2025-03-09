@@ -524,8 +524,6 @@ const app = Vue.createApp({
       }
     },
 
-
-
     // Fetch and show medical history in popup
     async viewMedicalHistory(email) {
       try {
@@ -1641,44 +1639,44 @@ const app = Vue.createApp({
       if (!medication || !medication.logs || medication.logs.length === 0) {
         return false; // No logs mean the medication hasn't been taken yet
       }
-    
+
       const lastLog = medication.logs[medication.logs.length - 1]; // Get the latest log entry
-    
+
       if (!lastLog || !lastLog.time) {
         return false; // Prevents null errors
       }
-    
+
       const logTime = new Date(lastLog.time);
-      
+
       if (isNaN(logTime)) {
         return false; // Invalid date
       }
-    
+
       return logTime.toISOString(); // Convert to ISO string safely
     },
-    
+
 
     shouldShowMarkAsTaken(medication) {
       if (!medication || !medication.logs || medication.logs.length === 0) {
         return false; // No logs mean no dose was taken
       }
-    
+
       const lastLog = medication.logs[medication.logs.length - 1];
-    
+
       if (!lastLog || !lastLog.time) {
         return false; // No valid log entry
       }
-    
+
       const logTime = new Date(lastLog.time);
-      
+
       if (isNaN(logTime)) {
         return false;
       }
-    
+
       const now = new Date();
       return logTime.toISOString() === now.toISOString(); // Checks if last taken dose matches current time
     },
-    
+
 
     checkMissedMedications() {
       this.user.medications.forEach(medication => {
@@ -1991,6 +1989,7 @@ const app = Vue.createApp({
 
 
 
+
     openChat(contact) {
       this.selectedContact = contact; // Set the selected contact
       this.chatMessages = []; // Clear previous messages
@@ -2040,8 +2039,6 @@ const app = Vue.createApp({
       this.showMessageMedicalHistoryPopup = false;
     },
 
-
-
     toggleMedicationEdit(patientEmail) {
       // Ensure medicationData exists for the given email
       if (!this.medicationData) {
@@ -2077,17 +2074,17 @@ const app = Vue.createApp({
 
     submitMedication(patientEmail) {
       const medication = { ...this.medicationData[patientEmail] }; // Copy data to prevent mutation issues
-    
+
       // Ensure all fields are filled for this patient
       if (!medication.name || !medication.dosage || !medication.frequency ||
-          !medication.time || !medication.duration || !medication.diagnosis) {
+        !medication.time || !medication.duration || !medication.diagnosis) {
         alert("Please fill in all medication details before prescribing.");
         return;
       }
-    
+
       // Assign `timeToTake` explicitly
       medication.timeToTake = medication.time;
-    
+
       fetch("http://localhost:3000/save-medication", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -2110,7 +2107,7 @@ const app = Vue.createApp({
           alert("An error occurred while prescribing the medication.");
         });
     }
-    
+
 
   },
 
