@@ -1515,25 +1515,33 @@ const app = Vue.createApp({
     
       let diffMinutes = Math.floor((nextDose - now) / 60000);
     
-      // **🔹 If the grace period (30 minutes after scheduled dose) has passed, move to the next dose**
-      if (diffMinutes < -30) {
-        console.log(`Grace period ended for ${medication.name}. Moving to next scheduled dose.`);
+      // **🔹 If within the grace period (0 to -30 minutes), show countdown**
+      if (diffMinutes < 0 && diffMinutes >= -30) {
+        return `${30 - Math.abs(diffMinutes)} minutes left to mark`;
+      }
     
-        // **Advance to the next dose properly** by recalculating based on frequency
+      // **🔹 If grace period has fully passed (-30+ minutes), auto-mark as missed**
+      if (diffMinutes < -30) {
+        console.log(`Grace period ended for ${medication.name}. Marking as Missed.`);
+    
+        // **🔴 Mark as Missed in Database**
+        console.log(`Grace period ended for ${medication.name}. Running autoMarkMissedMedications().`);
+        this.autoMarkMissedMedications();
+    
+        // **Move to the next scheduled dose**
         nextDose = this.calculateNextDoseTime(medication);
         while (nextDose <= now) {
           nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
         }
     
-        // **Update stored next dose time**
         medication.fixedNextDose = nextDose.toISOString();
         this.$forceUpdate();
     
-        // **Recalculate time difference**
+        // **Recalculate time difference for display**
         diffMinutes = Math.floor((nextDose - now) / 60000);
       }
     
-      // **🔹 Prevents the "0h 0m left" issue by ensuring nextDose is always in the future**
+      // **🔹 Prevents "0h 0m left" issue by ensuring nextDose is in the future**
       if (diffMinutes <= 0) {
         console.log(`Fixing next dose time for ${medication.name}, ensuring it's in the future.`);
         nextDose = this.calculateNextDoseTime(medication);
@@ -1546,12 +1554,14 @@ const app = Vue.createApp({
         diffMinutes = Math.floor((nextDose - now) / 60000);
       }
     
-      // **🔹 Always display the actual countdown for the next dose**
+      // **🔹 Always display countdown for the next dose**
       const hours = Math.floor(Math.max(diffMinutes, 0) / 60);
       const minutes = Math.max(diffMinutes, 0) % 60;
     
       return `${hours}h ${minutes}m left`;
     },
+    
+    
     
 
     getGracePeriodMessage(medication) {
