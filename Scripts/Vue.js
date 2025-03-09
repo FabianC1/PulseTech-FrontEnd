@@ -1508,25 +1508,30 @@ const app = Vue.createApp({
 
 
     getNextDoseCountdown(medication) {
-      // If the dose has been marked as taken, return "Taken"
-      if (medication.takenAt) {
-        return "Taken";
+      const now = this.getCurrentTime();
+      let nextDose = this.calculateNextDoseTime(medication);
+    
+      if (!nextDose) return "Not set";
+    
+      let diffMinutes = Math.floor((nextDose - now) / 60000);
+    
+      // **🔹 Move to the next valid dose if past grace period**
+      if (diffMinutes < -30) {
+        nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
+        medication.fixedNextDose = nextDose.toISOString();
+        diffMinutes = Math.floor((nextDose - now) / 60000); // Recalculate for new dose
       }
-      const diffMinutes = this.getTimeDiff(medication);
-      if (diffMinutes === null) return "Not set";
+    
+      // **🔹 Always return a valid countdown**
       if (diffMinutes >= 0) {
-        // Before dose time: normal countdown
         const hours = Math.floor(diffMinutes / 60);
         const minutes = diffMinutes % 60;
-        return hours > 0 ? `${hours}h ${minutes}m left` : `${minutes}m left`;
-      } else if (diffMinutes < 0 && diffMinutes >= -30) {
-        // During grace period: countdown from 30 minutes to 0
-        return `${30 - Math.abs(diffMinutes)} minutes left to mark`;
+        return `${hours}h ${minutes}m left`;
       }
-      return "Missed";
+    
+      return `${30 - Math.abs(diffMinutes)} minutes left to mark`; // Grace period countdown
     },
-
-
+  
 
     showMarkAsTaken(medication) {
       const now = this.getCurrentTime();
@@ -1671,30 +1676,44 @@ const app = Vue.createApp({
         this.user.medications = [];
         return;
       }
-
+    
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
-
+    
         if (!nextDose) return; // Skip if no valid dose time
-
+    
+        const doseTimeISO = nextDose.toISOString();
         const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes
-
-        // Only proceed if we're past the grace period (30 mins after dose time)
+    
+        // **🔹 1. Check if this dose was already marked as "Taken"**
+        const alreadyTaken = medication.logs && medication.logs.some(log =>
+          log.time === doseTimeISO && log.status === "Taken"
+        );
+    
+        if (alreadyTaken) {
+          console.log(`Skipping Missed status for ${medication.name} - already taken at ${doseTimeISO}`);
+    
+          // * Move to the next dose automatically**
+          medication.fixedNextDose = this.calculateNextDoseTime(medication, doseTimeISO).toISOString();
+          this.$forceUpdate();
+          return;
+        }
+    
+        // **🔹 2. Check if it was already marked as "Missed" to prevent duplicates**
+        const alreadyMissed = medication.logs && medication.logs.some(log =>
+          log.time === doseTimeISO && log.status === "Missed"
+        );
+    
+        if (alreadyMissed) {
+          console.log(`Skipping duplicate Missed status for ${medication.name} at ${doseTimeISO}`);
+          return; // Do not mark it as missed again
+        }
+    
+        // **🔹 3. If 30+ minutes have passed, mark as "Missed"**
         if (diffMinutes >= 30) {
-          // Check if the medication was already marked as "Taken" for this dose time
-          const doseTimeISO = nextDose.toISOString();
-          const alreadyTaken = medication.logs && medication.logs.some(log =>
-            log.time === doseTimeISO && log.status === "Taken"
-          );
-
-          if (alreadyTaken) {
-            console.log(`Skipping Missed status for ${medication.name} - already taken at ${doseTimeISO}`);
-            return; // Do not mark as missed
-          }
-
           console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${doseTimeISO})`);
-
+    
           try {
             const response = await fetch("http://localhost:3000/mark-medication-missed", {
               method: "POST",
@@ -1704,17 +1723,17 @@ const app = Vue.createApp({
                 medicationName: medication.name,
               }),
             });
-
+    
             const data = await response.json();
             if (response.ok) {
               console.log(`${medication.name} marked as Missed in database`);
-
+    
               if (!medication.logs) medication.logs = [];
               medication.logs.push({ time: doseTimeISO, status: "Missed" });
-
-              delete medication.fixedNextDose; // Reset dose tracking
-              medication.takenAt = null; // Reset for next cycle
-
+    
+              // **Move to the next dose automatically**
+              medication.fixedNextDose = this.calculateNextDoseTime(medication, doseTimeISO).toISOString();
+    
               this.$forceUpdate(); // Ensure UI updates
             } else {
               console.error(`Error marking ${medication.name} as Missed:`, data.message);
@@ -1732,19 +1751,18 @@ const app = Vue.createApp({
     getGracePeriodMessage(medication) {
       const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
-
+    
       if (!nextDose) return ""; // No valid dose time
-
-      const diffMinutes = Math.floor((now - nextDose) / 60000); // Difference in minutes
-
+    
+      const diffMinutes = Math.floor((now - nextDose) / 60000); // Negative if future, positive if past
+    
       if (diffMinutes >= 0 && diffMinutes < 30) {
-        return `${30 - diffMinutes} minutes left to mark`; // Show countdown
-      } else if (diffMinutes >= 30) {
-        return "Missed"; // Mark as missed after 30 minutes
+        return `${30 - diffMinutes} minutes left to mark`; // ✅ Within grace period
       }
-
-      return ""; // Otherwise, return nothing
+    
+      return this.getNextDoseCountdown(medication); // ✅ Otherwise, show normal countdown
     },
+    
 
 
 
@@ -1802,27 +1820,35 @@ const app = Vue.createApp({
     },
 
     updateMedicationUI() {
-      // Check if medications is an array before calling map on it
       if (!this.user.medications || !Array.isArray(this.user.medications)) {
         console.error("Medications is not an array or is undefined.");
-        this.user.medications = [];  // Initialize medications as an empty array if undefined
-        return; // Exit the function if medications is undefined or not an array
+        this.user.medications = [];
+        return;
       }
-
+    
       const now = this.getCurrentTime();
-      this.user.medications = this.user.medications.map((med) => {
-        const countdown = this.getNextDoseCountdown(med);
+    
+      this.user.medications.forEach((med) => {
+        let nextDose = this.calculateNextDoseTime(med);
         const alreadyTaken = this.hasTakenDose(med);
-
-        return {
-          ...med,
-          showMarkAsTaken: !alreadyTaken && this.shouldShowMarkAsTaken(med),
-          nextDoseDisplay: alreadyTaken ? "Taken" : countdown,
-          gracePeriodActive: countdown.includes("minutes left to mark"),
-        };
+        
+        // **Ensure next dose moves forward if missed**
+        if (nextDose && now - nextDose >= 30 * 60000) {
+          console.log(`Skipping overdue dose for ${med.name}. Moving to next dose.`);
+          nextDose = this.calculateNextDoseTime(med, nextDose.toISOString());
+          med.fixedNextDose = nextDose.toISOString();
+        }
+    
+        const countdown = this.getNextDoseCountdown(med);
+        
+        med.nextDoseDisplay = countdown; // ✅ **Always show countdown**
+        med.showMarkAsTaken = !alreadyTaken && this.shouldShowMarkAsTaken(med);
+        med.gracePeriodActive = countdown.includes("minutes left to mark");
       });
-      this.$forceUpdate(); // Force a re-render
+    
+      this.$forceUpdate(); // Force UI to refresh
     },
+    
 
     // New method to toggle fast speed
     toggleFastTime() {
