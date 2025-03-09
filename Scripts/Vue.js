@@ -137,6 +137,12 @@ const app = Vue.createApp({
       selectedMessageMedicalRecord: {},
       medicationInputs: {}, // Store medication name per patient
       medicationData: {},   // Store all medication details per patient
+      healthDashboardData: {
+        missedMeds: 0,
+        recentAppointments: [],
+        upcomingAppointments: [],
+        medicationStats: { taken: 0, missed: 0 }, // For the bar chart
+      }
     };
   },
 
@@ -192,10 +198,11 @@ const app = Vue.createApp({
 
   watch: {
     // Watch for when the current view is set to 'appointments'
-    currentView(newValue) {
-      if (newValue === 'appointments') {
-        this.fetchAppointmentsData();  // Trigger API calls only when the view is active
+    currentView(newView) {
+      if (newView === "healthDashboard") {
+        this.fetchHealthDashboardData();
       }
+
     },
 
 
@@ -1510,37 +1517,37 @@ const app = Vue.createApp({
     getNextDoseCountdown(medication) {
       const now = this.getCurrentTime();
       let nextDose = this.calculateNextDoseTime(medication);
-    
+
       if (!nextDose) return "Not set";
-    
+
       let diffMinutes = Math.floor((nextDose - now) / 60000);
-    
+
       // **🔹 If within the grace period (0 to -30 minutes), show countdown**
       if (diffMinutes < 0 && diffMinutes >= -30) {
         return `${30 - Math.abs(diffMinutes)} minutes left to mark`;
       }
-    
+
       // **🔹 If grace period has fully passed (-30+ minutes), auto-mark as missed**
       if (diffMinutes < -30) {
         console.log(`Grace period ended for ${medication.name}. Marking as Missed.`);
-    
+
         // **🔴 Mark as Missed in Database**
         console.log(`Grace period ended for ${medication.name}. Running autoMarkMissedMedications().`);
         this.autoMarkMissedMedications();
-    
+
         // **Move to the next scheduled dose**
         nextDose = this.calculateNextDoseTime(medication);
         while (nextDose <= now) {
           nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
         }
-    
+
         medication.fixedNextDose = nextDose.toISOString();
         this.$forceUpdate();
-    
+
         // **Recalculate time difference for display**
         diffMinutes = Math.floor((nextDose - now) / 60000);
       }
-    
+
       // **🔹 Prevents "0h 0m left" issue by ensuring nextDose is in the future**
       if (diffMinutes <= 0) {
         console.log(`Fixing next dose time for ${medication.name}, ensuring it's in the future.`);
@@ -1548,38 +1555,38 @@ const app = Vue.createApp({
         while (nextDose <= now) {
           nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
         }
-    
+
         medication.fixedNextDose = nextDose.toISOString();
         this.$forceUpdate();
         diffMinutes = Math.floor((nextDose - now) / 60000);
       }
-    
+
       // **🔹 Always display countdown for the next dose**
       const hours = Math.floor(Math.max(diffMinutes, 0) / 60);
       const minutes = Math.max(diffMinutes, 0) % 60;
-    
+
       return `${hours}h ${minutes}m left`;
     },
-    
-    
-    
+
+
+
 
     getGracePeriodMessage(medication) {
       const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
-    
+
       if (!nextDose) return ""; // No valid dose time
-    
+
       const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes
-    
+
       if (diffMinutes >= 0 && diffMinutes < 30) {
         return `${30 - diffMinutes} minutes left to mark`; // ✅ Still within grace period
       }
-    
+
       // ✅ Otherwise, return normal countdown (ALWAYS FUTURE TIME)
       return this.getNextDoseCountdown(medication);
     },
-    
+
 
 
     showMarkAsTaken(medication) {
@@ -1725,44 +1732,44 @@ const app = Vue.createApp({
         this.user.medications = [];
         return;
       }
-    
+
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
-    
+
         if (!nextDose) return; // Skip if no valid dose time
-    
+
         const doseTimeISO = nextDose.toISOString();
         const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes
-    
+
         // **🔹 1. Check if this dose was already marked as "Taken"**
         const alreadyTaken = medication.logs && medication.logs.some(log =>
           log.time === doseTimeISO && log.status === "Taken"
         );
-    
+
         if (alreadyTaken) {
           console.log(`Skipping Missed status for ${medication.name} - already taken at ${doseTimeISO}`);
-    
+
           // * Move to the next dose automatically**
           medication.fixedNextDose = this.calculateNextDoseTime(medication, doseTimeISO).toISOString();
           this.$forceUpdate();
           return;
         }
-    
+
         // **🔹 2. Check if it was already marked as "Missed" to prevent duplicates**
         const alreadyMissed = medication.logs && medication.logs.some(log =>
           log.time === doseTimeISO && log.status === "Missed"
         );
-    
+
         if (alreadyMissed) {
           console.log(`Skipping duplicate Missed status for ${medication.name} at ${doseTimeISO}`);
           return; // Do not mark it as missed again
         }
-    
+
         // **🔹 3. If 30+ minutes have passed, mark as "Missed"**
         if (diffMinutes >= 30) {
           console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${doseTimeISO})`);
-    
+
           try {
             const response = await fetch("http://localhost:3000/mark-medication-missed", {
               method: "POST",
@@ -1772,17 +1779,17 @@ const app = Vue.createApp({
                 medicationName: medication.name,
               }),
             });
-    
+
             const data = await response.json();
             if (response.ok) {
               console.log(`${medication.name} marked as Missed in database`);
-    
+
               if (!medication.logs) medication.logs = [];
               medication.logs.push({ time: doseTimeISO, status: "Missed" });
-    
+
               // **Move to the next dose automatically**
               medication.fixedNextDose = this.calculateNextDoseTime(medication, doseTimeISO).toISOString();
-    
+
               this.$forceUpdate(); // Ensure UI updates
             } else {
               console.error(`Error marking ${medication.name} as Missed:`, data.message);
@@ -1844,7 +1851,7 @@ const app = Vue.createApp({
       return nextDose;
     },
 
-    
+
     getTimeDiff(medication) {
       const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
@@ -1859,30 +1866,30 @@ const app = Vue.createApp({
         this.user.medications = [];
         return;
       }
-    
+
       const now = this.getCurrentTime();
-    
+
       this.user.medications.forEach((med) => {
         let nextDose = this.calculateNextDoseTime(med);
         const alreadyTaken = this.hasTakenDose(med);
-        
+
         // **Ensure next dose moves forward if missed**
         if (nextDose && now - nextDose >= 30 * 60000) {
           console.log(`Skipping overdue dose for ${med.name}. Moving to next dose.`);
           nextDose = this.calculateNextDoseTime(med, nextDose.toISOString());
           med.fixedNextDose = nextDose.toISOString();
         }
-    
+
         const countdown = this.getNextDoseCountdown(med);
-        
+
         med.nextDoseDisplay = countdown; // ✅ **Always show countdown**
         med.showMarkAsTaken = !alreadyTaken && this.shouldShowMarkAsTaken(med);
         med.gracePeriodActive = countdown.includes("minutes left to mark");
       });
-    
+
       this.$forceUpdate(); // Force UI to refresh
     },
-    
+
 
     // New method to toggle fast speed
     toggleFastTime() {
@@ -2150,15 +2157,84 @@ const app = Vue.createApp({
           console.error("Error prescribing medication:", error);
           alert("An error occurred while prescribing the medication.");
         });
-    }
+    },
+
+    async fetchHealthDashboardData() {
+      try {
+        const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+  
+        // Update dashboard data
+        this.healthDashboardData.missedMeds = data.missedMeds;
+        this.healthDashboardData.recentAppointments = data.recentAppointments;
+        this.healthDashboardData.upcomingAppointments = data.upcomingAppointments;
+        this.healthDashboardData.medicationStats = data.medicationStats;
+  
+        this.$nextTick(() => {
+          this.renderCharts(); // Ensure charts render AFTER data loads
+        });
+  
+      } catch (error) {
+        console.error("Error fetching health dashboard data:", error);
+      }
+    },
+  
+    // 🔹 Wrapper function to render all charts properly
+    renderCharts() {
+      this.renderMedicationChart();
+      this.renderHeartRateChart();
+      this.renderStepChart();
+    },
 
 
+    renderMedicationChart() {
+      const ctx = document.getElementById("medicationChart");
+      if (!ctx) return; // Ensure the element exists
+    
+      // 🔥 Destroy previous chart before creating a new one
+      if (this.medicationChart) {
+        this.medicationChart.destroy();
+      }
+    
+      // 🔹 Fix: Use empty arrays if undefined to prevent `.slice()` error
+      const days = (this.healthDashboardData.medicationStats?.dates || []).slice(-30);
+      const takenData = (this.healthDashboardData.medicationStats?.taken || []).slice(-30);
+      const missedData = (this.healthDashboardData.medicationStats?.missed || []).slice(-30);
+    
+      this.medicationChart = new Chart(ctx.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: days,
+          datasets: [
+            {
+              label: "Taken",
+              data: takenData,
+              backgroundColor: "green",
+            },
+            {
+              label: "Missed",
+              data: missedData,
+              backgroundColor: "red",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true } },
+        },
+      });
+    },
+    
   },
 
 
 
 
   mounted() {
+    this.fetchHealthDashboardData();
+
     // Load the theme preference from localStorage
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {

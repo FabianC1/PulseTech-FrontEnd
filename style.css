@@ -3353,3 +3353,12 @@ canvas {
 .auth-button:hover {
     background-color: #0056b3;
 }
+
+
+
+canvas {
+    width: 100% !important;
+    max-height: 300px !important;  /* 🔹 Prevents massive charts */
+    color: white;
+  }
+  
