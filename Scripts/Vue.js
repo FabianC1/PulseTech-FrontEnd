@@ -1539,7 +1539,7 @@ const app = Vue.createApp({
       return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
     },
 
-         async markAsTaken(medication) {
+    async markAsTaken(medication) {
       if (medication.isMarking || this.hasTakenDose(medication)) {
         console.log(`Already marked as taken: ${medication.name}`);
         return;
@@ -1665,24 +1665,35 @@ const app = Vue.createApp({
     },
 
 
-    autoMarkMissedMedications() {
+    async autoMarkMissedMedications() {
       if (!this.user.medications || !Array.isArray(this.user.medications)) {
         console.error("Medications is not an array or is undefined.");
-        this.user.medications = [];  // Initialize medications as an empty array if undefined
-        return; // Exit the function if medications is undefined or not an array
+        this.user.medications = [];
+        return;
       }
 
       this.user.medications.forEach(async (medication) => {
         const now = this.getCurrentTime();
         const nextDose = this.calculateNextDoseTime(medication);
 
-        if (!nextDose) return; // No valid dose time, skip.
+        if (!nextDose) return; // Skip if no valid dose time
 
-        const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes.
+        const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes
 
-        // If 30 minutes have passed after dose time, and it was NOT taken
-        if (diffMinutes >= 30 && !medication.takenAt) {
-          console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${nextDose})`);
+        // Only proceed if we're past the grace period (30 mins after dose time)
+        if (diffMinutes >= 30) {
+          // Check if the medication was already marked as "Taken" for this dose time
+          const doseTimeISO = nextDose.toISOString();
+          const alreadyTaken = medication.logs && medication.logs.some(log =>
+            log.time === doseTimeISO && log.status === "Taken"
+          );
+
+          if (alreadyTaken) {
+            console.log(`Skipping Missed status for ${medication.name} - already taken at ${doseTimeISO}`);
+            return; // Do not mark as missed
+          }
+
+          console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${doseTimeISO})`);
 
           try {
             const response = await fetch("http://localhost:3000/mark-medication-missed", {
@@ -1696,18 +1707,15 @@ const app = Vue.createApp({
 
             const data = await response.json();
             if (response.ok) {
-              console.log(` ${medication.name} marked as Missed in database`);
+              console.log(`${medication.name} marked as Missed in database`);
 
-              // Immediately update the UI
               if (!medication.logs) medication.logs = [];
-              medication.logs.push({ time: now.toISOString(), status: "Missed" });
+              medication.logs.push({ time: doseTimeISO, status: "Missed" });
 
-              // Clear next dose time & reset cycle
-              delete medication.fixedNextDose;
-              medication.takenAt = null; // Reset for the next cycle
+              delete medication.fixedNextDose; // Reset dose tracking
+              medication.takenAt = null; // Reset for next cycle
 
-              //  Force Vue to re-render
-              this.$forceUpdate();
+              this.$forceUpdate(); // Ensure UI updates
             } else {
               console.error(`Error marking ${medication.name} as Missed:`, data.message);
             }
@@ -1717,6 +1725,7 @@ const app = Vue.createApp({
         }
       });
     },
+
 
 
 
@@ -2047,15 +2056,15 @@ const app = Vue.createApp({
 
     submitMedication(patientEmail) {
       const medication = { ...this.medicationData[patientEmail] };
-    
+
       if (!medication.name || !medication.dosage || !medication.frequency ||
-          !medication.time || !medication.duration || !medication.diagnosis) {
+        !medication.time || !medication.duration || !medication.diagnosis) {
         alert("Please fill in all medication details before prescribing.");
         return;
       }
-    
+
       medication.timeToTake = medication.time; // Ensure correct field is used
-    
+
       fetch("http://localhost:3000/save-medication", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -2068,7 +2077,7 @@ const app = Vue.createApp({
         .then(data => {
           if (data.message === "Medication saved successfully!") {
             alert("Medication prescribed successfully!");
-    
+
             if (!this.isEditing.medication) {
               this.isEditing.medication = {}; // Ensure object exists
             }
@@ -2081,7 +2090,7 @@ const app = Vue.createApp({
           console.error("Error prescribing medication:", error);
           alert("An error occurred while prescribing the medication.");
         });
-    }    
+    }
 
 
   },
