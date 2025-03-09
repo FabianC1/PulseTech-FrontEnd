@@ -1515,23 +1515,62 @@ const app = Vue.createApp({
     
       let diffMinutes = Math.floor((nextDose - now) / 60000);
     
-      // **🔹 Move to the next valid dose if past grace period**
+      // **🔹 If the grace period (30 minutes after scheduled dose) has passed, move to the next dose**
       if (diffMinutes < -30) {
-        nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
+        console.log(`Grace period ended for ${medication.name}. Moving to next scheduled dose.`);
+    
+        // **Advance to the next dose properly** by recalculating based on frequency
+        nextDose = this.calculateNextDoseTime(medication);
+        while (nextDose <= now) {
+          nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
+        }
+    
+        // **Update stored next dose time**
         medication.fixedNextDose = nextDose.toISOString();
-        diffMinutes = Math.floor((nextDose - now) / 60000); // Recalculate for new dose
+        this.$forceUpdate();
+    
+        // **Recalculate time difference**
+        diffMinutes = Math.floor((nextDose - now) / 60000);
       }
     
-      // **🔹 Always return a valid countdown**
-      if (diffMinutes >= 0) {
-        const hours = Math.floor(diffMinutes / 60);
-        const minutes = diffMinutes % 60;
-        return `${hours}h ${minutes}m left`;
+      // **🔹 Prevents the "0h 0m left" issue by ensuring nextDose is always in the future**
+      if (diffMinutes <= 0) {
+        console.log(`Fixing next dose time for ${medication.name}, ensuring it's in the future.`);
+        nextDose = this.calculateNextDoseTime(medication);
+        while (nextDose <= now) {
+          nextDose.setHours(nextDose.getHours() + this.getFrequencyHours(medication.frequency));
+        }
+    
+        medication.fixedNextDose = nextDose.toISOString();
+        this.$forceUpdate();
+        diffMinutes = Math.floor((nextDose - now) / 60000);
       }
     
-      return `${30 - Math.abs(diffMinutes)} minutes left to mark`; // Grace period countdown
+      // **🔹 Always display the actual countdown for the next dose**
+      const hours = Math.floor(Math.max(diffMinutes, 0) / 60);
+      const minutes = Math.max(diffMinutes, 0) % 60;
+    
+      return `${hours}h ${minutes}m left`;
     },
-  
+    
+
+    getGracePeriodMessage(medication) {
+      const now = this.getCurrentTime();
+      const nextDose = this.calculateNextDoseTime(medication);
+    
+      if (!nextDose) return ""; // No valid dose time
+    
+      const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes
+    
+      if (diffMinutes >= 0 && diffMinutes < 30) {
+        return `${30 - diffMinutes} minutes left to mark`; // ✅ Still within grace period
+      }
+    
+      // ✅ Otherwise, return normal countdown (ALWAYS FUTURE TIME)
+      return this.getNextDoseCountdown(medication);
+    },
+    
+
 
     showMarkAsTaken(medication) {
       const now = this.getCurrentTime();
@@ -1748,22 +1787,6 @@ const app = Vue.createApp({
 
 
 
-    getGracePeriodMessage(medication) {
-      const now = this.getCurrentTime();
-      const nextDose = this.calculateNextDoseTime(medication);
-    
-      if (!nextDose) return ""; // No valid dose time
-    
-      const diffMinutes = Math.floor((now - nextDose) / 60000); // Negative if future, positive if past
-    
-      if (diffMinutes >= 0 && diffMinutes < 30) {
-        return `${30 - diffMinutes} minutes left to mark`; // ✅ Within grace period
-      }
-    
-      return this.getNextDoseCountdown(medication); // ✅ Otherwise, show normal countdown
-    },
-    
-
 
 
 
@@ -1811,6 +1834,7 @@ const app = Vue.createApp({
       return nextDose;
     },
 
+    
     getTimeDiff(medication) {
       const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
