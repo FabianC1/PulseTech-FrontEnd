@@ -2191,31 +2191,36 @@ const app = Vue.createApp({
     },
 
     async fetchHealthDashboardData() {
-      try {
-        console.log("Fetching health dashboard data..."); // Debugging
+      this.isLoading = true; // Start loading state
 
+      try {
         const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}`);
         const data = await response.json();
 
-        console.log("Fetched Health Dashboard Data:", data); // Debugging
+        console.log("Health Dashboard Data from API:", data); // Debugging
 
         if (!response.ok) throw new Error(data.message);
 
-        // Store the fetched data
-        this.healthDashboardData.missedMeds = data.missedMeds || 0;
-        this.healthDashboardData.recentAppointments = data.recentAppointments || [];
-        this.healthDashboardData.upcomingAppointments = data.upcomingAppointments || [];
-        this.healthDashboardData.medicationStats = data.medicationStats || { dates: [], taken: [], missed: [] };
-        this.healthDashboardData.healthAlerts = data.healthAlerts || [];
+        // ✅ Ensure that all fields exist
+        this.healthDashboardData = {
+          missedMeds: data.missedMeds || 0, // Default to 0 if missing
+          recentAppointments: data.recentAppointments || [],
+          upcomingAppointments: data.upcomingAppointments || [],
+          medicationStats: data.medicationStats || { dates: [], taken: [], missed: [] },
+          healthAlerts: data.healthAlerts || [] // ✅ Make sure health alerts are stored
+        };
 
         this.$nextTick(() => {
-          this.renderMedicationChart();
+          this.renderMedicationChart(); // Ensure chart updates properly
         });
 
       } catch (error) {
         console.error("Error fetching health dashboard data:", error);
+      } finally {
+        this.isLoading = false;
       }
     },
+
 
 
     renderMedicationChart() {
@@ -2263,7 +2268,9 @@ const app = Vue.createApp({
             y: {
               ticks: {
                 color: "white", // Y-axis labels color
-                font: { size: 14 }
+                font: { size: 14 },
+                stepSize: 1, // Ensures numbers increment by 1
+                precision: 0 // Prevents decimal places
               },
               grid: {
                 color: "rgba(255, 255, 255, 0.2)" // Light grid lines
