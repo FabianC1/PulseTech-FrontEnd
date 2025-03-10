@@ -2229,12 +2229,14 @@ const app = Vue.createApp({
           upcomingAppointments: data.upcomingAppointments || [],
           medicationStats: data.medicationStats || { dates: [], taken: [], missed: [] },
           healthAlerts: data.healthAlerts || [],
-          heartRateLogs: data.heartRateLogs || [] // ✅ Store heart rate logs
+          heartRateLogs: data.heartRateLogs || [], // ✅ Store heart rate logs
+          stepCountLogs: data.stepCountLogs || []  // ✅ Store step count logs
         };
 
         this.$nextTick(() => {
           this.renderMedicationChart();
           this.renderHeartRateChart(); // ✅ Call heart rate chart function
+          this.renderStepCountChart(); // ✅ Call step count chart function
         });
 
       } catch (error) {
@@ -2383,7 +2385,63 @@ const app = Vue.createApp({
     },
    
 
-
+    renderStepCountChart() {
+      const ctx = document.getElementById("stepCountChart");
+      if (!ctx) return;
+    
+      if (this.stepCountChart) {
+        this.stepCountChart.destroy();
+      }
+    
+      // ✅ Ensure step count logs exist before rendering
+      if (!this.healthDashboardData.stepCountLogs || this.healthDashboardData.stepCountLogs.length === 0) {
+        console.warn("No step count data found");
+        return;
+      }
+    
+      // Extract timestamps and step count values
+      const labels = this.healthDashboardData.stepCountLogs.map(entry => new Date(entry.time).toLocaleTimeString());
+      const stepCountData = this.healthDashboardData.stepCountLogs.map(entry => entry.value);
+    
+      this.stepCountChart = new Chart(ctx.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: labels, // X-axis: Timestamps
+          datasets: [
+            {
+              label: "Steps Taken",
+              data: stepCountData, // Y-axis: Step count values
+              borderColor: "rgba(54, 162, 235, 1)", // Blue
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderWidth: 2,
+              fill: true,
+              pointBackgroundColor: "white",
+              pointRadius: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: "white" },
+              grid: { color: "rgba(255, 255, 255, 0.2)" },
+            },
+            y: {
+              ticks: { color: "white", precision: 0 }, // No decimals
+              grid: { color: "rgba(255, 255, 255, 0.2)" },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: { color: "white" },
+            },
+          },
+        },
+      });
+    }
+    
 
 
 
