@@ -2321,21 +2321,21 @@ const app = Vue.createApp({
     renderWearableChart() {
       const ctx = document.getElementById("heartRateChart");
       if (!ctx) return;
-    
+
       if (this.heartRateChart) {
         this.heartRateChart.destroy();
       }
-    
+
       // Ensure wearable data history exists
       if (!this.user.wearableDataHistory || this.user.wearableDataHistory.length === 0) {
         console.warn("No wearable data found");
         return;
       }
-    
+
       // Extract dates and heart rate values for the chart
       const labels = this.user.wearableDataHistory.map(entry => entry.date);
       const heartRateData = this.user.wearableDataHistory.map(entry => entry.heartRate);
-    
+
       this.heartRateChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
@@ -2384,12 +2384,11 @@ const app = Vue.createApp({
           },
         },
       });
-    }
-    
+    },
 
 
 
-
+  
   },
 
 
