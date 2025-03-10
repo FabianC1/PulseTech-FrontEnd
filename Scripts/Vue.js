@@ -2164,22 +2164,22 @@ const app = Vue.createApp({
         const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
-  
+
         // Update dashboard data
         this.healthDashboardData.missedMeds = data.missedMeds;
         this.healthDashboardData.recentAppointments = data.recentAppointments;
         this.healthDashboardData.upcomingAppointments = data.upcomingAppointments;
         this.healthDashboardData.medicationStats = data.medicationStats;
-  
+
         this.$nextTick(() => {
           this.renderCharts(); // Ensure charts render AFTER data loads
         });
-  
+
       } catch (error) {
         console.error("Error fetching health dashboard data:", error);
       }
     },
-  
+
     // 🔹 Wrapper function to render all charts properly
     renderCharts() {
       this.renderMedicationChart();
@@ -2191,17 +2191,17 @@ const app = Vue.createApp({
     renderMedicationChart() {
       const ctx = document.getElementById("medicationChart");
       if (!ctx) return; // Ensure the element exists
-    
+
       // 🔥 Destroy previous chart before creating a new one
       if (this.medicationChart) {
         this.medicationChart.destroy();
       }
-    
+
       // 🔹 Fix: Use empty arrays if undefined to prevent `.slice()` error
       const days = (this.healthDashboardData.medicationStats?.dates || []).slice(-30);
       const takenData = (this.healthDashboardData.medicationStats?.taken || []).slice(-30);
       const missedData = (this.healthDashboardData.medicationStats?.missed || []).slice(-30);
-    
+
       this.medicationChart = new Chart(ctx.getContext("2d"), {
         type: "bar",
         data: {
@@ -2226,7 +2226,35 @@ const app = Vue.createApp({
         },
       });
     },
-    
+
+    async submitAnswer() {
+      if (!this.userInput) return; // Ensure input isn't empty
+
+      try {
+        const response = await fetch("/answer-question", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userInput: this.userInput })
+        });
+
+        const data = await response.json();
+
+        if (data.message) {
+          this.chatHistory.push({ type: "bot", text: data.message });
+        }
+        if (data.options) {
+          this.chatHistory.push({ type: "bot", text: data.options.join("\n") });
+        }
+
+        this.userInput = ""; // Clear input field
+      } catch (error) {
+        console.error("Error communicating with backend:", error);
+      }
+    }
+
+
   },
 
 
