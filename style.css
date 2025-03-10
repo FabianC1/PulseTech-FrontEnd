@@ -3359,6 +3359,6 @@ canvas {
 canvas {
     width: 100% !important;
     max-height: 300px !important;  /* 🔹 Prevents massive charts */
-    color: white;
+    color: rgb(255, 255, 255);
   }
   

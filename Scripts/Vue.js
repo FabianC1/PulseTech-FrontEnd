@@ -2148,82 +2148,15 @@ const app = Vue.createApp({
         });
     },
 
-    async fetchHealthDashboardData() {
-      try {
-        const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}`);
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message);
-
-        // Update dashboard data
-        this.healthDashboardData.missedMeds = data.missedMeds;
-        this.healthDashboardData.recentAppointments = data.recentAppointments;
-        this.healthDashboardData.upcomingAppointments = data.upcomingAppointments;
-        this.healthDashboardData.medicationStats = data.medicationStats;
-
-        this.$nextTick(() => {
-          this.renderCharts(); // Ensure charts render AFTER data loads
-        });
-
-      } catch (error) {
-        console.error("Error fetching health dashboard data:", error);
-      }
-    },
-
-    // 🔹 Wrapper function to render all charts properly
-    renderCharts() {
-      this.renderMedicationChart();
-      this.renderHeartRateChart();
-      this.renderStepChart();
-    },
-
-
-    renderMedicationChart() {
-      const ctx = document.getElementById("medicationChart");
-      if (!ctx) return; // Ensure the element exists
-
-      // 🔥 Destroy previous chart before creating a new one
-      if (this.medicationChart) {
-        this.medicationChart.destroy();
-      }
-
-      // 🔹 Fix: Use empty arrays if undefined to prevent `.slice()` error
-      const days = (this.healthDashboardData.medicationStats?.dates || []).slice(-30);
-      const takenData = (this.healthDashboardData.medicationStats?.taken || []).slice(-30);
-      const missedData = (this.healthDashboardData.medicationStats?.missed || []).slice(-30);
-
-      this.medicationChart = new Chart(ctx.getContext("2d"), {
-        type: "bar",
-        data: {
-          labels: days,
-          datasets: [
-            {
-              label: "Taken",
-              data: takenData,
-              backgroundColor: "green",
-            },
-            {
-              label: "Missed",
-              data: missedData,
-              backgroundColor: "red",
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true } },
-        },
-      });
-    },
 
     async submitAnswer() {
       if (!this.userInput) return; // Prevent empty submissions
-    
+
       try {
         // Store user input in the chat and update UI
         this.chatHistory.push({ type: "user", text: this.userInput });
         this.$forceUpdate();
-    
+
         // Send user input to the backend
         const response = await fetch("/answer-question", {
           method: "POST",
@@ -2232,15 +2165,15 @@ const app = Vue.createApp({
           },
           body: JSON.stringify({ userInput: this.userInput })
         });
-    
+
         const data = await response.json();
-    
+
         // If no message or options are received, log and retry after 1 second
         if (!data.message && !data.options) {
           console.warn("No response received. Retrying in 1 second...");
           return setTimeout(() => this.submitAnswer(), 1000);
         }
-    
+
         // Add the bot's response to the chat history
         if (data.message) {
           this.chatHistory.push({ type: "bot", text: data.message });
@@ -2248,7 +2181,7 @@ const app = Vue.createApp({
         if (data.options) {
           this.chatHistory.push({ type: "bot", text: data.options.join("\n") });
         }
-    
+
         // Force UI update and clear user input field
         this.$forceUpdate();
         this.userInput = "";
@@ -2256,7 +2189,99 @@ const app = Vue.createApp({
         console.error("Error communicating with backend:", error);
       }
     },
-    
+
+    async fetchHealthDashboardData() {
+      try {
+        console.log("Fetching health dashboard data..."); // Debugging
+
+        const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}`);
+        const data = await response.json();
+
+        console.log("Fetched Health Dashboard Data:", data); // Debugging
+
+        if (!response.ok) throw new Error(data.message);
+
+        // Store the fetched data
+        this.healthDashboardData.missedMeds = data.missedMeds || 0;
+        this.healthDashboardData.recentAppointments = data.recentAppointments || [];
+        this.healthDashboardData.upcomingAppointments = data.upcomingAppointments || [];
+        this.healthDashboardData.medicationStats = data.medicationStats || { dates: [], taken: [], missed: [] };
+        this.healthDashboardData.healthAlerts = data.healthAlerts || [];
+
+        this.$nextTick(() => {
+          this.renderMedicationChart();
+        });
+
+      } catch (error) {
+        console.error("Error fetching health dashboard data:", error);
+      }
+    },
+
+
+    renderMedicationChart() {
+      const ctx = document.getElementById("medicationChart");
+      if (!ctx) return;
+
+      if (this.medicationChart) {
+        this.medicationChart.destroy();
+      }
+
+      this.medicationChart = new Chart(ctx.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: this.healthDashboardData.medicationStats.dates,
+          datasets: [
+            {
+              label: "Taken",
+              data: this.healthDashboardData.medicationStats.taken,
+              backgroundColor: "rgba(75, 192, 192, 0.6)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Missed",
+              data: this.healthDashboardData.medicationStats.missed,
+              backgroundColor: "rgba(255, 99, 132, 0.6)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: {
+                color: "white", // X-axis labels color
+                font: { size: 14 } // Adjust font size if needed
+              },
+              grid: {
+                color: "rgba(255, 255, 255, 0.2)" // Light grid lines
+              }
+            },
+            y: {
+              ticks: {
+                color: "white", // Y-axis labels color
+                font: { size: 14 }
+              },
+              grid: {
+                color: "rgba(255, 255, 255, 0.2)" // Light grid lines
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "white", // Legend labels color
+                font: { size: 14 }
+              }
+            }
+          }
+        }
+      });
+    }
+
 
 
   },
