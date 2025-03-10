@@ -221,8 +221,9 @@ const app = Vue.createApp({
       immediate: true, // Fetch contacts immediately after the component is mounted or when user data changes
     }
 
-
   },
+
+
 
   created() {
     // Fetch the Terms and Conditions data from the backend API
@@ -2228,9 +2229,14 @@ const app = Vue.createApp({
     },
 
     async submitAnswer() {
-      if (!this.userInput) return; // Ensure input isn't empty
-
+      if (!this.userInput) return; // Prevent empty submissions
+    
       try {
+        // Store user input in the chat and update UI
+        this.chatHistory.push({ type: "user", text: this.userInput });
+        this.$forceUpdate();
+    
+        // Send user input to the backend
         const response = await fetch("/answer-question", {
           method: "POST",
           headers: {
@@ -2238,21 +2244,31 @@ const app = Vue.createApp({
           },
           body: JSON.stringify({ userInput: this.userInput })
         });
-
+    
         const data = await response.json();
-
+    
+        // If no message or options are received, log and retry after 1 second
+        if (!data.message && !data.options) {
+          console.warn("No response received. Retrying in 1 second...");
+          return setTimeout(() => this.submitAnswer(), 1000);
+        }
+    
+        // Add the bot's response to the chat history
         if (data.message) {
           this.chatHistory.push({ type: "bot", text: data.message });
         }
         if (data.options) {
           this.chatHistory.push({ type: "bot", text: data.options.join("\n") });
         }
-
-        this.userInput = ""; // Clear input field
+    
+        // Force UI update and clear user input field
+        this.$forceUpdate();
+        this.userInput = "";
       } catch (error) {
         console.error("Error communicating with backend:", error);
       }
-    }
+    },
+    
 
 
   },
