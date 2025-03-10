@@ -1686,14 +1686,11 @@ const app = Vue.createApp({
         if (response.ok) {
           console.log("Medical records saved successfully");
 
-          // ✅ Update localStorage with new wearable data
+          // Update localStorage with new wearable data
           localStorage.setItem("wearableData", JSON.stringify(this.user.wearableDataHistory));
 
-          // ✅ Fetch updated medical records from the database
+          // Fetch updated medical records from the database
           await this.fetchMedicalRecords();
-
-          // ✅ Refresh the wearable data chart
-          this.renderWearableChart();
 
           // Reset edit mode
           Object.keys(this.isEditing).forEach((key) => {
@@ -2232,12 +2229,12 @@ const app = Vue.createApp({
           upcomingAppointments: data.upcomingAppointments || [],
           medicationStats: data.medicationStats || { dates: [], taken: [], missed: [] },
           healthAlerts: data.healthAlerts || [],
-          wearableDataHistory: data.wearableDataHistory || [], // ✅ Store wearable data
+          heartRateLogs: data.heartRateLogs || [] // ✅ Store heart rate logs
         };
 
         this.$nextTick(() => {
           this.renderMedicationChart();
-          this.renderWearableChart(); // ✅ Render wearable data chart
+          this.renderHeartRateChart(); // ✅ Call heart rate chart function
         });
 
       } catch (error) {
@@ -2246,6 +2243,7 @@ const app = Vue.createApp({
         this.isLoading = false;
       }
     },
+
 
 
 
@@ -2318,32 +2316,30 @@ const app = Vue.createApp({
 
 
 
-    renderWearableChart() {
+    renderHeartRateChart() {
       const ctx = document.getElementById("heartRateChart");
       if (!ctx) return;
-
+   
       if (this.heartRateChart) {
         this.heartRateChart.destroy();
       }
-
-      // Ensure wearable data history exists
-      if (!this.user.wearableDataHistory || this.user.wearableDataHistory.length === 0) {
-        console.warn("No wearable data found");
+   
+      if (!this.healthDashboardData.heartRateLogs || this.healthDashboardData.heartRateLogs.length === 0) {
+        console.warn("No heart rate data found");
         return;
       }
-
-      // Extract dates and heart rate values for the chart
-      const labels = this.user.wearableDataHistory.map(entry => entry.date);
-      const heartRateData = this.user.wearableDataHistory.map(entry => entry.heartRate);
-
+   
+      const labels = this.healthDashboardData.heartRateLogs.map(entry => new Date(entry.time).toLocaleTimeString());
+      const heartRateData = this.healthDashboardData.heartRateLogs.map(entry => parseInt(entry.value));
+   
       this.heartRateChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
-          labels: labels, // X-axis: Dates
+          labels: labels, // X-axis: Time
           datasets: [
             {
               label: "Heart Rate (BPM)",
-              data: heartRateData, // Y-axis: Heart rate values
+              data: heartRateData, // Y-axis: BPM values
               borderColor: "rgba(255, 99, 132, 1)",
               backgroundColor: "rgba(255, 99, 132, 0.2)",
               borderWidth: 2,
@@ -2385,10 +2381,13 @@ const app = Vue.createApp({
         },
       });
     },
+   
 
 
 
-  
+
+
+
   },
 
 
@@ -2396,7 +2395,7 @@ const app = Vue.createApp({
 
   mounted() {
     this.fetchHealthDashboardData();
-    this.renderWearableChart(); // Ensure the chart loads
+    this.renderHeartRateChart();
 
     // Load the theme preference from localStorage
     const savedTheme = localStorage.getItem("theme");
