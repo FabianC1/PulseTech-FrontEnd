@@ -425,18 +425,6 @@ const app = Vue.createApp({
         .filter((line) => line.length > 0); // Remove any empty lines
     },
 
-    // Start a new diagnosis
-    startNewDiagnosis() {
-      this.diagnosisStarted = false;
-      this.question = "";
-      this.userAnswer = "";
-      this.diagnosisResult = "";
-      this.formattedDiagnosisResult = [];
-      this.hasDiagnosis = false;
-      this.showInput = false;
-      this.startDiagnosis(); // Start the diagnosis again
-    },
-
     saveMedication() {
       if (!this.user || !this.user.email) {
         console.error("User email is missing. Cannot save medication.");
