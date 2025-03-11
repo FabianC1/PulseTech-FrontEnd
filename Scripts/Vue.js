@@ -2230,33 +2230,49 @@ const app = Vue.createApp({
     },
 
     async fetchHealthDashboardData() {
-      this.isLoading = true; // Start loading state
-
       try {
-        const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}`);
+        // 🔹 Load cached data from localStorage
+        const cachedData = JSON.parse(localStorage.getItem("healthDashboardData"));
+        const lastFetched = localStorage.getItem("healthDashboardLastUpdated");
+    
+        if (cachedData && lastFetched) {
+          // 🔹 Use cached data first (for instant loading)
+          this.healthDashboardData = cachedData;
+          console.log("Using cached health dashboard data.");
+        }
+    
+        // 🔹 Fetch only if there’s no cached data OR if the API has newer data
+        const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}&lastUpdated=${lastFetched || ""}`);
         const data = await response.json();
-
-        console.log("Health Dashboard Data from API:", data); // Debugging
-
-        if (!response.ok) throw new Error(data.message);
-
+    
+        // 🔹 If API returns a "No Updates" message, skip updating
+        if (data.message === "No Updates") {
+          console.log("Health Dashboard is up to date. No new API call needed.");
+          return;
+        }
+    
+        // 🔹 If new data is received, update the state and localStorage
         this.healthDashboardData = {
           missedMeds: data.missedMeds || 0,
           recentAppointments: data.recentAppointments || [],
           upcomingAppointments: data.upcomingAppointments || [],
           medicationStats: data.medicationStats || { dates: [], taken: [], missed: [] },
           healthAlerts: data.healthAlerts || [],
-          heartRateLogs: data.heartRateLogs || [], // Store heart rate logs
-          stepCountLogs: data.stepCountLogs || [],  // Store step count logs
-          sleepTrackingLogs: data.sleepTrackingLogs || [] // Store sleep tracking logs
+          heartRateLogs: data.heartRateLogs || [],
+          stepCountLogs: data.stepCountLogs || [],
+          sleepTrackingLogs: data.sleepTrackingLogs || []
         };
-
+    
+        // 🔹 Store the new data in localStorage
+        localStorage.setItem("healthDashboardData", JSON.stringify(this.healthDashboardData));
+        localStorage.setItem("healthDashboardLastUpdated", new Date().toISOString());
+    
+        console.log("Updated health dashboard data from API.");
       } catch (error) {
         console.error("Error fetching health dashboard data:", error);
-      } finally {
-        this.isLoading = false;
       }
     },
+    
 
 
 
