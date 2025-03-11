@@ -230,11 +230,11 @@
                     <!-- Health Alerts -->
                     <div class="alerts-section">
                         <h3>Health Alerts</h3>
-                        <ul v-if="healthDashboardData.healthAlerts.length">
-                            <li v-for="(alert, index) in healthDashboardData.healthAlerts" :key="index">
-                                {{ alert }}
-                            </li>
-                        </ul>
+                        <div v-if="healthDashboardData.healthAlerts.length">
+                            <div v-for="(alert, index) in healthDashboardData.healthAlerts" :key="index"
+                                class="alert-message" v-html="alert">
+                            </div>
+                        </div>
                         <p v-else>No health alerts at this time.</p>
                     </div>
 

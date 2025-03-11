@@ -2,7 +2,7 @@
 :root {
     /* Light Mode */
     --primary-bg-light: linear-gradient(to left, #758FFF, #ffffff);
-    --section-bg-light: #586dca; /* Light mode section background */
+    --section-bg-light: #3c50aaea; /* Light mode section background */
     --primary-text-light: #000000; 
 
     /* Dark Mode */
@@ -3323,12 +3323,6 @@ a:hover {
     filter: brightness(1.2);
 }
 
-
-canvas {
-    width: 100%;
-    height: auto;
-}
-
 .profile-pic {
     width: 80px;
     height: 80px;
@@ -3355,10 +3349,61 @@ canvas {
 }
 
 
-
 canvas {
     width: 100% !important;
     max-height: 300px !important;  /* 🔹 Prevents massive charts */
     color: rgb(255, 255, 255);
   }
   
+
+/* Health Alerts Section */
+.alerts-section {
+    background: var(--section-bg);
+    padding: 15px;
+    border-radius: 10px;
+    color: var(--primary-text);
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Individual alert messages */
+.alert-message {
+    background: rgba(255, 0, 0, 0.37); /* Light red for visibility */
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: var(--primary-text);
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Critical alert (5+ missed meds) */
+.alert-message.critical {
+    background: rgba(255, 0, 0, 0.548); /* Darker red for critical alerts */
+    border-left: 5px solid red;
+    font-size: 1.1rem;
+}
+
+/* Hover effect for alerts */
+.alert-message:hover {
+    background: rgba(255, 0, 0, 0.2);
+}
+
+/* Doctor Contact Button */
+.alert-message a {
+    display: inline-block;
+    background: linear-gradient(45deg, #ff4b2b, #ff416c);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+    margin-left: 5%;
+}
+
+/* Doctor Contact Button Hover */
+.alert-message a:hover {
+    background: linear-gradient(45deg, #ff1e00, #e0004c);
+    transform: scale(1.05);
+}
