@@ -1622,68 +1622,87 @@ const app = Vue.createApp({
 
 
 
-    showMarkAsTaken(medication) {
-      if (!medication || !medication.logs) return false;
-    
-      const now = this.getCurrentTime();
-      const nextDose = this.calculateNextDoseTime(medication);
-      if (!nextDose) return false;
-    
-      const diffMinutes = Math.floor((nextDose - now) / 60000);
-      
-      // If taken within the valid timeframe, hide the button
-      const alreadyTaken = medication.logs.some(log => {
-        const logTime = new Date(log.time);
-        const logDiff = Math.floor((logTime - nextDose) / 60000);
-        return log.status === "Taken" && logDiff >= -30 && logDiff <= 60;
-      });
-    
-      if (alreadyTaken) return false; // Hide button if already taken
-    
-      return diffMinutes <= 60 && diffMinutes >= -30; // Show only if valid
-    },
-    
-
-    async markAsTaken(medication) {
-      if (medication.isMarking || this.hasTakenDose(medication)) {
-        console.log(`Already marked as taken: ${medication.name}`);
+    async autoMarkMissedMedications() {
+      if (!this.user.medications || !Array.isArray(this.user.medications)) {
+        console.error("Medications is not an array or is undefined.");
+        this.user.medications = [];
         return;
       }
 
-      medication.isMarking = true;
       const now = this.getCurrentTime();
-      const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
+      const missedDoses = JSON.parse(localStorage.getItem("missedDoses")) || {}; // Retrieve stored missed doses
 
-      try {
-        const response = await fetch("http://localhost:3000/mark-medication-taken", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: this.user.email,
-            medicationName: medication.name,
-            doseTime: nextDoseTime,
-          }),
-        });
+      for (const medication of this.user.medications) {
+        const nextDose = this.calculateNextDoseTime(medication);
+        if (!nextDose) continue; // Skip if no valid dose time
 
-        const data = await response.json();
+        const doseTimeISO = nextDose.toISOString();
+        const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference
 
-        if (response.ok) {
-          console.log(`${medication.name} marked as taken at ${data.takenAt}`);
+        // **🔹 1. Check if this dose was already marked as "Taken"**
+        const alreadyTaken = medication.logs && medication.logs.some(log =>
+          log.time === doseTimeISO && log.status === "Taken"
+        );
 
-          if (!medication.logs) medication.logs = [];
-          medication.logs.push({ time: nextDoseTime, status: "Taken" });
+        if (alreadyTaken) {
+          console.log(`Skipping Missed status for ${medication.name} - already taken at ${doseTimeISO}`);
 
-          this.updateMedicationUI();
+          // * Move to the next dose automatically**
+          medication.fixedNextDose = this.calculateNextDoseTime(medication, doseTimeISO).toISOString();
           this.$forceUpdate();
-        } else {
-          console.error(`Error marking ${medication.name} as taken:`, data.message);
+          continue;
         }
-      } catch (error) {
-        console.error("Error marking medication as taken:", error);
-      } finally {
-        medication.isMarking = false;
+
+        // **🔹 2. Check if it was already marked as "Missed" (in logs OR localStorage)**
+        const alreadyMissed = medication.logs && medication.logs.some(log =>
+          log.time === doseTimeISO && log.status === "Missed"
+        );
+
+        if (alreadyMissed || missedDoses[`${medication.name}_${doseTimeISO}`]) {
+          console.log(`Skipping duplicate Missed status for ${medication.name} at ${doseTimeISO}`);
+          continue; // Do not mark it as missed again
+        }
+
+        // **🔹 3. If 30+ minutes have passed, mark as "Missed"**
+        if (diffMinutes >= 30) {
+          console.log(`Auto-marking ${medication.name} as Missed (Dose Time: ${doseTimeISO})`);
+
+          try {
+            const response = await fetch("http://localhost:3000/mark-medication-missed", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: this.user.email,
+                medicationName: medication.name,
+                doseTime: doseTimeISO,
+              }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              console.log(`${medication.name} marked as Missed in database`);
+
+              if (!medication.logs) medication.logs = [];
+              medication.logs.push({ time: doseTimeISO, status: "Missed" });
+
+              // **Store this missed log in `localStorage` to prevent duplicate marking**
+              missedDoses[`${medication.name}_${doseTimeISO}`] = true;
+              localStorage.setItem("missedDoses", JSON.stringify(missedDoses));
+
+              // **Move to the next dose automatically**
+              medication.fixedNextDose = this.calculateNextDoseTime(medication).toISOString();
+
+              this.$forceUpdate(); // Ensure UI updates
+            } else {
+              console.error(`Error marking ${medication.name} as Missed:`, data.message);
+            }
+          } catch (error) {
+            console.error("Error in auto-marking missed medication:", error);
+          }
+        }
       }
     },
+
 
 
     async saveMedicalRecords() {
