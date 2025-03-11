@@ -3407,3 +3407,51 @@ canvas {
     background: linear-gradient(45deg, #ff1e00, #e0004c);
     transform: scale(1.05);
 }
+
+
+/* Appointments Section */
+.dashboard-recent-appointments, .dashboard-upcoming-appointments {
+    background: var(--section-bg);
+    padding: 15px;
+    border-radius: 10px;
+    color: var(--primary-text);
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Individual Appointment Item */
+.dashboard-appointment-item {
+    background: rgba(0, 123, 255, 0.1); /* Light blue background */
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Date */
+.dashboard-appointment-date {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #00b894; /* Green for dates */
+}
+
+/* Doctor */
+.dashboard-appointment-doctor {
+    font-size: 1rem;
+    color: #007bff; /* Blue for doctor names */
+    font-weight: bold;
+}
+
+/* Reason */
+.dashboard-appointment-reason{
+    font-size: 0.9rem;
+    color: #f368e0; /* Pink for reasons */
+}
+
+/* Hover effect */
+.dashboard-appointment-item:hover {
+    background: rgba(0, 123, 255, 0.2);
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+}

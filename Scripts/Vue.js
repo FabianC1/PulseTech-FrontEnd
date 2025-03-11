@@ -193,6 +193,18 @@ const app = Vue.createApp({
       });
 
       return closestMed || { name: "None", timeToTake: "N/A", dosage: "N/A" };
+    },
+
+    // Show only the last 3 completed appointments
+    filteredRecentAppointments() {
+      return this.healthDashboardData.recentAppointments
+        .slice(-3) // Get the last 3 appointments
+        .reverse(); // Show the most recent one first
+    },
+
+    // Show only the next 3 scheduled appointments
+    filteredUpcomingAppointments() {
+      return this.healthDashboardData.upcomingAppointments.slice(0, 3);
     }
   },
 
@@ -2321,23 +2333,23 @@ const app = Vue.createApp({
     renderHeartRateChart() {
       const ctx = document.getElementById("heartRateChart");
       if (!ctx) return;
-    
+
       if (this.heartRateChart) {
         this.heartRateChart.destroy();
       }
-    
+
       // Ensure there is data
       if (!this.healthDashboardData.heartRateLogs || this.healthDashboardData.heartRateLogs.length === 0) {
         console.warn("No heart rate data found");
         return;
       }
-    
+
       // Slice to get the most recent 20 entries
       const recentEntries = this.healthDashboardData.heartRateLogs.slice(-20);
-      
+
       const labels = recentEntries.map(entry => new Date(entry.time).toLocaleTimeString());
       const heartRateData = recentEntries.map(entry => parseInt(entry.value));
-    
+
       this.heartRateChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
@@ -2374,40 +2386,40 @@ const app = Vue.createApp({
         },
       });
     },
-    
+
 
 
     renderStepCountChart() {
       const ctx = document.getElementById("stepCountChart");
       if (!ctx) return;
-    
+
       if (this.stepCountChart) {
         this.stepCountChart.destroy();
       }
-    
+
       if (!this.healthDashboardData.stepCountLogs || this.healthDashboardData.stepCountLogs.length === 0) {
         console.warn("No step count data found");
         return;
       }
-    
+
       // Step 1: Track only the latest step count entry per day
       const stepDataByDate = {};
-    
+
       this.healthDashboardData.stepCountLogs.forEach(entry => {
         const date = new Date(entry.time).toLocaleDateString(); // Get only the date
         const steps = parseInt(entry.value);
-    
+
         // Keep only the most recent value for each day
         stepDataByDate[date] = steps;
       });
-    
+
       // Step 2: Extract the last 7 days of step data
       const sortedDates = Object.keys(stepDataByDate).sort((a, b) => new Date(a) - new Date(b));
       const recentDates = sortedDates.slice(-7); // Get last 7 days
-    
+
       // Step 3: Get step counts for those days
       const stepCountData = recentDates.map(date => stepDataByDate[date] || 0);
-    
+
       // Step 4: Render the chart
       this.stepCountChart = new Chart(ctx.getContext("2d"), {
         type: "line",
@@ -2445,42 +2457,42 @@ const app = Vue.createApp({
         },
       });
     },
-    
-    
-    
+
+
+
 
 
     renderSleepTrackingChart() {
       const ctx = document.getElementById("sleepTrackingChart");
       if (!ctx) return;
-    
+
       if (this.sleepTrackingChart) {
         this.sleepTrackingChart.destroy();
       }
-    
+
       if (!this.healthDashboardData.sleepTrackingLogs || this.healthDashboardData.sleepTrackingLogs.length === 0) {
         console.warn("No sleep tracking data found");
         return;
       }
-    
+
       // Step 1: Track only the latest sleep duration entry per day
       const sleepDataByDate = {};
-    
+
       this.healthDashboardData.sleepTrackingLogs.forEach(entry => {
         const date = new Date(entry.time).toLocaleDateString(); // Extract date only
         const sleepHours = parseInt(entry.value);
-    
+
         // Keep only the most recent value for each day
         sleepDataByDate[date] = sleepHours;
       });
-    
+
       // Step 2: Get the last 7 days of sleep data
       const sortedDates = Object.keys(sleepDataByDate).sort((a, b) => new Date(a) - new Date(b));
       const recentDates = sortedDates.slice(-7); // Keep only last 7 days
-    
+
       // Step 3: Extract sleep duration values for those days
       const sleepData = recentDates.map(date => sleepDataByDate[date] || 0);
-    
+
       // Step 4: Render the chart
       this.sleepTrackingChart = new Chart(ctx.getContext("2d"), {
         type: "line",
@@ -2518,8 +2530,10 @@ const app = Vue.createApp({
         },
       });
     },
-    
 
+    formatDate(date) {
+      return new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    }
   },
 
 

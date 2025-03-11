@@ -239,24 +239,30 @@
                     </div>
 
                     <!-- Recent Appointments -->
-                    <div class="medical-history">
+                    <div class="dashboard-recent-appointments">
                         <h3>Recent Appointments</h3>
-                        <ul v-if="healthDashboardData.recentAppointments.length">
-                            <li v-for="appointment in healthDashboardData.recentAppointments" :key="appointment.date">
-                                {{ appointment.date }} - {{ appointment.doctor || "Unknown Doctor" }}
-                            </li>
-                        </ul>
+                        <div v-if="healthDashboardData.recentAppointments.length">
+                            <div v-for="appointment in healthDashboardData.recentAppointments" :key="appointment.date"
+                                class="dashboard-appointment-item">
+                                <span class="dashboard-appointment-date">{{ formatDate(appointment.date) }}</span>
+                                <span class="dashboard-appointment-doctor">{{ appointment.doctor }}</span>
+                                <span class="dashboard-appointment-reason">({{ appointment.reason }})</span>
+                            </div>
+                        </div>
                         <p v-else>No recent appointments.</p>
                     </div>
 
                     <!-- Upcoming Appointments -->
-                    <div class="upcoming-events">
+                    <div class="dashboard-upcoming-appointments">
                         <h3>Upcoming Appointments</h3>
-                        <ul v-if="healthDashboardData.upcomingAppointments.length">
-                            <li v-for="event in healthDashboardData.upcomingAppointments" :key="event.date">
-                                {{ event.date }} - {{ event.doctor || "Unknown Doctor" }}
-                            </li>
-                        </ul>
+                        <div v-if="healthDashboardData.upcomingAppointments.length">
+                            <div v-for="event in healthDashboardData.upcomingAppointments" :key="event.date"
+                                class="dashboard-appointment-item">
+                                <span class="dashboard-appointment-date">{{ formatDate(event.date) }}</span>
+                                <span class="dashboard-appointment-doctor">{{ event.doctor }}</span>
+                                <span class="dashboard-appointment-reason">({{ event.reason }})</span>
+                            </div>
+                        </div>
                         <p v-else>No upcoming appointments.</p>
                     </div>
 
