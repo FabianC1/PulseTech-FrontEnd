@@ -2,12 +2,12 @@
 :root {
     /* Light Mode */
     --primary-bg-light: linear-gradient(to left, #758FFF, #ffffff);
-    --section-bg-light: #3c50aaea; /* Light mode section background */
+    --section-bg-light: #223174ea; /* Light mode section background */
     --primary-text-light: #000000; 
 
     /* Dark Mode */
     --primary-bg-dark: linear-gradient(to right, #1f1f1f, #013a85bd);
-    --section-bg-dark: rgba(255, 255, 255, 0.13);/* Dark mode section background */
+    --section-bg-dark: rgba(49, 49, 49, 0.568);/* Dark mode section background */
     --primary-text-dark: #ffffff;
 
     /* Default Mode */
@@ -3420,38 +3420,39 @@ canvas {
 
 /* Individual Appointment Item */
 .dashboard-appointment-item {
-    background: rgba(0, 123, 255, 0.1); /* Light blue background */
+    background: rgba(0, 123, 255, 0.15); /* Universal transparency */
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 8px;
     display: flex;
     flex-direction: column;
     transition: background 0.3s ease-in-out;
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border for light mode */
 }
 
 /* Date */
 .dashboard-appointment-date {
     font-weight: bold;
     font-size: 1.1rem;
-    color: #00b894; /* Green for dates */
+    color: var(--primary-text); /* Uses theme text color */
 }
 
 /* Doctor */
 .dashboard-appointment-doctor {
     font-size: 1rem;
-    color: #007bff; /* Blue for doctor names */
+    color: #007bff; /* Keep blue for contrast */
     font-weight: bold;
 }
 
 /* Reason */
-.dashboard-appointment-reason{
+.dashboard-appointment-reason {
     font-size: 0.9rem;
-    color: #f368e0; /* Pink for reasons */
+    color: #ff4081; /* Adjusted to be visible in both themes */
 }
 
 /* Hover effect */
 .dashboard-appointment-item:hover {
-    background: rgba(0, 123, 255, 0.2);
+    background: rgba(0, 123, 255, 0.3);
     transform: scale(1.02);
     transition: all 0.2s ease-in-out;
 }
