@@ -2390,18 +2390,35 @@ const app = Vue.createApp({
         return;
       }
     
-      const recentEntries = this.healthDashboardData.stepCountLogs.slice(-20);
+      // Step 1: Group step count data by date
+      const stepDataByDate = {};
     
-      const labels = recentEntries.map(entry => new Date(entry.time).toLocaleTimeString());
-      const stepCountData = recentEntries.map(entry => parseInt(entry.value));
+      this.healthDashboardData.stepCountLogs.forEach(entry => {
+        const date = new Date(entry.time).toLocaleDateString(); // Get only the date part
+        const steps = parseInt(entry.value);
     
+        if (!stepDataByDate[date]) {
+          stepDataByDate[date] = 0;
+        }
+    
+        stepDataByDate[date] += steps; // Sum steps for that day
+      });
+    
+      // Step 2: Extract the last 7 days of step data
+      const sortedDates = Object.keys(stepDataByDate).sort((a, b) => new Date(a) - new Date(b));
+      const recentDates = sortedDates.slice(-7); // Get last 7 days
+    
+      // Step 3: Get step counts for those days
+      const stepCountData = recentDates.map(date => stepDataByDate[date] || 0);
+    
+      // Step 4: Render the chart
       this.stepCountChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
-          labels: labels,
+          labels: recentDates, // X-axis: Last 7 days
           datasets: [{
-            label: "Steps Taken",
-            data: stepCountData,
+            label: "Steps Taken Per Day",
+            data: stepCountData, // Y-axis: Total steps per day
             borderColor: "rgba(54, 162, 235, 1)",
             backgroundColor: "rgba(54, 162, 235, 0.2)",
             borderWidth: 2,
@@ -2432,6 +2449,7 @@ const app = Vue.createApp({
       });
     },
     
+    
 
 
     renderSleepTrackingChart() {
@@ -2447,18 +2465,35 @@ const app = Vue.createApp({
         return;
       }
     
-      const recentEntries = this.healthDashboardData.sleepTrackingLogs.slice(-20);
+      // Step 1: Group sleep duration by date
+      const sleepDataByDate = {};
     
-      const labels = recentEntries.map(entry => new Date(entry.time).toLocaleDateString());
-      const sleepData = recentEntries.map(entry => parseInt(entry.value));
+      this.healthDashboardData.sleepTrackingLogs.forEach(entry => {
+        const date = new Date(entry.time).toLocaleDateString(); // Extract date only
+        const sleepHours = parseInt(entry.value);
     
+        if (!sleepDataByDate[date]) {
+          sleepDataByDate[date] = 0;
+        }
+    
+        sleepDataByDate[date] += sleepHours; // Sum sleep hours for that day
+      });
+    
+      // Step 2: Get the last 7 days of sleep data
+      const sortedDates = Object.keys(sleepDataByDate).sort((a, b) => new Date(a) - new Date(b));
+      const recentDates = sortedDates.slice(-7); // Keep only last 7 days
+    
+      // Step 3: Extract sleep duration values for those days
+      const sleepData = recentDates.map(date => sleepDataByDate[date] || 0);
+    
+      // Step 4: Render the chart
       this.sleepTrackingChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
-          labels: labels,
+          labels: recentDates, // X-axis: Last 7 days
           datasets: [{
             label: "Sleep Duration (Hours)",
-            data: sleepData,
+            data: sleepData, // Y-axis: Total sleep per day
             borderColor: "rgb(54, 66, 235)",
             backgroundColor: "rgba(123, 54, 235, 0.2)",
             borderWidth: 2,
@@ -2476,7 +2511,7 @@ const app = Vue.createApp({
               grid: { color: "rgba(255, 255, 255, 0.2)" },
             },
             y: {
-              ticks: { color: "white", precision: 0 },
+              ticks: { color: "white", precision: 0 }, // No decimals
               grid: { color: "rgba(255, 255, 255, 0.2)" },
             },
           },
