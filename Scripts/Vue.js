@@ -1623,15 +1623,26 @@ const app = Vue.createApp({
 
 
     showMarkAsTaken(medication) {
+      if (!medication || !medication.logs) return false;
+    
       const now = this.getCurrentTime();
       const nextDose = this.calculateNextDoseTime(medication);
-
       if (!nextDose) return false;
-
+    
       const diffMinutes = Math.floor((nextDose - now) / 60000);
-
-      return diffMinutes <= 60 && diffMinutes >= -30; // Show within the correct timeframe
+      
+      // If taken within the valid timeframe, hide the button
+      const alreadyTaken = medication.logs.some(log => {
+        const logTime = new Date(log.time);
+        const logDiff = Math.floor((logTime - nextDose) / 60000);
+        return log.status === "Taken" && logDiff >= -30 && logDiff <= 60;
+      });
+    
+      if (alreadyTaken) return false; // Hide button if already taken
+    
+      return diffMinutes <= 60 && diffMinutes >= -30; // Show only if valid
     },
+    
 
     async markAsTaken(medication) {
       if (medication.isMarking || this.hasTakenDose(medication)) {
