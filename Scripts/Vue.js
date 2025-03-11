@@ -1569,10 +1569,10 @@ const app = Vue.createApp({
       const diffMinutes = Math.floor((now - nextDose) / 60000); // Time difference in minutes
 
       if (diffMinutes >= 0 && diffMinutes < 30) {
-        return `${30 - diffMinutes} minutes left to mark`; // ✅ Still within grace period
+        return `${30 - diffMinutes} minutes left to mark`; // Still within grace period
       }
 
-      // ✅ Otherwise, return normal countdown (ALWAYS FUTURE TIME)
+      // Otherwise, return normal countdown (ALWAYS FUTURE TIME)
       return this.getNextDoseCountdown(medication);
     },
 
@@ -1672,7 +1672,7 @@ const app = Vue.createApp({
         bloodOxygen: this.user.bloodOxygen,
         organDonorStatus: this.user.organDonorStatus,
         medicalDirectives: this.user.medicalDirectives,
-        wearableDataHistory: this.user.wearableDataHistory, // ✅ Include wearable data history
+        wearableDataHistory: this.user.wearableDataHistory, // Include wearable data history
       };
 
       try {
@@ -1893,7 +1893,7 @@ const app = Vue.createApp({
 
         const countdown = this.getNextDoseCountdown(med);
 
-        med.nextDoseDisplay = countdown; // ✅ **Always show countdown**
+        med.nextDoseDisplay = countdown; // **Always show countdown**
         med.showMarkAsTaken = !alreadyTaken && this.shouldShowMarkAsTaken(med);
         med.gracePeriodActive = countdown.includes("minutes left to mark");
       });
@@ -2229,14 +2229,16 @@ const app = Vue.createApp({
           upcomingAppointments: data.upcomingAppointments || [],
           medicationStats: data.medicationStats || { dates: [], taken: [], missed: [] },
           healthAlerts: data.healthAlerts || [],
-          heartRateLogs: data.heartRateLogs || [], // ✅ Store heart rate logs
-          stepCountLogs: data.stepCountLogs || []  // ✅ Store step count logs
+          heartRateLogs: data.heartRateLogs || [], // Store heart rate logs
+          stepCountLogs: data.stepCountLogs || [],  // Store step count logs
+          sleepTrackingLogs: data.sleepTrackingLogs || [] // Store sleep tracking logs
         };
 
         this.$nextTick(() => {
           this.renderMedicationChart();
-          this.renderHeartRateChart(); // ✅ Call heart rate chart function
-          this.renderStepCountChart(); // ✅ Call step count chart function
+          this.renderHeartRateChart(); // Call heart rate chart function
+          this.renderStepCountChart(); // Call step count chart function
+          this.renderSleepTrackingChart(); // Call sleep tracking chart function
         });
 
       } catch (error) {
@@ -2393,7 +2395,7 @@ const app = Vue.createApp({
         this.stepCountChart.destroy();
       }
     
-      // ✅ Ensure step count logs exist before rendering
+      // Ensure step count logs exist before rendering
       if (!this.healthDashboardData.stepCountLogs || this.healthDashboardData.stepCountLogs.length === 0) {
         console.warn("No step count data found");
         return;
@@ -2404,7 +2406,7 @@ const app = Vue.createApp({
       const stepCountData = this.healthDashboardData.stepCountLogs.map(entry => entry.value);
     
       this.stepCountChart = new Chart(ctx.getContext("2d"), {
-        type: "bar",
+        type: "line",
         data: {
           labels: labels, // X-axis: Timestamps
           datasets: [
@@ -2440,10 +2442,68 @@ const app = Vue.createApp({
           },
         },
       });
+    },
+
+
+    renderSleepTrackingChart() {
+      const ctx = document.getElementById("sleepTrackingChart");
+      if (!ctx) return;
+    
+      if (this.sleepTrackingChart) {
+        this.sleepTrackingChart.destroy();
+      }
+    
+      // Ensure sleep tracking data exists
+      if (!this.healthDashboardData.sleepTrackingLogs || this.healthDashboardData.sleepTrackingLogs.length === 0) {
+        console.warn("No sleep tracking data found");
+        return;
+      }
+    
+      // Extract dates and sleep durations
+      const labels = this.healthDashboardData.sleepTrackingLogs.map(entry => 
+        new Date(entry.time).toLocaleDateString()
+      );
+      const sleepData = this.healthDashboardData.sleepTrackingLogs.map(entry => entry.value);
+    
+      this.sleepTrackingChart = new Chart(ctx.getContext("2d"), {
+        type: "line",
+        data: {
+          labels: labels, // X-axis: Dates
+          datasets: [
+            {
+              label: "Sleep Duration (Hours)",
+              data: sleepData, // Y-axis: Sleep hours
+              borderColor: "rgb(54, 66, 235)",
+              backgroundColor: "rgba(123, 54, 235, 0.2)",
+              borderWidth: 2,
+              fill: true,
+              pointBackgroundColor: "white",
+              pointRadius: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: "white" },
+              grid: { color: "rgba(255, 255, 255, 0.2)" },
+            },
+            y: {
+              ticks: { color: "white", precision: 0 },
+              grid: { color: "rgba(255, 255, 255, 0.2)" },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: { color: "white" },
+            },
+          },
+        },
+      });
     }
     
-
-
 
 
   },
@@ -2454,6 +2514,8 @@ const app = Vue.createApp({
   mounted() {
     this.fetchHealthDashboardData();
     this.renderHeartRateChart();
+    this.renderStepCountChart();
+    this.renderSleepTrackingChart();
 
     // Load the theme preference from localStorage
     const savedTheme = localStorage.getItem("theme");
