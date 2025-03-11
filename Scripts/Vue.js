@@ -938,6 +938,9 @@ const app = Vue.createApp({
     // Handle logout action
     logout() {
       localStorage.removeItem("user"); // Clear user session
+      localStorage.removeItem("healthDashboardData"); // Remove dashboard data
+      sessionStorage.removeItem("healthDashboardData"); // Remove session-stored dashboard data
+
       this.isLoggedIn = false;
 
       // Clear login input fields
@@ -957,13 +960,37 @@ const app = Vue.createApp({
         profilePicture: "" // Ensure profilePicture exists to prevent errors
       };
 
-      this.currentView = "login"; // Redirect instantly
-    },
-    redirectToLogin() {
-      this.currentView = "login"; // Switch to login view
-    },
-    redirectToSignup() {
-      this.currentView = "signup"; // Switch to signup view
+      // 🔹 Clear health dashboard data from Vue state
+      this.healthDashboardData = {
+        missedMeds: 0,
+        recentAppointments: [],
+        upcomingAppointments: [],
+        medicationStats: { taken: 0, missed: 0 },
+        healthAlerts: [],
+        heartRateLogs: [],
+        stepCountLogs: [],
+        sleepTrackingLogs: []
+      };
+
+      // 🔹 Destroy all existing charts (if they exist)
+      if (this.medicationChart) {
+        this.medicationChart.destroy();
+        this.medicationChart = null;
+      }
+      if (this.heartRateChart) {
+        this.heartRateChart.destroy();
+        this.heartRateChart = null;
+      }
+      if (this.stepCountChart) {
+        this.stepCountChart.destroy();
+        this.stepCountChart = null;
+      }
+      if (this.sleepTrackingChart) {
+        this.sleepTrackingChart.destroy();
+        this.sleepTrackingChart = null;
+      }
+
+      this.currentView = "login"; // Redirect to login page
     },
 
 
@@ -2234,23 +2261,23 @@ const app = Vue.createApp({
         // 🔹 Load cached data from localStorage
         const cachedData = JSON.parse(localStorage.getItem("healthDashboardData"));
         const lastFetched = localStorage.getItem("healthDashboardLastUpdated");
-    
+
         if (cachedData && lastFetched) {
           // 🔹 Use cached data first (for instant loading)
           this.healthDashboardData = cachedData;
           console.log("Using cached health dashboard data.");
         }
-    
+
         // 🔹 Fetch only if there’s no cached data OR if the API has newer data
         const response = await fetch(`http://localhost:3000/get-health-dashboard?email=${this.user.email}&lastUpdated=${lastFetched || ""}`);
         const data = await response.json();
-    
+
         // 🔹 If API returns a "No Updates" message, skip updating
         if (data.message === "No Updates") {
           console.log("Health Dashboard is up to date. No new API call needed.");
           return;
         }
-    
+
         // 🔹 If new data is received, update the state and localStorage
         this.healthDashboardData = {
           missedMeds: data.missedMeds || 0,
@@ -2262,17 +2289,17 @@ const app = Vue.createApp({
           stepCountLogs: data.stepCountLogs || [],
           sleepTrackingLogs: data.sleepTrackingLogs || []
         };
-    
+
         // 🔹 Store the new data in localStorage
         localStorage.setItem("healthDashboardData", JSON.stringify(this.healthDashboardData));
         localStorage.setItem("healthDashboardLastUpdated", new Date().toISOString());
-    
+
         console.log("Updated health dashboard data from API.");
       } catch (error) {
         console.error("Error fetching health dashboard data:", error);
       }
     },
-    
+
 
 
 
