@@ -1703,7 +1703,68 @@ const app = Vue.createApp({
       }
     },
 
+    showMarkAsTaken(medication) {
+      if (!medication || !medication.logs) return false;
 
+      const now = this.getCurrentTime();
+      const nextDose = this.calculateNextDoseTime(medication);
+      if (!nextDose) return false;
+
+      const diffMinutes = Math.floor((nextDose - now) / 60000);
+
+      // If taken within the valid timeframe, hide the button
+      const alreadyTaken = medication.logs.some(log => {
+        const logTime = new Date(log.time);
+        const logDiff = Math.floor((logTime - nextDose) / 60000);
+        return log.status === "Taken" && logDiff >= -30 && logDiff <= 60;
+      });
+
+      if (alreadyTaken) return false; // Hide button if already taken
+
+      return diffMinutes <= 60 && diffMinutes >= -30; // Show only if valid
+    },
+
+
+    async markAsTaken(medication) {
+      if (medication.isMarking || this.hasTakenDose(medication)) {
+        console.log(`Already marked as taken: ${medication.name}`);
+        return;
+      }
+
+      medication.isMarking = true;
+      const now = this.getCurrentTime();
+      const nextDoseTime = this.calculateNextDoseTime(medication).toISOString();
+
+      try {
+        const response = await fetch("http://localhost:3000/mark-medication-taken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: this.user.email,
+            medicationName: medication.name,
+            doseTime: nextDoseTime,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log(`${medication.name} marked as taken at ${data.takenAt}`);
+
+          if (!medication.logs) medication.logs = [];
+          medication.logs.push({ time: nextDoseTime, status: "Taken" });
+
+          this.updateMedicationUI();
+          this.$forceUpdate();
+        } else {
+          console.error(`Error marking ${medication.name} as taken:`, data.message);
+        }
+      } catch (error) {
+        console.error("Error marking medication as taken:", error);
+      } finally {
+        medication.isMarking = false;
+      }
+    },
 
     async saveMedicalRecords() {
       const newWearableEntry = {
