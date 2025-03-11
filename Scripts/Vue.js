@@ -197,12 +197,17 @@ const app = Vue.createApp({
   },
 
   watch: {
-    // Watch for when the current view is set to 'appointments'
+    // Watch for when the current view is set to 'healthDashboard'
     currentView(newView) {
       if (newView === "healthDashboard") {
         this.fetchHealthDashboardData();
+        this.$nextTick(() => {
+          this.renderMedicationChart();
+          this.renderHeartRateChart();
+          this.renderStepCountChart();
+          this.renderSleepTrackingChart();
+        });
       }
-
     },
 
 
@@ -2234,13 +2239,6 @@ const app = Vue.createApp({
           sleepTrackingLogs: data.sleepTrackingLogs || [] // Store sleep tracking logs
         };
 
-        this.$nextTick(() => {
-          this.renderMedicationChart();
-          this.renderHeartRateChart(); // Call heart rate chart function
-          this.renderStepCountChart(); // Call step count chart function
-          this.renderSleepTrackingChart(); // Call sleep tracking chart function
-        });
-
       } catch (error) {
         console.error("Error fetching health dashboard data:", error);
       } finally {
@@ -2512,10 +2510,15 @@ const app = Vue.createApp({
 
 
   mounted() {
-    this.fetchHealthDashboardData();
-    this.renderHeartRateChart();
-    this.renderStepCountChart();
-    this.renderSleepTrackingChart();
+    this.fetchHealthDashboardData(); // Fetch data initially
+
+    // Ensure the charts render on mount
+    this.$nextTick(() => {
+      this.renderMedicationChart();
+      this.renderHeartRateChart();
+      this.renderStepCountChart();
+      this.renderSleepTrackingChart();
+    });
 
     // Load the theme preference from localStorage
     const savedTheme = localStorage.getItem("theme");
