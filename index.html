@@ -245,7 +245,9 @@
                             <div v-for="appointment in healthDashboardData.recentAppointments" :key="appointment.date"
                                 class="dashboard-appointment-item">
                                 <span class="dashboard-appointment-date">{{ formatDate(appointment.date) }}</span>
-                                <span class="dashboard-appointment-name">{{ appointment.name }}</span>
+                                <span class="dashboard-appointment-name">
+                                    {{ user.role === 'patient' ? appointment.doctorName : appointment.patientName }}
+                                </span>
                                 <span class="dashboard-appointment-reason">{{ appointment.reason }}</span>
                             </div>
                         </div>
@@ -259,7 +261,9 @@
                             <div v-for="event in healthDashboardData.upcomingAppointments" :key="event.date"
                                 class="dashboard-appointment-item">
                                 <span class="dashboard-appointment-date">{{ formatDate(event.date) }}</span>
-                                <span class="dashboard-appointment-name">{{ event.name }}</span>
+                                <span class="dashboard-appointment-name">
+                                    {{ user.role === 'patient' ? event.doctorName : event.patientName }}
+                                </span>
                                 <span class="dashboard-appointment-reason">{{ event.reason }}</span>
                             </div>
                         </div>
