@@ -3419,42 +3419,46 @@ canvas {
     background: var(--section-bg);
     padding: 15px;
     border-radius: 10px;
-    color: white;
+    color: var(--primary-text);
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-/* Individual Appointment Item */
+/* Individual Appointment Item (Inline Layout) */
 .dashboard-appointment-item {
-    background: rgba(0, 123, 255, 0.15); /* Universal transparency */
+    background: rgba(0, 123, 255, 0.15); /* Transparent blue */
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 8px;
-    display: flex;
-    flex-direction: column;
+    display: flex; /* Arrange items in a row */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space items evenly */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
     transition: background 0.3s ease-in-out;
-    border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border for light mode */
 }
 
-/* Date */
+/* Ensure text spacing and visibility */
 .dashboard-appointment-date {
     font-weight: bold;
     font-size: 1.1rem;
-    color: var(--primary-text); /* Uses theme text color */
+    color: var(--primary-text);
+    flex: 1; /* Allow resizing */
+    min-width: 120px; /* Ensure date is visible */
 }
 
-/* Doctor */
-.dashboard-appointment-doctor {
+.dashboard-appointment-name {
     font-size: 1rem;
-    color: #007bff; /* Keep blue for contrast */
+    color: #007bff; /* Blue */
     font-weight: bold;
+    flex: 2; /* Allow more space */
+    text-align: center;
 }
 
-/* Reason */
 .dashboard-appointment-reason {
     font-size: 0.9rem;
-    color: #ff4081; /* Adjusted to be visible in both themes */
+    color: #ff4081; /* Pink */
+    flex: 1;
+    text-align: right;
 }
-
 /* Hover effect */
 .dashboard-appointment-item:hover {
     background: rgba(0, 123, 255, 0.3);
