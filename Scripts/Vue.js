@@ -2323,19 +2323,19 @@ const app = Vue.createApp({
     renderHeartRateChart() {
       const ctx = document.getElementById("heartRateChart");
       if (!ctx) return;
-   
+
       if (this.heartRateChart) {
         this.heartRateChart.destroy();
       }
-   
+
       if (!this.healthDashboardData.heartRateLogs || this.healthDashboardData.heartRateLogs.length === 0) {
         console.warn("No heart rate data found");
         return;
       }
-   
+
       const labels = this.healthDashboardData.heartRateLogs.map(entry => new Date(entry.time).toLocaleTimeString());
       const heartRateData = this.healthDashboardData.heartRateLogs.map(entry => parseInt(entry.value));
-   
+
       this.heartRateChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
@@ -2385,26 +2385,26 @@ const app = Vue.createApp({
         },
       });
     },
-   
+
 
     renderStepCountChart() {
       const ctx = document.getElementById("stepCountChart");
       if (!ctx) return;
-    
+
       if (this.stepCountChart) {
         this.stepCountChart.destroy();
       }
-    
+
       // Ensure step count logs exist before rendering
       if (!this.healthDashboardData.stepCountLogs || this.healthDashboardData.stepCountLogs.length === 0) {
         console.warn("No step count data found");
         return;
       }
-    
+
       // Extract timestamps and step count values
       const labels = this.healthDashboardData.stepCountLogs.map(entry => new Date(entry.time).toLocaleTimeString());
       const stepCountData = this.healthDashboardData.stepCountLogs.map(entry => entry.value);
-    
+
       this.stepCountChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
@@ -2448,23 +2448,23 @@ const app = Vue.createApp({
     renderSleepTrackingChart() {
       const ctx = document.getElementById("sleepTrackingChart");
       if (!ctx) return;
-    
+
       if (this.sleepTrackingChart) {
         this.sleepTrackingChart.destroy();
       }
-    
+
       // Ensure sleep tracking data exists
       if (!this.healthDashboardData.sleepTrackingLogs || this.healthDashboardData.sleepTrackingLogs.length === 0) {
         console.warn("No sleep tracking data found");
         return;
       }
-    
+
       // Extract dates and sleep durations
-      const labels = this.healthDashboardData.sleepTrackingLogs.map(entry => 
+      const labels = this.healthDashboardData.sleepTrackingLogs.map(entry =>
         new Date(entry.time).toLocaleDateString()
       );
       const sleepData = this.healthDashboardData.sleepTrackingLogs.map(entry => entry.value);
-    
+
       this.sleepTrackingChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
@@ -2503,7 +2503,7 @@ const app = Vue.createApp({
         },
       });
     }
-    
+
 
 
   },
@@ -2559,6 +2559,16 @@ const app = Vue.createApp({
         this.fetchMessages();
       }
     }, 2000);
+
+    // **🔹 Implement the 5-minute wearable data logging**
+    setInterval(async () => {
+      const newData = await fetchWearableData(); // Get latest health data
+
+      if (this.shouldLogData(newData)) { // Only log if there’s a meaningful change
+        await this.logWearableData(newData);
+        console.log("Logged new health data:", newData);
+      }
+    }, 300000); // Log every 5 minutes (300000 ms)
   },
 
   beforeUnmount() {
