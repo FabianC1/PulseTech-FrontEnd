@@ -2321,104 +2321,37 @@ const app = Vue.createApp({
     renderHeartRateChart() {
       const ctx = document.getElementById("heartRateChart");
       if (!ctx) return;
-
+    
       if (this.heartRateChart) {
         this.heartRateChart.destroy();
       }
-
+    
+      // Ensure there is data
       if (!this.healthDashboardData.heartRateLogs || this.healthDashboardData.heartRateLogs.length === 0) {
         console.warn("No heart rate data found");
         return;
       }
-
-      const labels = this.healthDashboardData.heartRateLogs.map(entry => new Date(entry.time).toLocaleTimeString());
-      const heartRateData = this.healthDashboardData.heartRateLogs.map(entry => parseInt(entry.value));
-
+    
+      // Slice to get the most recent 20 entries
+      const recentEntries = this.healthDashboardData.heartRateLogs.slice(-20);
+      
+      const labels = recentEntries.map(entry => new Date(entry.time).toLocaleTimeString());
+      const heartRateData = recentEntries.map(entry => parseInt(entry.value));
+    
       this.heartRateChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
-          labels: labels, // X-axis: Time
-          datasets: [
-            {
-              label: "Heart Rate (BPM)",
-              data: heartRateData, // Y-axis: BPM values
-              borderColor: "rgba(255, 99, 132, 1)",
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderWidth: 2,
-              fill: true,
-              pointBackgroundColor: "white",
-              pointRadius: 4,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              ticks: {
-                color: "white",
-              },
-              grid: {
-                color: "rgba(255, 255, 255, 0.2)",
-              },
-            },
-            y: {
-              ticks: {
-                color: "white",
-                precision: 0, // No decimals
-              },
-              grid: {
-                color: "rgba(255, 255, 255, 0.2)",
-              },
-            },
-          },
-          plugins: {
-            legend: {
-              labels: {
-                color: "white",
-              },
-            },
-          },
-        },
-      });
-    },
-
-
-    renderStepCountChart() {
-      const ctx = document.getElementById("stepCountChart");
-      if (!ctx) return;
-
-      if (this.stepCountChart) {
-        this.stepCountChart.destroy();
-      }
-
-      // Ensure step count logs exist before rendering
-      if (!this.healthDashboardData.stepCountLogs || this.healthDashboardData.stepCountLogs.length === 0) {
-        console.warn("No step count data found");
-        return;
-      }
-
-      // Extract timestamps and step count values
-      const labels = this.healthDashboardData.stepCountLogs.map(entry => new Date(entry.time).toLocaleTimeString());
-      const stepCountData = this.healthDashboardData.stepCountLogs.map(entry => entry.value);
-
-      this.stepCountChart = new Chart(ctx.getContext("2d"), {
-        type: "line",
-        data: {
-          labels: labels, // X-axis: Timestamps
-          datasets: [
-            {
-              label: "Steps Taken",
-              data: stepCountData, // Y-axis: Step count values
-              borderColor: "rgba(54, 162, 235, 1)", // Blue
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
-              borderWidth: 2,
-              fill: true,
-              pointBackgroundColor: "white",
-              pointRadius: 4,
-            },
-          ],
+          labels: labels,
+          datasets: [{
+            label: "Heart Rate (BPM)",
+            data: heartRateData,
+            borderColor: "rgba(255, 99, 132, 1)",
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderWidth: 2,
+            fill: true,
+            pointBackgroundColor: "white",
+            pointRadius: 4,
+          }],
         },
         options: {
           responsive: true,
@@ -2429,7 +2362,7 @@ const app = Vue.createApp({
               grid: { color: "rgba(255, 255, 255, 0.2)" },
             },
             y: {
-              ticks: { color: "white", precision: 0 }, // No decimals
+              ticks: { color: "white", precision: 0 },
               grid: { color: "rgba(255, 255, 255, 0.2)" },
             },
           },
@@ -2441,44 +2374,98 @@ const app = Vue.createApp({
         },
       });
     },
+    
+
+
+    renderStepCountChart() {
+      const ctx = document.getElementById("stepCountChart");
+      if (!ctx) return;
+    
+      if (this.stepCountChart) {
+        this.stepCountChart.destroy();
+      }
+    
+      if (!this.healthDashboardData.stepCountLogs || this.healthDashboardData.stepCountLogs.length === 0) {
+        console.warn("No step count data found");
+        return;
+      }
+    
+      const recentEntries = this.healthDashboardData.stepCountLogs.slice(-20);
+    
+      const labels = recentEntries.map(entry => new Date(entry.time).toLocaleTimeString());
+      const stepCountData = recentEntries.map(entry => parseInt(entry.value));
+    
+      this.stepCountChart = new Chart(ctx.getContext("2d"), {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Steps Taken",
+            data: stepCountData,
+            borderColor: "rgba(54, 162, 235, 1)",
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderWidth: 2,
+            fill: true,
+            pointBackgroundColor: "white",
+            pointRadius: 4,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: "white" },
+              grid: { color: "rgba(255, 255, 255, 0.2)" },
+            },
+            y: {
+              ticks: { color: "white", precision: 0 },
+              grid: { color: "rgba(255, 255, 255, 0.2)" },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: { color: "white" },
+            },
+          },
+        },
+      });
+    },
+    
 
 
     renderSleepTrackingChart() {
       const ctx = document.getElementById("sleepTrackingChart");
       if (!ctx) return;
-
+    
       if (this.sleepTrackingChart) {
         this.sleepTrackingChart.destroy();
       }
-
-      // Ensure sleep tracking data exists
+    
       if (!this.healthDashboardData.sleepTrackingLogs || this.healthDashboardData.sleepTrackingLogs.length === 0) {
         console.warn("No sleep tracking data found");
         return;
       }
-
-      // Extract dates and sleep durations
-      const labels = this.healthDashboardData.sleepTrackingLogs.map(entry =>
-        new Date(entry.time).toLocaleDateString()
-      );
-      const sleepData = this.healthDashboardData.sleepTrackingLogs.map(entry => entry.value);
-
+    
+      const recentEntries = this.healthDashboardData.sleepTrackingLogs.slice(-20);
+    
+      const labels = recentEntries.map(entry => new Date(entry.time).toLocaleDateString());
+      const sleepData = recentEntries.map(entry => parseInt(entry.value));
+    
       this.sleepTrackingChart = new Chart(ctx.getContext("2d"), {
         type: "line",
         data: {
-          labels: labels, // X-axis: Dates
-          datasets: [
-            {
-              label: "Sleep Duration (Hours)",
-              data: sleepData, // Y-axis: Sleep hours
-              borderColor: "rgb(54, 66, 235)",
-              backgroundColor: "rgba(123, 54, 235, 0.2)",
-              borderWidth: 2,
-              fill: true,
-              pointBackgroundColor: "white",
-              pointRadius: 4,
-            },
-          ],
+          labels: labels,
+          datasets: [{
+            label: "Sleep Duration (Hours)",
+            data: sleepData,
+            borderColor: "rgb(54, 66, 235)",
+            backgroundColor: "rgba(123, 54, 235, 0.2)",
+            borderWidth: 2,
+            fill: true,
+            pointBackgroundColor: "white",
+            pointRadius: 4,
+          }],
         },
         options: {
           responsive: true,
@@ -2501,6 +2488,7 @@ const app = Vue.createApp({
         },
       });
     }
+    
 
 
 
