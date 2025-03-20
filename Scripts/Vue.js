@@ -2399,26 +2399,45 @@ const app = Vue.createApp({
     renderMedicationChart() {
       const ctx = document.getElementById("medicationChart");
       if (!ctx) return;
-
+    
       if (this.medicationChart) {
         this.medicationChart.destroy();
       }
-
+    
+      // Sort dates along with taken and missed doses
+      const medicationData = this.healthDashboardData.medicationStats.dates.map(
+        (date, index) => ({
+          date: new Date(date).getTime(), // Convert to timestamp for sorting
+          taken: this.healthDashboardData.medicationStats.taken[index] || 0, // Default to 0 if missing
+          missed: this.healthDashboardData.medicationStats.missed[index] || 0, // Default to 0 if missing
+        })
+      );
+    
+      //Sort by date (Oldest → Newest)
+      medicationData.sort((a, b) => a.date - b.date);
+    
+      // Extract sorted values
+      const sortedDates = medicationData.map(entry => new Date(entry.date).toISOString().split("T")[0]); // Convert timestamp back to date
+      const sortedTaken = medicationData.map(entry => entry.taken);
+      const sortedMissed = medicationData.map(entry => entry.missed);
+    
+      console.log("Sorted Medication Data:", { sortedDates, sortedTaken, sortedMissed });
+    
       this.medicationChart = new Chart(ctx.getContext("2d"), {
         type: "bar",
         data: {
-          labels: this.healthDashboardData.medicationStats.dates,
+          labels: sortedDates, //Use sorted dates
           datasets: [
             {
               label: "Taken",
-              data: this.healthDashboardData.medicationStats.taken,
+              data: sortedTaken, //Use sorted taken doses
               backgroundColor: "rgba(75, 192, 192, 0.6)",
               borderColor: "rgba(75, 192, 192, 1)",
               borderWidth: 1,
             },
             {
               label: "Missed",
-              data: this.healthDashboardData.medicationStats.missed,
+              data: sortedMissed, //Use sorted missed doses
               backgroundColor: "rgba(255, 99, 132, 0.6)",
               borderColor: "rgba(255, 99, 132, 1)",
               borderWidth: 1,
@@ -2432,35 +2451,36 @@ const app = Vue.createApp({
             x: {
               ticks: {
                 color: "white", // X-axis labels color
-                font: { size: 14 } // Adjust font size if needed
+                font: { size: 14 },
               },
               grid: {
-                color: "rgba(255, 255, 255, 0.2)" // Light grid lines
-              }
+                color: "rgba(255, 255, 255, 0.2)", // Light grid lines
+              },
             },
             y: {
               ticks: {
                 color: "white", // Y-axis labels color
                 font: { size: 14 },
                 stepSize: 1, // Ensures numbers increment by 1
-                precision: 0 // Prevents decimal places
+                precision: 0, // Prevents decimal places
               },
               grid: {
-                color: "rgba(255, 255, 255, 0.2)" // Light grid lines
-              }
-            }
+                color: "rgba(255, 255, 255, 0.2)", // Light grid lines
+              },
+            },
           },
           plugins: {
             legend: {
               labels: {
                 color: "white", // Legend labels color
-                font: { size: 14 }
-              }
-            }
-          }
-        }
+                font: { size: 14 },
+              },
+            },
+          },
+        },
       });
     },
+    
 
 
 
