@@ -2560,15 +2560,15 @@ const app = Vue.createApp({
       const stepDataByDate = {};
 
       this.healthDashboardData.stepCountLogs.forEach(entry => {
-        const date = new Date(entry.time).toLocaleDateString(); // Get only the date
+        const date = new Date(entry.time).toISOString().split("T")[0]; // Sortable format
         const steps = parseInt(entry.value);
 
         // Keep only the most recent value for each day
-        stepDataByDate[date] = steps;
+        stepDataByDate[date] = steps; // Only keep latest per day
       });
 
       // Step 2: Extract the last 7 days of step data
-      const sortedDates = Object.keys(stepDataByDate).sort((a, b) => new Date(a) - new Date(b));
+      const sortedDates = Object.keys(stepDataByDate).sort(); // Sorts correctly now
       const recentDates = sortedDates.slice(-7); // Get last 7 days
 
       // Step 3: Get step counts for those days
@@ -2633,7 +2633,7 @@ const app = Vue.createApp({
       const sleepDataByDate = {};
 
       this.healthDashboardData.sleepTrackingLogs.forEach(entry => {
-        const date = new Date(entry.time).toLocaleDateString(); // Extract date only
+        const date = new Date(entry.time).toISOString().split("T")[0]; // YYYY-MM-DD
         const sleepHours = parseInt(entry.value);
 
         // Keep only the most recent value for each day
@@ -2641,7 +2641,7 @@ const app = Vue.createApp({
       });
 
       // Step 2: Get the last 7 days of sleep data
-      const sortedDates = Object.keys(sleepDataByDate).sort((a, b) => new Date(a) - new Date(b));
+      const sortedDates = Object.keys(sleepDataByDate).sort(); // Chronological order
       const recentDates = sortedDates.slice(-7); // Keep only last 7 days
 
       // Step 3: Extract sleep duration values for those days
